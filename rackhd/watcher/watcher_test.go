@@ -2,9 +2,10 @@ package watcher_test
 
 import (
 	"fmt"
+
+	"github.com/RackHD/NeighborhoodManager/rackhd/watcher"
 	regStore "github.com/king-jam/libreg/registry"
 	"github.com/king-jam/libreg/registry/mock"
-	"github.com/skunkworxs/nm-rackhd/watcher"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

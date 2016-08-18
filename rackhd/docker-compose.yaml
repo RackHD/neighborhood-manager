@@ -4,7 +4,7 @@ version: "2"
 
 services:
   consulserver:
-    image: "skunkworxs/consul:server"
+    image: "rackhd/consul:server"
     container_name: "consulserver"
     hostname: "consulserver"
     ports:
@@ -20,9 +20,9 @@ services:
     command: "agent -config-dir /etc/consul.d/server.json -bootstrap"
   nm-rackhd-proxy:
     build: .
-    image: "skunkworxs/nm-rackhd:latest"
-    container_name: "nm-rackhd"
-    hostname: "nm-rackhd"
+    image: "rackhd/rackhd:latest"
+    container_name: "rackhd"
+    hostname: "rackhd"
     links:
         - consulclient
     expose:
@@ -45,7 +45,7 @@ services:
       - consulclient
   ssdpspoofer:
     build: ./cmd/utils
-    image: "skunkworxs/endpoint:latest"
+    image: "rackhd/endpoint:latest"
     container_name: "endpoint"
     hostname: "endpoint"
     expose:
@@ -55,7 +55,7 @@ services:
     depends_on:
         - consulclient
   consulclient:
-    image: "skunkworxs/consul:client"
+    image: "rackhd/consul:client"
     container_name: "consulclient"
     hostname: "consulclient"
     expose:
