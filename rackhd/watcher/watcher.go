@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/king-jam/libreg"
-	regStore "github.com/king-jam/libreg/registry"
+	"github.com/RackHD/NeighborhoodManager/libreg"
+	regStore "github.com/RackHD/NeighborhoodManager/libreg/registry"
 )
 
 // Monitor is a struct to initialize a BackendStore

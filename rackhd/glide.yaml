@@ -1,6 +1,0 @@
-package: github.com/RackHD/NeighborhoodManager/rackhd
-import:
-- package: github.com/king-jam/libreg
-  subpackages:
-  - registry
-  - registry/consul
