@@ -1,0 +1,6 @@
+FROM rackhd/golang:1.7.0-wheezy
+
+ADD ./bin/registry /go/bin/registry
+ADD ./registry.json /go/bin/registry.json
+
+ENTRYPOINT ["/go/bin/nm-registry"]

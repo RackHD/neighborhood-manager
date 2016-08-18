@@ -1,0 +1,21 @@
+{
+    "ssdp":{
+        "tags":{
+            "Inservice":[
+                "urn:schemas-upnp-org:service:agent:0.1",
+                "urn:schemas-upnp-org:service:lldp:0.1",
+                "urn:schemas-upnp-org:service:catalog-compute:0.1"
+            ],
+            "Inservice-agent":[
+                "urn:skunkworxs:inservice:agent:0"
+            ],
+            "RackHD":[
+                "urn:dmtf-org:service:redfish-rest:1.0",
+                "urn:schemas-upnp-org:service:api:1.1",
+                "urn:schemas-upnp-org:service:api:2.0",
+                "urn:schemas-upnp-org:device:on-http:1"
+            ]
+        }
+    }
+}
+
