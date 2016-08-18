@@ -1,7 +1,0 @@
-package: github.com/skunkworxs/nm-registry
-import:
-- package: github.com/hashicorp/consul
-  subpackages:
-  - api
-- package: github.com/king-jam/gossdp
-- package: github.com/spf13/viper
