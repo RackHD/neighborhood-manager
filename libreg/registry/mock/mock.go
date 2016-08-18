@@ -4,8 +4,8 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/king-jam/libreg"
-	"github.com/king-jam/libreg/registry"
+	"github.com/RackHD/NeighborhoodManager/libreg"
+	"github.com/RackHD/NeighborhoodManager/libreg/registry"
 )
 
 type Mock struct {

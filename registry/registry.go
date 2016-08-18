@@ -8,9 +8,9 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/RackHD/NeighborhoodManager/libreg"
+	regStore "github.com/RackHD/NeighborhoodManager/libreg/registry"
 	"github.com/king-jam/gossdp"
-	"github.com/king-jam/libreg"
-	regStore "github.com/king-jam/libreg/registry"
 )
 
 // Registry is a service registry object

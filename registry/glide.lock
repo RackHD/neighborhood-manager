@@ -1,5 +1,5 @@
-hash: bcadc6ea498083bc41468d0f1a8b9b5eed167cbbe9909514d2f0b6b6bc30a1a6
-updated: 2016-08-18T18:23:39.822281412Z
+hash: 01b16626fa1c71ccdc934b58338cebabddda5d2e03dfe0f7f2ef4471066704f1
+updated: 2016-08-18T21:36:17.706595778Z
 imports:
 - name: github.com/BurntSushi/toml
   version: 99064174e013895bbd9b025c31100bd1d9b590ca
@@ -28,11 +28,6 @@ imports:
   - coordinate
 - name: github.com/king-jam/gossdp
   version: 83dbf4057d732d2a11fc27754f969eea50f7b132
-- name: github.com/king-jam/libreg
-  version: 355bd2f5b2653da3dd8b93cae434f7b9aad8ea82
-  subpackages:
-  - registry
-  - registry/consul
 - name: github.com/kr/fs
   version: 2788f0dbd16903de03cb8186e5c7d97b69ad387b
 - name: github.com/magiconair/properties
@@ -43,6 +38,13 @@ imports:
   version: a22138067af1c4942683050411a841ade67fe1eb
 - name: github.com/pkg/sftp
   version: a71e8f580e3b622ebff585309160b1cc549ef4d2
+- name: github.com/RackHD/NeighborhoodManager
+  version: fc116ceb7a35827572b3dfd97bf06d42725eb8b2
+  subpackages:
+  - libreg
+  - libreg/registry
+  - libreg/registry/consul
+  - registry
 - name: github.com/spf13/afero
   version: b28a7effac979219c2a2ed6205a4d70e4b1bcd02
   subpackages:
