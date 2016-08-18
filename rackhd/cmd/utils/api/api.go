@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/king-jam/libreg"
-	regStore "github.com/king-jam/libreg/registry"
-	"github.com/king-jam/libreg/registry/consul"
+	"github.com/RackHD/NeighborhoodManager/libreg"
+	regStore "github.com/RackHD/NeighborhoodManager/libreg/registry"
+	"github.com/RackHD/NeighborhoodManager/libreg/registry/consul"
 )
 
 // Server is the proxy server struct
