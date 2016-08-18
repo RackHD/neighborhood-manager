@@ -4,9 +4,10 @@ APPLICATION = rackhd
 
 TTY = $(shell if [ -t 0 ]; then echo "-ti"; fi)
 
-DOCKER_DIR = /go/src/github.com/${ORGANIZATION}/${PROJECT}/${APPLICATION}
+PROJECT_DIR = /go/src/github.com/${ORGANIZATION}/${PROJECT}
+DOCKER_DIR = ${PROJECT_DIR}/${APPLICATION}
 DOCKER_IMAGE = rackhd/golang:1.7.0-wheezy
-DOCKER_CMD = docker run --rm -v ${PWD}:${DOCKER_DIR} ${TTY} -w ${DOCKER_DIR} ${DOCKER_IMAGE}
+DOCKER_CMD = docker run --rm -v $(shell dirname $(shell pwd -L)):${PROJECT_DIR} ${TTY} -w ${DOCKER_DIR} ${DOCKER_IMAGE}
 
 MAIN_PATH = cmd/${APPLICATION}
 
@@ -48,7 +49,7 @@ deps:
 	@${DOCKER_CMD} make deps-local
 
 deps-local:
-	@if ! [ -f glide.lock ]; then glide init; fi
+	@if ! [ -f glide.yaml ]; then glide init; fi
 	@glide install
 
 build:
@@ -72,7 +73,7 @@ test-local: lint-local
 #	@go tool cover -html=watcher/watcher.coverprofile -o watcher-cover.html
 
 release: deps build
-	@docker build -t rackhd/rackhd .
+	@docker build -t rackhd/${APPLICATION} .
 	@docker build -t rackhd/endpoint cmd/utils/
 
 run: release
