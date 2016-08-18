@@ -1,0 +1,12 @@
+sudo: required
+services:
+    - docker
+language: go
+go:
+    - 1.7beta2
+env:
+    - BUILD_DIR=registry
+
+script:
+    - cd $BUILD_DIR && make
+
