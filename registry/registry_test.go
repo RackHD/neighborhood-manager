@@ -7,12 +7,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/RackHD/NeighborhoodManager/registry"
 	"github.com/king-jam/gossdp"
 	libreg "github.com/king-jam/libreg/registry"
 	"github.com/king-jam/libreg/registry/mock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/skunkworxs/nm-registry"
 )
 
 var _ = Describe("Registry", func() {
