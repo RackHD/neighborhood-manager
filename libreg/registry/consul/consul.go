@@ -7,9 +7,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/RackHD/NeighborhoodManager/libreg"
+	"github.com/RackHD/NeighborhoodManager/libreg/registry"
 	"github.com/hashicorp/consul/api"
-	"github.com/king-jam/libreg"
-	"github.com/king-jam/libreg/registry"
 )
 
 var (
