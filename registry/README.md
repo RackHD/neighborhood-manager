@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/skunkworxs/nm-registry.svg?token=v1ARpoyxXwQDgyhKZ5P5&branch=master)](https://travis-ci.com/skunkworxs/nm-registry)
+[![Build Status](https://travis-ci.org/RackHD/NeighborhoodManager.svg?branch=master)](https://travis-ci.org/RackHD/NeighborhoodManager)
 
 
 # Neighborhood Manager Service Registry
