@@ -78,8 +78,8 @@ test-local: lint-local
 	@ginkgo -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST}
 
 release: deps build
-	@docker build -t ${ORGANIZATION}/${APPLICATION} .
-	@docker build -t ${ORGANIZATION}/ssdpspoofer cmd/ssdpspoofer/
+	@docker build -t rackhd/${APPLICATION} .
+	@docker build -t rackhd/ssdpspoofer cmd/ssdpspoofer/
 
 run: release
 	@docker-compose up --force-recreate

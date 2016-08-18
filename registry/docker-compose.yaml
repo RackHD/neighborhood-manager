@@ -1,4 +1,4 @@
-#Consul Cluster
+#Service Registry
 
 version: "2"
 
@@ -20,9 +20,9 @@ services:
     command: "agent -config-dir /etc/consul.d/server.json -bootstrap"
   registry:
     build: .
-    image: "skunkworxs/nm-registry:latest"
-    container_name: "nm-registry"
-    hostname: "nm-registry"
+    image: "rackhd/registry:latest"
+    container_name: "registry"
+    hostname: "registry"
     links:
         - consulclient
     expose:
@@ -43,7 +43,7 @@ services:
       - consulclient
   ssdpspoofer:
     build: ./cmd/ssdpspoofer
-    image: "skunkworxs/ssdpspoofer:latest"
+    image: "rackhd/ssdpspoofer:latest"
     container_name: "ssdpspoofer"
     hostname: "ssdpspoofer"
     expose:
