@@ -2,6 +2,8 @@
 *.o
 *.a
 *.so
+# OSX
+*.DS_Store
 
 # Folders
 _obj
@@ -23,6 +25,7 @@ _testmain.go
 *.test
 *.prof
 *.coverprofile
+*.html
 
 bin
 vendor

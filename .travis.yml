@@ -3,9 +3,10 @@ services:
     - docker
 language: go
 go:
-    - 1.7beta2
+    - 1.7
 env:
     - BUILD_DIR=registry
+    - BUILD_DIR=rackhd
 
 script:
     - cd $BUILD_DIR && make
