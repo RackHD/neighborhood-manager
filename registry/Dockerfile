@@ -1,6 +1,6 @@
-FROM skunkworxs/golang:1.7-wheezy
+FROM rackhd/golang:1.7.0-wheezy
 
-ADD ./bin/nm-registry /go/bin/nm-registry
+ADD ./bin/registry /go/bin/registry
 ADD ./registry.json /go/bin/registry.json
 
 ENTRYPOINT ["/go/bin/nm-registry"]
