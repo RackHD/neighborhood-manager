@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/RackHD/NeighborhoodManager/cmd/utils/api"
+	"github.com/RackHD/NeighborhoodManager/rackhd/cmd/utils/api"
 	"github.com/king-jam/libreg/registry"
 )
 
