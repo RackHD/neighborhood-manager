@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/RackHD/NeighborhoodManager/watcher"
+	"github.com/RackHD/NeighborhoodManager/rackhd/watcher"
 	regStore "github.com/king-jam/libreg/registry"
 	"github.com/king-jam/libreg/registry/consul"
 )
