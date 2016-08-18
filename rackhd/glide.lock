@@ -1,0 +1,19 @@
+hash: 39492683f3330893cd76de27c14be4c2edb8417cd2c71de53a0b1bed96032fef
+updated: 2016-08-18T18:50:52.26701021Z
+imports:
+- name: github.com/hashicorp/consul
+  version: 94e83001a3d5561d029cb53db221753592bcd23f
+  subpackages:
+  - api
+- name: github.com/hashicorp/go-cleanhttp
+  version: ad28ea4487f05916463e2423a55166280e8254b5
+- name: github.com/hashicorp/serf
+  version: 9432bc08aa8d486e497e27f84878ebbe8c1eab66
+  subpackages:
+  - coordinate
+- name: github.com/king-jam/libreg
+  version: 355bd2f5b2653da3dd8b93cae434f7b9aad8ea82
+  subpackages:
+  - registry
+  - registry/consul
+testImports: []
