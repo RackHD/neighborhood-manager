@@ -1,10 +1,11 @@
-APPLICATION = nm-rackhd
-ORGANIZATION = skunkworxs
+ORGANIZATION = RackHD
+PROJECT = NeighborhoodManager
+APPLICATION = rackhd
 
 TTY = $(shell if [ -t 0 ]; then echo "-ti"; fi)
 
-DOCKER_DIR = /go/src/github.com/${ORGANIZATION}/${APPLICATION}
-DOCKER_IMAGE = ${ORGANIZATION}/golang:1.7-wheezy
+DOCKER_DIR = /go/src/github.com/${ORGANIZATION}/${PROJECT}/${APPLICATION}
+DOCKER_IMAGE = rackhd/golang:1.7.0-wheezy
 DOCKER_CMD = docker run --rm -v ${PWD}:${DOCKER_DIR} ${TTY} -w ${DOCKER_DIR} ${DOCKER_IMAGE}
 
 MAIN_PATH = cmd/${APPLICATION}
@@ -71,8 +72,8 @@ test-local: lint-local
 #	@go tool cover -html=watcher/watcher.coverprofile -o watcher-cover.html
 
 release: deps build
-	@docker build -t ${ORGANIZATION}/${APPLICATION} .
-	@docker build -t ${ORGANIZATION]/endpoint cmd/utils/
+	@docker build -t rackhd/rackhd .
+	@docker build -t rackhd/endpoint cmd/utils/
 
 run: release
 	@docker-compose up --force-recreate

@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/RackHD/NeighborhoodManager/rackhd/proxy"
 	"github.com/king-jam/libreg/registry"
-	"github.com/skunkworxs/nm-rackhd/proxy"
 )
 
 var binaryName, buildDate, buildUser, commitHash, goVersion, osArch, releaseVersion string

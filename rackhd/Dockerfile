@@ -1,5 +1,5 @@
-FROM skunkworxs/golang:1.7-wheezy
+FROM rackhd/golang:1.7.0-wheezy
 
-ADD ./bin/nm-rackhd /bin/nm-rackhd
+ADD ./bin/rackhd /bin/rackhd
 
-ENTRYPOINT ["/bin/nm-rackhd"]
+ENTRYPOINT ["/bin/rackhd"]

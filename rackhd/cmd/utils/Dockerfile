@@ -1,4 +1,4 @@
-FROM skunkworxs/golang:1.7-wheezy
+FROM rackhd/golang:1.7.0-wheezy
 
 ADD ../../bin/entrypoint /bin/entrypoint
 
