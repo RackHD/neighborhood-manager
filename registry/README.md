@@ -60,7 +60,8 @@ The `registry.json` file found in the source code is currently configured to lis
 
 ## Building
 Download the [source] from GitHub  
-`go get -u github.com/skunkworxs/nm-registry`
+`go get -u github.com/rackhd/NeighborhoodManager`
+`cd registry`
 
 Build the dependencies  
 `make deps`
@@ -89,10 +90,9 @@ The steps in this section will guide you through getting a test/dev environment 
 
 ### Starting the environment
 1. Change to a directory where you can clone the source code
-2. `git clone https://github.com/skunkworxs/nm-registry.git`
-3. `git clone https://github.com/skunkworxs/docker-images.git`
-4. `cd ./nm-registry`
-5. `make run` (Note that this will take some time when running for the first time. Docker has to pull several images from the internet. If any of the downloads fail, simply re-do the `make run` command)
+2. `git clone https://github.com/RackHD/NeighborhoodManager.git`
+3. `cd registry`
+4. `make run` (Note that this will take some time when running for the first time. Docker has to pull several images from the internet. If any of the downloads fail, simply re-do the `make run` command)
 
 ### Interacting with the environment
 You now have four docker containers running: 
@@ -109,7 +109,7 @@ The SSDP Spoofer sends out dummy advertisement messages made to look like Inserv
 
 Now you can use the [Consul Catalog API] to interact with the backend storage. For example, to retrieve all services that have been registered: 
 ```
-root@50283b1b6a03:/go/src/github.com/skunkworxs/nm-registry# curl -s http://consulclient:8500/v1/catalog/services | python -mjson.tool
+root@c1208c34725f:/go/src/github.com/RackHD/NeighborhoodManager/registry# curl -s http://consulclient:8500/v1/catalog/services | python -mjson.tool
 {
     "Inservice-service:agent:0.1": [],
     "Inservice-service:catalog-compute:0.1": [],
@@ -126,7 +126,7 @@ Notice the URL to which you are sending the request. The Docker containers have 
 
 As another example, to see all nodes that are offering the RackHD 2.0 API service:
 ```
-root@50283b1b6a03:/go/src/github.com/skunkworxs/nm-registry# curl http://consulclient:8500/v1/catalog/service/"RackHD-service:api:2.0" | python -mjson.tool
+root@50283b1b6a03:/go/src/github.com/RackHD/NeighborhoodManager/registry# curl http://consulclient:8500/v1/catalog/service/"RackHD-service:api:2.0" | python -mjson.tool
 [
     {
         "Address": "192.168.1.1",
@@ -176,7 +176,7 @@ Save and close the file, then run `glide install`
 [joined together]: https://www.consul.io/docs/guides/servers.html
 [agent]: https://www.consul.io/docs/agent/basics.html
 [SSDP]: https://en.wikipedia.org/wiki/Simple_Service_Discovery_Protocol
-[Inservice-Agent]: https://github.com/skunkworxs/inservice-agent
+[Inservice-Agent]: https://github.com/RackHD/InService
 [RackHD]: https://github.com/RackHD
 [configuring consul]: https://www.digitalocean.com/community/tutorials/how-to-configure-consul-in-a-production-environment-on-ubuntu-14-04
-[source]: https://github.com/skunkworxs/nm-registry
+[source]: https://github.com/RackHD/NeighborhoodManager
