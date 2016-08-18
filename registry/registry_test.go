@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"time"
 
+	libreg "github.com/RackHD/NeighborhoodManager/libreg/registry"
+	"github.com/RackHD/NeighborhoodManager/libreg/registry/mock"
 	"github.com/RackHD/NeighborhoodManager/registry"
 	"github.com/king-jam/gossdp"
-	libreg "github.com/king-jam/libreg/registry"
-	"github.com/king-jam/libreg/registry/mock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
