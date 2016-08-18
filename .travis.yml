@@ -8,5 +8,5 @@ env:
     - BUILD_DIR=registry
 
 script:
-    - cd $TEST_DIR && make
+    - cd $BUILD_DIR && make
 
