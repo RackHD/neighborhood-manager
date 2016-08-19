@@ -1,5 +1,5 @@
 ORGANIZATION = RackHD
-PROJECT = NeighborhoodManager
+PROJECT = neighborhood-manager
 APPLICATION = rackhd
 
 TTY = $(shell if [ -t 0 ]; then echo "-ti"; fi)

@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/RackHD/NeighborhoodManager/libreg/registry"
+	"github.com/RackHD/neighborhood-manager/libreg/registry"
 )
 
 // Initialize creates a new Store object, initializing the client

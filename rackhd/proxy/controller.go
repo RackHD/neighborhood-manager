@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"sync"
 
-	regStore "github.com/RackHD/NeighborhoodManager/libreg/registry"
-	"github.com/RackHD/NeighborhoodManager/libreg/registry/consul"
-	"github.com/RackHD/NeighborhoodManager/rackhd/watcher"
+	regStore "github.com/RackHD/neighborhood-manager/libreg/registry"
+	"github.com/RackHD/neighborhood-manager/libreg/registry/consul"
+	"github.com/RackHD/neighborhood-manager/rackhd/watcher"
 )
 
 // Server is the proxy server struct

@@ -3,9 +3,9 @@ package watcher_test
 import (
 	"fmt"
 
-	regStore "github.com/RackHD/NeighborhoodManager/libreg/registry"
-	"github.com/RackHD/NeighborhoodManager/libreg/registry/mock"
-	"github.com/RackHD/NeighborhoodManager/rackhd/watcher"
+	regStore "github.com/RackHD/neighborhood-manager/libreg/registry"
+	"github.com/RackHD/neighborhood-manager/libreg/registry/mock"
+	"github.com/RackHD/neighborhood-manager/rackhd/watcher"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/RackHD/NeighborhoodManager/libreg/registry"
-	"github.com/RackHD/NeighborhoodManager/rackhd/proxy"
+	"github.com/RackHD/neighborhood-manager/libreg/registry"
+	"github.com/RackHD/neighborhood-manager/rackhd/proxy"
 )
 
 var binaryName, buildDate, buildUser, commitHash, goVersion, osArch, releaseVersion string
