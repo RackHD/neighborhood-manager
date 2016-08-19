@@ -1,0 +1,23 @@
+hash: 1bcd3ce3df9fcbd14e715bf399f7e5164732a9322a6f2cefe2101b1221b787af
+updated: 2016-08-19T17:43:00.092331808Z
+imports:
+- name: github.com/hashicorp/consul
+  version: 36dc9201f2e006d4b5db1f0446b17357811297bf
+  subpackages:
+  - api
+- name: github.com/hashicorp/go-cleanhttp
+  version: ad28ea4487f05916463e2423a55166280e8254b5
+- name: github.com/hashicorp/serf
+  version: 9432bc08aa8d486e497e27f84878ebbe8c1eab66
+  subpackages:
+  - coordinate
+- name: github.com/RackHD/neighborhood-manager
+  version: b851dd1fe65be18a313133ed5db60ce508832898
+  subpackages:
+  - libreg
+  - libreg/registry
+  - libreg/registry/consul
+  - rackhd/proxy
+  - rackhd/cmd/utils/api
+  - rackhd/watcher
+testImports: []
