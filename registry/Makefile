@@ -75,7 +75,7 @@ test:
 	@${DOCKER_CMD} make test-local
 
 test-local: lint-local
-	@ginkgo -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST}
+	@ginkgo -r -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST}
 
 release: deps build
 	@docker build -t rackhd/${APPLICATION} .
