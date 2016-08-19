@@ -8,8 +8,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/RackHD/NeighborhoodManager/libreg"
-	regStore "github.com/RackHD/NeighborhoodManager/libreg/registry"
+	"github.com/RackHD/neighborhood-manager/libreg"
+	regStore "github.com/RackHD/neighborhood-manager/libreg/registry"
 	"github.com/king-jam/gossdp"
 )
 

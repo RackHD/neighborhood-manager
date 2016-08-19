@@ -11,7 +11,7 @@ imports:
   version: 9432bc08aa8d486e497e27f84878ebbe8c1eab66
   subpackages:
   - coordinate
-- name: github.com/RackHD/NeighborhoodManager
+- name: github.com/RackHD/neighborhood-manager
   version: 5951ac64f77fa5b53523a36dc73c2c751d37e6bf
   subpackages:
   - libreg

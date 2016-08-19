@@ -1,5 +1,5 @@
 ORGANIZATION = RackHD
-PROJECT = NeighborhoodManager
+PROJECT = neighborhood-manager
 APPLICATION = registry
 
 SHELL = /bin/bash

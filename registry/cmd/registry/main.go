@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
-	libreg "github.com/RackHD/NeighborhoodManager/libreg/registry"
-	"github.com/RackHD/NeighborhoodManager/libreg/registry/consul"
-	"github.com/RackHD/NeighborhoodManager/registry"
+	libreg "github.com/RackHD/neighborhood-manager/libreg/registry"
+	"github.com/RackHD/neighborhood-manager/libreg/registry/consul"
+	"github.com/RackHD/neighborhood-manager/registry"
 	"github.com/spf13/viper"
 )
 

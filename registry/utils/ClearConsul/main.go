@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/RackHD/NeighborhoodManager/libreg"
-	"github.com/RackHD/NeighborhoodManager/libreg/registry"
-	"github.com/RackHD/NeighborhoodManager/libreg/registry/consul"
+	"github.com/RackHD/neighborhood-manager/libreg"
+	"github.com/RackHD/neighborhood-manager/libreg/registry"
+	"github.com/RackHD/neighborhood-manager/libreg/registry/consul"
 )
 
 func main() {

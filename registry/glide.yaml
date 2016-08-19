@@ -1,6 +1,6 @@
-package: github.com/RackHD/NeighborhoodManager/registry
+package: github.com/RackHD/neighborhood-manager/registry
 import:
-- package: github.com/RackHD/NeighborhoodManager
+- package: github.com/RackHD/neighborhood-manager
   subpackages:
   - libreg
   - libreg/registry

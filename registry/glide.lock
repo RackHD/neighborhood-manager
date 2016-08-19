@@ -38,7 +38,7 @@ imports:
   version: a22138067af1c4942683050411a841ade67fe1eb
 - name: github.com/pkg/sftp
   version: a71e8f580e3b622ebff585309160b1cc549ef4d2
-- name: github.com/RackHD/NeighborhoodManager
+- name: github.com/RackHD/neighborhood-manager
   version: fc116ceb7a35827572b3dfd97bf06d42725eb8b2
   subpackages:
   - libreg

@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/RackHD/NeighborhoodManager/libreg"
-	"github.com/RackHD/NeighborhoodManager/libreg/registry"
+	"github.com/RackHD/neighborhood-manager/libreg"
+	"github.com/RackHD/neighborhood-manager/libreg/registry"
 	"github.com/hashicorp/consul/api"
 )
 
