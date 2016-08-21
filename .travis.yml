@@ -1,13 +1,16 @@
 sudo: required
 services:
-    - docker
+- docker
 language: go
 go:
-    - 1.7
+- 1.7
 env:
-    - BUILD_DIR=registry
-    - BUILD_DIR=rackhd
-
+  matrix:
+  - BUILD_DIR=registry
+  - BUILD_DIR=rackhd
+  global:
+    secure: nVUh59671AbppNtMA9P18coId3lgfa39on0SppQQA00r41DW9jeHOP0cVFBn0eqkjYBI4mDpwBAEqSHKkNLiS1qLvy3K8DiuP/C2sNhZ0sRJ5ssu8ap1k0s09v/3P9L/ZrsIcmTV7TUzMfEc0Nee7BpRKbFN8V2afD/5rmxWFqHaxN/3m5JoOL7pFPG/n35t+hcqWOAUXRskTkgLvFKapB/tYLv6PW1pCPtEc46wiKFzVgoJG7GoqyOsFcnrksxigjww+6jxxH8U/l2gR72ch5V42NHF/9VptPmGwKWwwxrXoyQXXR1plU1thOS/Jug9+sjAlZfgyRZSW9I6ihBwKzyBNlaeQuGMVdgPaFXcNhEZtN6XL2/aO7/nCDkEOomTt0IL2UA6HZJJ/MYjsq8GCnD+EgdnQe7GWVbF1c301RaDt2z+1kjlFdmGQr3rk2C3v+rrvDq02chRk9u17G36Y749RmbstFpA0zYn8OU+B9aSAg8cg7paV8e3pkhTVsq2Z12cQJoE1SsYJW8FxCi4Ob6JTPmL+9czEpGsKAxmwUCmw1p5epFvS3bePan0c092miHP0cVE3eUt6LA0YTKiD4ZEKM5cn6KVl45Xm1xqydllin8xHigo69IaTep1DEkPQh3WtbLP3vL5kAkLlHkAFXhygKJMar1QKKBy0pGeCv8=
 script:
-    - cd $BUILD_DIR && make
-
+- cd $BUILD_DIR && make
+after_success:
+- cd $TRAVIS_BUILD_DIR && make coveralls

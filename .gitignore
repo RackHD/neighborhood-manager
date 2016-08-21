@@ -2,6 +2,7 @@
 *.o
 *.a
 *.so
+
 # OSX
 *.DS_Store
 
@@ -18,7 +19,6 @@ _test
 _cgo_defun.c
 _cgo_gotypes.go
 _cgo_export.*
-
 _testmain.go
 
 *.exe

@@ -69,8 +69,7 @@ test:
 	@${DOCKER_CMD} make test-local
 
 test-local: lint-local
-	@ginkgo -r -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST}
-#	@go tool cover -html=watcher/watcher.coverprofile -o watcher-cover.html
+	@ginkgo -race -trace -randomizeAllSpecs -r -cover
 
 release: deps build
 	@docker build -t rackhd/${APPLICATION} .
