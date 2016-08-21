@@ -1,9 +1,7 @@
 package: github.com/RackHD/neighborhood-manager/registry
 import:
-- package: github.com/RackHD/neighborhood-manager
-  subpackages:
-  - libreg
-  - libreg/registry
-  - libreg/registry/consul
 - package: github.com/king-jam/gossdp
 - package: github.com/spf13/viper
+- package: github.com/hashicorp/consul
+ignore:
+- github.com/RackHD/neighborhood-manager

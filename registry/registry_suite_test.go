@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestNmRegistry(t *testing.T) {
+func TestRegistry(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "NmRegistry Suite")
+	RunSpecs(t, "Registry Suite")
 }
