@@ -26,7 +26,7 @@ var (
 	ErrNotReachable = errors.New("API not reachable")
 	// ErrNodeNotFound is thrown when the node is not found int he registry
 	ErrNodeNotFound = errors.New("Node not found in registry")
-	// ErrKSvcNotFound is thrown when the service is not found in the registry
+	// ErrSvcNotFound is thrown when the service is not found in the registry
 	ErrSvcNotFound = errors.New("Service not found in registry")
 )
 
@@ -40,7 +40,7 @@ type Config struct {
 	Password          string
 }
 
-/// ClientTLSConfig contains data for a Client TLS configuration in the form
+// ClientTLSConfig contains data for a Client TLS configuration in the form
 // the etcd client wants it.  Eventually we'll adapt it for ZK and Consul.
 type ClientTLSConfig struct {
 	CertFile   string
@@ -74,11 +74,13 @@ type Registry interface {
 	Node(node string, options *QueryOptions) (*CatalogNode, error)
 }
 
+// Node is ...
 type Node struct {
 	Node    string
 	Address string
 }
 
+// CatalogService is ...
 type CatalogService struct {
 	Node                     string
 	Address                  string
@@ -90,11 +92,13 @@ type CatalogService struct {
 	ServiceEnableTagOverride bool
 }
 
+// CatalogNode is ...
 type CatalogNode struct {
 	Node     *Node
 	Services map[string]*AgentService
 }
 
+// CatalogRegistration is ...
 type CatalogRegistration struct {
 	Node       string
 	Address    string
@@ -103,6 +107,7 @@ type CatalogRegistration struct {
 	Check      *AgentCheck
 }
 
+//CatalogDeregistration is ...
 type CatalogDeregistration struct {
 	Node       string
 	Address    string
