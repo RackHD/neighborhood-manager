@@ -1,7 +1,0 @@
-package: github.com/RackHD/neighborhood-manager/rackhd
-import:
-- package: github.com/RackHD/neighborhood-manager
-  subpackages:
-  - libreg
-  - libreg/registry
-  - libreg/registry/consul

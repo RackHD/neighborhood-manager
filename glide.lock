@@ -1,8 +1,6 @@
-hash: c33e119fd04580064386aaa82f48b9e9982d44fc439fe75682970eed39f9bbef
-updated: 2016-08-19T17:46:59.09304741Z
+hash: 1430ace24aa0f5928da1786bae12d7db3fff57f1b4878448245da0fbda724509
+updated: 2016-08-22T17:27:50.804668522Z
 imports:
-- name: github.com/BurntSushi/toml
-  version: 99064174e013895bbd9b025c31100bd1d9b590ca
 - name: github.com/fsnotify/fsnotify
   version: f12c6236fe7b5cf6bcf30e5935d08cb079d78334
 - name: github.com/hashicorp/consul
@@ -12,7 +10,7 @@ imports:
 - name: github.com/hashicorp/go-cleanhttp
   version: ad28ea4487f05916463e2423a55166280e8254b5
 - name: github.com/hashicorp/hcl
-  version: d8c773c4cba11b11539e3d45f93daeaa5dcf1fa1
+  version: bc40da04e8303cb7406e9ed1a2b742d636c5d960
   subpackages:
   - hcl/ast
   - hcl/parser
@@ -34,19 +32,16 @@ imports:
   version: 61b492c03cf472e0c6419be5899b8e0dc28b1b88
 - name: github.com/mitchellh/mapstructure
   version: ca63d7c062ee3c9f34db231e352b60012b4fd0c1
+- name: github.com/pelletier/go-buffruneio
+  version: df1e16fde7fc330a0ca68167c23bf7ed6ac31d6d
+- name: github.com/pelletier/go-toml
+  version: 0049ab3dc4c4c70a9eee23087437b69c0dde2130
 - name: github.com/pkg/errors
-  version: a22138067af1c4942683050411a841ade67fe1eb
+  version: 17b591df37844cde689f4d5813e5cea0927d8dd2
 - name: github.com/pkg/sftp
   version: a71e8f580e3b622ebff585309160b1cc549ef4d2
-- name: github.com/RackHD/neighborhood-manager
-  version: b851dd1fe65be18a313133ed5db60ce508832898
-  subpackages:
-  - libreg
-  - libreg/registry
-  - libreg/registry/consul
-  - registry
 - name: github.com/spf13/afero
-  version: b28a7effac979219c2a2ed6205a4d70e4b1bcd02
+  version: 20500e2abd0d1f4564a499e83d11d6c73cd58c27
   subpackages:
   - mem
   - sftp
@@ -55,18 +50,18 @@ imports:
 - name: github.com/spf13/jwalterweatherman
   version: 33c24e77fb80341fe7130ee7c594256ff08ccc46
 - name: github.com/spf13/pflag
-  version: 6454a84b6da0ea8b628d5d8a26759f62c6c161b4
+  version: 103ce5cd2042f2fe629c1957abb64ab3e7f50235
 - name: github.com/spf13/viper
-  version: 654fc7bb54d0c138ef80405ff577391f79c0c32d
+  version: 7fb2782df3d83e0036cc89f461ed0422628776f4
 - name: golang.org/x/crypto
-  version: 88d0005bf4c3ec17306ecaca4281a8d8efd73e91
+  version: 7e016f1856e33d687a3a722085e249982e673aff
   subpackages:
   - ssh
   - curve25519
   - ed25519
   - ed25519/internal/edwards25519
 - name: golang.org/x/net
-  version: 07b51741c1d6423d4a6abab1c49940ec09cb1aaf
+  version: 7394c112eae4dba7e96bfcfe738e6373d61772b4
   subpackages:
   - ipv4
   - bpf
