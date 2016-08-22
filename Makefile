@@ -72,8 +72,8 @@ deps-local:
 	@glide install
 
 build:
-	@make build-reg
 	@make build-proxy
+	@make build-reg
 
 build-proxy:
 	@${DOCKER_CMD} make build-proxy-local
@@ -94,12 +94,21 @@ lint:
 
 lint-local:
 	@gometalinter --vendor --fast --disable=dupl --disable=gotype --skip=grpc ./...
-
 test:
-	@${DOCKER_CMD} make test-local
+	@make test-proxy
+	@make test-reg
 
-test-local: lint-local
-	@ginkgo -r -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST}
+test-proxy:
+	@${DOCKER_CMD} make test-reg-local
+
+test-proxy-local: lint-local
+	@ginkgo ${PROXY} -r -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST}
+
+test-reg:
+	@${DOCKER_CMD} make test-reg-local
+
+test-reg-local: lint-local
+	@ginkgo ${REGISTRY} -r -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST}
 
 release: deps build
 	@docker build -t rackhd/${PROXY} rackhd
