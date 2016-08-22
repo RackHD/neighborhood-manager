@@ -8,6 +8,8 @@ DOCKER_DIR = ${PROJECT_DIR}
 DOCKER_IMAGE = rackhd/golang:1.7.0-wheezy
 DOCKER_CMD = docker run --rm -v ${PWD}:${PROJECT_DIR} ${TTY} -w ${DOCKER_DIR} ${DOCKER_IMAGE}
 
+default: noop
+	
 noop:
 	@echo Neighborhood Manager
 

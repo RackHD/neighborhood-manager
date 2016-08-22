@@ -49,8 +49,8 @@ deps:
 	@${DOCKER_CMD} make deps-local
 
 deps-local:
-	@if ! [ -f glide.yaml ]; then glide init; fi
-	@glide install
+	@if ! [ -f glide.yaml ]; then glide init --non-interactive; fi
+	@glide install --strip-vcs --strip-vendor
 
 build:
 	@${DOCKER_CMD} make build-local
