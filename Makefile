@@ -86,7 +86,7 @@ build-reg:
 	@${DOCKER_CMD} make build-reg-local
 
 build-reg-local: lint-local
-	@go build -o bin/${REGISTRY} ${LDFLAGS} registry/cmd/registry/*.go
+	@go build -o bin/${REGISTRY} ${REGFLAGS} registry/cmd/registry/*.go
 	@go build -o registry/cmd/ssdpspoofer/bin/ssdpspoofer registry/cmd/ssdpspoofer/*.go
 
 lint:
@@ -99,16 +99,18 @@ test:
 	@make test-reg
 
 test-proxy:
-	@${DOCKER_CMD} make test-reg-local
+	@${DOCKER_CMD} make test-proxy-local
+	@make build-proxy
 
 test-proxy-local: lint-local
-	@ginkgo ${PROXY} -r -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST}
+	@ginkgo -r -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST} ${PROXY}
 
 test-reg:
 	@${DOCKER_CMD} make test-reg-local
+	@make build-reg
 
 test-reg-local: lint-local
-	@ginkgo ${REGISTRY} -r -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST}
+	@ginkgo -r -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST} ${REGISTRY}
 
 release: deps build
 	@docker build -t rackhd/${PROXY} rackhd
