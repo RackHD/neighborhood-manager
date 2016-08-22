@@ -8,22 +8,25 @@ import (
 	"github.com/RackHD/neighborhood-manager/libreg/registry"
 )
 
+// Mock is...
 type Mock struct {
 	Catalog map[*registry.CatalogRegistration]bool
 	sync.RWMutex
 }
 
+// Register inits a new MOCK
 func Register() {
 	libreg.AddRegistry(registry.MOCK, New)
 }
 
+// New instantiates a new registry
 func New(endpoints []string, options *registry.Config) (registry.Registry, error) {
 	m := &Mock{}
 	m.Catalog = make(map[*registry.CatalogRegistration]bool)
 	return m, nil
 }
 
-// GetSearchTerms returns the whitelist of SSDP URNs to act on
+// GetCatalog returns the whitelist of SSDP URNs to act on
 func (m *Mock) GetCatalog() map[registry.CatalogRegistration]bool {
 	c := make(map[registry.CatalogRegistration]bool)
 
@@ -131,8 +134,7 @@ func (m *Mock) Service(service, tag string, options *registry.QueryOptions) ([]*
 			containsTag = true
 		}
 
-		if r.Service.Service == service &&
-			containsTag == true {
+		if r.Service.Service == service && containsTag {
 			catalogService := registry.CatalogService{
 				Node:                     r.Node,
 				Address:                  r.Address,

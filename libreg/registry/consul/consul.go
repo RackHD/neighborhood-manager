@@ -84,6 +84,7 @@ func (s *Consul) setTimeout(time time.Duration) {
 	s.config.WaitTime = time
 }
 
+// Register adds an entry into the consul backend
 func (s *Consul) Register(reg *registry.CatalogRegistration, options *registry.WriteOptions) error {
 	catalog := s.client.Catalog()
 	writeOps := s.getWriteOptions(options)
@@ -202,7 +203,7 @@ func (s *Consul) Node(node string, options *registry.QueryOptions) (*registry.Ca
 		return nil, nil
 	}
 
-	var retNode *registry.Node = &registry.Node{
+	var retNode = &registry.Node{
 		Node:    n.Node.Node,
 		Address: n.Node.Address,
 	}
