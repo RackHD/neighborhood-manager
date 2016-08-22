@@ -16,4 +16,4 @@ before_install:
 script:
 - cd $BUILD_DIR && make
 after_success:
-- make coveralls
+- cd $TRAVIS_BUILD_DIR && make coveralls
