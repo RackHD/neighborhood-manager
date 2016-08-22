@@ -1,7 +1,7 @@
 ORGANIZATION = RackHD
 PROJECT = neighborhood-manager
-REGISTRY = registry
 PROXY = rackhd
+REGISTRY = registry
 
 
 TTY = $(shell if [ -t 0 ]; then echo "-ti"; fi)
@@ -22,7 +22,7 @@ RELEASEVERSION = 0.1
 
 
 #Flags to pass to main.go
-REGFLAGS = -ldflags "-X 'main.binaryName=${REGISTRY}' \
+PROXYFLAGS = -ldflags "-X 'main.binaryName=${PROXY}' \
 		    -X 'main.buildDate=${BUILDDATE}' \
 		    -X 'main.buildUser=${BUILDER}' \
 		    -X 'main.commitHash=${COMMITHASH}' \
@@ -30,7 +30,7 @@ REGFLAGS = -ldflags "-X 'main.binaryName=${REGISTRY}' \
 		    -X 'main.osArch=${OSARCH}' \
 		    -X 'main.releaseVersion=${RELEASEVERSION}' "
 
-PROXYFLAGS = -ldflags "-X 'main.binaryName=${PROXY}' \
+REGFLAGS = -ldflags "-X 'main.binaryName=${REGISTRY}' \
 		    -X 'main.buildDate=${BUILDDATE}' \
 		    -X 'main.buildUser=${BUILDER}' \
 		    -X 'main.commitHash=${COMMITHASH}' \
@@ -68,17 +68,17 @@ deps:
 	@${DOCKER_CMD} make deps-local
 
 deps-local:
-	@if ! [ -f glide.lock ]; then glide init --non-interactive; fi
-	@glide install --strip-vcs --strip-vendor
+	@if ! [ -f glide.yaml ]; then glide init --non-interactive; fi
+	@glide install
 
 build:
-	@build-reg
-	@build-proxy
+	@make build-reg
+	@make build-proxy
 
 build-proxy:
 	@${DOCKER_CMD} make build-proxy-local
 
-build-proxy-local:
+build-proxy-local: lint-local
 	@go build -o bin/${PROXY} ${PROXYFLAGS} rackhd/cmd/rackhd/*.go
 	@go build -o bin/endpoint rackhd/cmd/utils/*.go
 
@@ -102,10 +102,10 @@ test-local: lint-local
 	@ginkgo -r -race -trace -cover -randomizeAllSpecs --slowSpecThreshold=${SLOWTEST}
 
 release: deps build
-	@docker build -t rackhd/${REGISTRY} registry
-	@docker build -t rackhd/ssdpspoofer registry/cmd/ssdpspoofer/
 	@docker build -t rackhd/${PROXY} rackhd
 	@docker build -t rackhd/endpoint rackhd/cmd/utils/
+	@docker build -t rackhd/${REGISTRY} registry
+	@docker build -t rackhd/ssdpspoofer registry/cmd/ssdpspoofer/
 
 
 run: release
