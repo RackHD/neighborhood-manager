@@ -1,12 +1,16 @@
-hash: 8848f29d45ef660cc468d754f367db89da70b6663cbcde9f56dd4810ba5f7f40
-updated: 2016-08-22T11:18:43.479056964-04:00
+hash: 1430ace24aa0f5928da1786bae12d7db3fff57f1b4878448245da0fbda724509
+updated: 2016-08-22T17:27:50.804668522Z
 imports:
 - name: github.com/fsnotify/fsnotify
   version: f12c6236fe7b5cf6bcf30e5935d08cb079d78334
 - name: github.com/hashicorp/consul
   version: 36dc9201f2e006d4b5db1f0446b17357811297bf
+  subpackages:
+  - api
+- name: github.com/hashicorp/go-cleanhttp
+  version: ad28ea4487f05916463e2423a55166280e8254b5
 - name: github.com/hashicorp/hcl
-  version: d8c773c4cba11b11539e3d45f93daeaa5dcf1fa1
+  version: bc40da04e8303cb7406e9ed1a2b742d636c5d960
   subpackages:
   - hcl/ast
   - hcl/parser
@@ -16,6 +20,10 @@ imports:
   - hcl/strconv
   - json/scanner
   - json/token
+- name: github.com/hashicorp/serf
+  version: 9432bc08aa8d486e497e27f84878ebbe8c1eab66
+  subpackages:
+  - coordinate
 - name: github.com/king-jam/gossdp
   version: 83dbf4057d732d2a11fc27754f969eea50f7b132
 - name: github.com/kr/fs
@@ -46,7 +54,7 @@ imports:
 - name: github.com/spf13/viper
   version: 7fb2782df3d83e0036cc89f461ed0422628776f4
 - name: golang.org/x/crypto
-  version: b3cc7317554b3e708b116d997899e612bab100d6
+  version: 7e016f1856e33d687a3a722085e249982e673aff
   subpackages:
   - ssh
   - curve25519

@@ -1,5 +1,0 @@
-package: github.com/RackHD/neighborhood-manager/libreg
-import:
-- package: github.com/hashicorp/consul
-  subpackages:
-  - api
