@@ -72,6 +72,9 @@ type Registry interface {
 
 	// Node lists the services provided by a given node
 	Node(node string, options *QueryOptions) (*CatalogNode, error)
+
+	// Leader returns the leader of the cluster
+	Leader() (string, error)
 }
 
 // Node is ...

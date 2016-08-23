@@ -18,7 +18,7 @@ var backendAddr, endpointAddr, serviceName string
 // init takes in configurable flags
 func init() {
 	flag.StringVar(&backendAddr, "backend-address", "127.0.0.1:8500", "address:port of the backend store")
-	flag.StringVar(&endpointAddr, "endpoint-address", "http://0.0.0.0:10001", "http://address:port of the endpoint server")
+	flag.StringVar(&endpointAddr, "endpoint-address", "http://0.0.0.0:10002", "http://address:port of the endpoint server")
 	flag.StringVar(&serviceName, "service-name", "RackHD-service:api:2.0:TEST", "The service being spoofed")
 }
 
@@ -45,14 +45,6 @@ func extractIPPort(location string) (string, int, error) {
 // Main
 func main() {
 
-	log.Println(binaryName)
-	log.Println("  Release version: " + releaseVersion)
-	log.Println("  Built On: " + buildDate)
-	log.Println("  Build By: " + buildUser)
-	log.Println("  Commit Hash: " + commitHash)
-	log.Println("  Go version: " + goVersion)
-	log.Println("  OS/Arch: " + osArch)
-
 	flag.Parse()
 
 	// Parse proxyAddr
@@ -62,11 +54,12 @@ func main() {
 	}
 
 	// Proxy server configuration
-	h, err := api.NewServer(endpointIP, serviceName, "dc1", backendAddr, registry.CONSUL, endpointPort)
+	h, err := api.NewServer(endpointIP, serviceName, "dc-docker", backendAddr, registry.CONSUL, endpointPort)
 	if err != nil {
 		log.Fatalf("Endpoint server configuration failed: %s\n", err)
 	}
-	h.Register("dc1", serviceName)
+
+	h.Register("dc-docker", serviceName)
 
 	fmt.Printf("Endpoint is served on => %s:%d\n", h.Address, h.Port)
 
