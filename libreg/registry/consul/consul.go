@@ -254,3 +254,9 @@ func (s *Consul) getQueryOptions(options *registry.QueryOptions) *api.QueryOptio
 	}
 	return ops
 }
+
+// Leader returns the cluster leader
+func (s *Consul) Leader() (string, error) {
+	status := s.client.Status()
+	return status.Leader()
+}

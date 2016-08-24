@@ -171,3 +171,8 @@ func (m *Mock) Node(node string, options *registry.QueryOptions) (*registry.Cata
 	}
 	return &catalogNode, nil
 }
+
+// Leader returns the cluster leader
+func (m *Mock) Leader() (string, error) {
+	return "", nil
+}

@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -52,7 +53,15 @@ func NewServer(endpointIP, serviceName, datacenter, backendAddr string, backend 
 	s.Address = endpointIP
 	s.Port = endpointPort
 
-	return s, nil
+	for i := 0; i < 5; i++ {
+		_, err = s.Store.Leader()
+		if err == nil {
+			return s, nil
+		}
+		time.Sleep(5 * time.Second)
+	}
+
+	return nil, errors.New("Unable to find backend cluster")
 }
 
 // HandleTest is....well a test
@@ -95,7 +104,7 @@ func (e *Server) HandleServeObject(w http.ResponseWriter, r *http.Request) {
 // Register is...
 func (e *Server) Register(datacenter, serviceName string) {
 	n := fmt.Sprintf("%d", rand.Int())
-	_ = e.Store.Register(&regStore.CatalogRegistration{
+	err := e.Store.Register(&regStore.CatalogRegistration{
 		Node:       n,
 		Address:    e.Address,
 		Datacenter: datacenter,
@@ -114,5 +123,9 @@ func (e *Server) Register(datacenter, serviceName string) {
 			ServiceName: serviceName,
 		},
 	}, nil)
+
+	if err != nil {
+		log.Printf("Error registering serviceName: %s\n", err)
+	}
 
 }
