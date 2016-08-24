@@ -54,8 +54,8 @@ func NewServer(endpointIP, serviceName, datacenter, backendAddr string, backend 
 	s.Port = endpointPort
 
 	for i := 0; i < 5; i++ {
-		_, err = s.Store.Leader()
-		if err == nil {
+		leader, err := s.Store.Leader()
+		if err == nil && leader != "" {
 			return s, nil
 		}
 		time.Sleep(5 * time.Second)
@@ -97,7 +97,6 @@ func (e *Server) HandleServeObject(w http.ResponseWriter, r *http.Request) {
 		Thing2:  "moar things go here :)",
 		Numbers: rand.Intn(90000),
 	}
-
 	json.NewEncoder(w).Encode(object)
 }
 

@@ -19,7 +19,7 @@ services:
       - "8600"
       - "8600/udp"
     command: "agent -config-dir /etc/consul.d/server.json -bootstrap"
-  nm-rackhd-proxy:
+  rackhd:
     build:
       context: .
       dockerfile: Dockerfile-proxy
@@ -43,7 +43,7 @@ services:
       - "8500/udp"
       - "8600"
       - "8600/udp"
-    command: "-proxy-address=http://0.0.0.0:10001 -backend-address=consulclient:8500 -service-name=RackHD-service:api:2.0:TEST"
+    command: "-proxy-address=http://0.0.0.0:10001 -backend-address=consulclient:8500 -service-name=RackHD-service:api:2.0:TEST -datacenter=dc-docker"
     depends_on:
       - consulclient
   endpoint:
@@ -55,6 +55,7 @@ services:
     hostname: "endpoint"
     links:
         - consulclient
+        - rackhd
     ports:
       - "10002:10002"
     expose:
@@ -70,7 +71,7 @@ services:
       - "8500/udp"
       - "8600"
       - "8600/udp"
-    command: "-endpoint-address=http://0.0.0.0:10002 -backend-address=consulclient:8500"
+    command: "-endpoint-address=http://0.0.0.0:10002 -backend-address=consulclient:8500 -datacenter=dc-docker"
     depends_on:
         - consulclient
   consulclient:
