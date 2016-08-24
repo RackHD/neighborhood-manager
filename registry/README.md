@@ -60,7 +60,7 @@ The `registry.json` file found in the source code is currently configured to lis
 
 ## Building
 Download the [source] from GitHub  
-`go get -u github.com/rackhd/neighborhood-manager`
+`go get -u github.com/rackhd/neighborhood-manager`  
 `cd registry`
 
 Build the dependencies  
@@ -70,13 +70,13 @@ Build the Service Registry
 `make build`
 
 ## Running
-After building, the Service Registry binary (named `nm-registry`) will be in the `bin/` folder of the source directory. To run it from there, copy `registry.json` to that location.  
-`cp registry.json bin/`  
+After building, the Service Registry binary (named `registry`) will be in the `bin/` folder of the source directory. To run it from there, copy `registry.json` to that location.  
+`cp registry.json ../bin/`  
 
 Move to that directory and run the Service Registry.  
 ```
-cd bin
-./nm-registry
+cd ../bin
+./registry
 ``` 
 
 
@@ -92,7 +92,7 @@ The steps in this section will guide you through getting a test/dev environment 
 1. Change to a directory where you can clone the source code
 2. `git clone https://github.com/RackHD/neighborhood-manager.git`
 3. `cd registry`
-4. `make run` (Note that this will take some time when running for the first time. Docker has to pull several images from the internet. If any of the downloads fail, simply re-do the `make run` command)
+4. `make run-reg` (Note that this will take some time when running for the first time. Docker has to pull several images from the internet. If any of the downloads fail, simply re-do the `make run-reg` command)
 
 ### Interacting with the environment
 You now have four docker containers running: 
@@ -104,12 +104,12 @@ You now have four docker containers running:
 The SSDP Spoofer sends out dummy advertisement messages made to look like Inservice-Agent and RackHD. They are received by the Service Registry, passed to the Consul client, and sent to the Consul server for registration. You can interact with the Consul client in the same way the Service Registry does, to retrieve information that has been stored.
 
 1. Open a new terminal prompt
-2. Change to the `nm-registry` directory
+2. Change to the `neighborhood-manager` source directory
 3. `make consul-shell` 
 
 Now you can use the [Consul Catalog API] to interact with the backend storage. For example, to retrieve all services that have been registered: 
 ```
-root@c1208c34725f:/go/src/github.com/RackHD/neighborhood-manager/registry# curl -s http://consulclient:8500/v1/catalog/services | python -mjson.tool
+root@c1208c34725f:/go/src/github.com/RackHD/neighborhood-manager# curl -s http://consulclient:8500/v1/catalog/services | python -mjson.tool
 {
     "Inservice-service:agent:0.1": [],
     "Inservice-service:catalog-compute:0.1": [],
@@ -126,7 +126,7 @@ Notice the URL to which you are sending the request. The Docker containers have 
 
 As another example, to see all nodes that are offering the RackHD 2.0 API service:
 ```
-root@50283b1b6a03:/go/src/github.com/RackHD/neighborhood-manager/registry# curl http://consulclient:8500/v1/catalog/service/"RackHD-service:api:2.0" | python -mjson.tool
+root@50283b1b6a03:/go/src/github.com/RackHD/neighborhood-manager# curl http://consulclient:8500/v1/catalog/service/"RackHD-service:api:2.0" | python -mjson.tool
 [
     {
         "Address": "192.168.1.1",
@@ -162,8 +162,8 @@ After this, the steps in the next section should be done to lock in the specific
 ### Updating a library dependency
 When a dependent library has an updated commit that is desired (such as a big fix, added feature, etc), the library's entry in `glide.lock` should be updated. Open the file and find its entry, such as 
 ```
-- name: github.com/king-jam/libreg
-  version: 179a49f4d4eb663251a1703a5af8f36695d2831b
+- name: github.com/hashicorp/consul
+  version: 36dc9201f2e006d4b5db1f0446b17357811297bf
 ```
 Replace the existing commit hash with the hash of the new desired commit.  
 Save and close the file, then run `glide install`  

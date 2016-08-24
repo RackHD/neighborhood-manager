@@ -52,7 +52,7 @@ shell:
 	@${DOCKER_CMD} /bin/bash
 
 consul-shell:
-	@docker run --rm -ti --net nmregistry_default -v ${PWD}:${DOCKER_DIR} -w ${DOCKER_DIR} ${DOCKER_IMAGE} /bin/bash
+	@docker run --rm -ti --net registry_default -v ${PWD}:${DOCKER_DIR} -w ${DOCKER_DIR} ${DOCKER_IMAGE} /bin/bash
 
 clean:
 	@${DOCKER_CMD} make clean-local
