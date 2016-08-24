@@ -78,7 +78,7 @@ func (e *Server) HandleServeArray(w http.ResponseWriter, r *http.Request) {
 		node := NodeObject{
 			Name:    fmt.Sprintf("TESTNODE: %+v", rand.Intn(100)),
 			Thing1:  "arrays for days",
-			Thing2:  "moar things go here",
+			Thing2:  e.Address,
 			Numbers: i,
 		}
 		nodes = append(nodes, node)
@@ -94,7 +94,7 @@ func (e *Server) HandleServeObject(w http.ResponseWriter, r *http.Request) {
 	object := NodeObject{
 		Name:    name,
 		Thing1:  "objects FTW",
-		Thing2:  "moar things go here :)",
+		Thing2:  e.Address,
 		Numbers: rand.Intn(90000),
 	}
 	json.NewEncoder(w).Encode(object)
@@ -102,7 +102,8 @@ func (e *Server) HandleServeObject(w http.ResponseWriter, r *http.Request) {
 
 // Register is...
 func (e *Server) Register(datacenter, serviceName string) {
-	n := fmt.Sprintf("%d", rand.Int())
+	rGen := rand.New(rand.NewSource(time.Now().UnixNano()))
+	n := fmt.Sprintf("%d", rGen.Int())
 	err := e.Store.Register(&regStore.CatalogRegistration{
 		Node:       n,
 		Address:    e.Address,

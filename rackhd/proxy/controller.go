@@ -77,7 +77,6 @@ func (p *Server) GetResp(r *http.Request, addrs map[string]struct{}) (chan *Resp
 			r.URL.Scheme = "http"
 			fmt.Printf("url string %s\n", r.URL.String())
 			respGet, err := http.Get(r.URL.String())
-			fmt.Printf("%s\n", respGet.Status)
 			if err != nil {
 				errs <- fmt.Errorf("Could not send any HTTP Get requests: %s\n", err)
 				return
@@ -98,7 +97,6 @@ func (p *Server) GetResp(r *http.Request, addrs map[string]struct{}) (chan *Resp
 // helper function to write to the ResponseWriter.
 func (p *Server) RespCheck(w http.ResponseWriter, cr chan *Response) {
 	initialResp := <-cr
-	// if 1st byte is ! [, write iR and return
 	if initialResp.Body[0] != '[' {
 		w.Write(initialResp.Body)
 		return

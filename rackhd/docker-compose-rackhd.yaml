@@ -19,61 +19,6 @@ services:
       - "8600"
       - "8600/udp"
     command: "agent -config-dir /etc/consul.d/server.json -bootstrap"
-  rackhd:
-    build:
-      context: .
-      dockerfile: Dockerfile-proxy
-    image: "rackhd/rackhd:latest"
-    container_name: "rackhd"
-    hostname: "rackhd"
-    links:
-        - consulclient
-    ports:
-      - "10001:10001"
-    expose:
-      - "10001"
-      - "10002"
-      - "8300"
-      - "8301"
-      - "8301/udp"
-      - "8302"
-      - "8302/udp"
-      - "8400"
-      - "8500"
-      - "8500/udp"
-      - "8600"
-      - "8600/udp"
-    command: "-proxy-address=http://0.0.0.0:10001 -backend-address=consulclient:8500 -service-name=RackHD-service:api:2.0:TEST -datacenter=dc-docker"
-    depends_on:
-      - consulclient
-  endpoint:
-    build:
-      context: .
-      dockerfile: Dockerfile-endpoint
-    image: "rackhd/endpoint:latest"
-    container_name: "endpoint"
-    hostname: "endpoint"
-    links:
-        - consulclient
-        - rackhd
-    ports:
-      - "10002:10002"
-    expose:
-      - "10001"
-      - "10002"
-      - "8300"
-      - "8301"
-      - "8301/udp"
-      - "8302"
-      - "8302/udp"
-      - "8400"
-      - "8500"
-      - "8500/udp"
-      - "8600"
-      - "8600/udp"
-    command: "-endpoint-address=http://0.0.0.0:10002 -backend-address=consulclient:8500 -datacenter=dc-docker"
-    depends_on:
-        - consulclient
   consulclient:
     image: "rackhd/consul:client"
     container_name: "consulclient"
@@ -93,3 +38,60 @@ services:
       - "8600/udp"
     depends_on:
       - consulserver
+  rackhd:
+    build:
+      context: .
+      dockerfile: Dockerfile-proxy
+    image: "rackhd/rackhd:latest"
+    container_name: "rackhd"
+    hostname: "rackhd"
+    links:
+        - consulclient
+        - endpoint1
+        - endpoint2
+    ports:
+      - "10001:10001"
+    expose:
+      - "10001"
+      - "10002"
+      - "10003"
+      - "8500"
+    command: "-proxy-address=http://rackhd:10001 -backend-address=consulclient:8500 -service-name=RackHD-service:api:2.0:TEST -datacenter=dc-docker"
+    depends_on:
+      - consulclient
+  endpoint1:
+    build:
+      context: .
+      dockerfile: Dockerfile-endpoint
+    image: "rackhd/endpoint:latest"
+    container_name: "endpoint1"
+    hostname: "endpoint1"
+    links:
+        - consulclient
+    ports:
+      - "10002:10002"
+    expose:
+      - "10001"
+      - "10002"
+      - "8500"
+    command: "-endpoint-address=http://endpoint1:10002 -backend-address=consulclient:8500 -datacenter=dc-docker"
+    depends_on:
+        - consulclient
+  endpoint2:
+    build:
+      context: .
+      dockerfile: Dockerfile-endpoint
+    image: "rackhd/endpoint:latest"
+    container_name: "endpoint2"
+    hostname: "endpoint2"
+    links:
+        - consulclient
+    ports:
+      - "10003:10003"
+    expose:
+      - "10001"
+      - "10003"
+      - "8500"
+    command: "-endpoint-address=http://endpoint2:10003 -backend-address=consulclient:8500 -datacenter=dc-docker"
+    depends_on:
+        - consulclient
