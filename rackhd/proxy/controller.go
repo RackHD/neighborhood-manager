@@ -57,10 +57,7 @@ func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Did not get IP List ==> %s\n", err)
 	}
 	cr, _ := p.GetResp(r, addresses)
-
-	for range cr {
-		p.RespCheck(w, cr)
-	}
+	p.RespCheck(w, cr)
 	return
 }
 
@@ -80,7 +77,6 @@ func (p *Server) GetResp(r *http.Request, addrs map[string]struct{}) (chan *Resp
 			r.URL.Scheme = "http"
 			fmt.Printf("url string %s\n", r.URL.String())
 			respGet, err := http.Get(r.URL.String())
-			fmt.Printf("%+v\n\n", respGet)
 			if err != nil {
 				errs <- fmt.Errorf("Could not send any HTTP Get requests: %s\n", err)
 				return
@@ -99,28 +95,16 @@ func (p *Server) GetResp(r *http.Request, addrs map[string]struct{}) (chan *Resp
 
 // RespCheck identifies the type of initialResp.Body and calls the appropriate
 // helper function to write to the ResponseWriter.
-func (p *Server) RespCheck(w http.ResponseWriter, c chan *Response) {
-	initialResp := <-c
-	w.WriteHeader(initialResp.StatusCode)
-	if initialResp.Body[0] == '[' {
-		p.CombineResp(c, initialResp, w)
-	} else {
-		p.PassResp(initialResp, w)
+func (p *Server) RespCheck(w http.ResponseWriter, cr chan *Response) {
+	initialResp := <-cr
+	if initialResp.Body[0] != '[' {
+		w.Write(initialResp.Body)
+		return
 	}
-}
-
-// CombineResp combines many response.Body objects and formats them correctly
-// with json structuring.
-func (p *Server) CombineResp(cr chan *Response, initialResp *Response, w http.ResponseWriter) {
-	w.Write(initialResp.Body[0 : len(initialResp.Body)-1])
+	w.Write(initialResp.Body[0 : len(initialResp.Body)-2])
 	for r := range cr {
 		w.Write([]byte(","))
 		w.Write(r.Body[1 : len(r.Body)-2])
 	}
 	w.Write([]byte("]"))
-}
-
-// PassResp takes a response.Body object and writes it to the ResponseWriter
-func (p *Server) PassResp(initialResp *Response, w http.ResponseWriter) {
-	w.Write(initialResp.Body)
 }

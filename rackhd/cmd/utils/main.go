@@ -13,13 +13,14 @@ import (
 )
 
 var binaryName, buildDate, buildUser, commitHash, goVersion, osArch, releaseVersion string
-var backendAddr, endpointAddr, serviceName string
+var backendAddr, endpointAddr, serviceName, datacenter string
 
 // init takes in configurable flags
 func init() {
 	flag.StringVar(&backendAddr, "backend-address", "127.0.0.1:8500", "address:port of the backend store")
 	flag.StringVar(&endpointAddr, "endpoint-address", "http://0.0.0.0:10002", "http://address:port of the endpoint server")
 	flag.StringVar(&serviceName, "service-name", "RackHD-service:api:2.0:TEST", "The service being spoofed")
+	flag.StringVar(&datacenter, "datacenter", "dc1", "The consul datacenter string")
 }
 
 // extractIPPort splits the Address flag into an ip string anf port int
@@ -54,12 +55,12 @@ func main() {
 	}
 
 	// Proxy server configuration
-	h, err := api.NewServer(endpointIP, serviceName, "dc-docker", backendAddr, registry.CONSUL, endpointPort)
+	h, err := api.NewServer(endpointIP, serviceName, datacenter, backendAddr, registry.CONSUL, endpointPort)
 	if err != nil {
 		log.Fatalf("Endpoint server configuration failed: %s\n", err)
 	}
 
-	h.Register("dc-docker", serviceName)
+	h.Register(datacenter, serviceName)
 
 	fmt.Printf("Endpoint is served on => %s:%d\n", h.Address, h.Port)
 
