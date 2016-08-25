@@ -5,7 +5,7 @@ Neighborhood Manager
 [![Coverage Status](https://coveralls.io/repos/github/RackHD/neighborhood-manager/badge.svg?branch=master)](https://coveralls.io/github/RackHD/neighborhood-manager?branch=master)
 
 ## Service Registry
-The [Service Registry] is a utility that will listen on the network for services that advertise themselves. The specific list of services a user would like to e notified about can be configured. When an advertisement is seen on the network from a configured service, the Service Registry collects information about the service, and registers the details with a storage backend of the user's choosing. Other applications can access this storage for aggregated information about all services available on a given network.
+The [Service Registry] is a utility that will listen on the network for services that advertise themselves. The specific list of services a user would like to be notified about is configurable. When an advertisement is seen on the network from a configured service, the Service Registry collects information about the service, and registers the details with a storage backend of the user's choosing. Other applications can access this storage for aggregated information about all services available on a given network.
 
 ## RackHD Proxy
 The [RackHD Proxy] is a utility that acts as a proxy to the RackHD API.
@@ -16,7 +16,7 @@ The [RackHD Proxy] is a utility that acts as a proxy to the RackHD API.
 Contribute
 ----------
 
-Neighborhood Manager is a collection of libraries and applications housed at https://github.com/RackHD/neighborhood-manager. The code for Neighboor Manager is written in Golang and makes use of Makefiles. It is available under the Apache 2.0 license (or compatible sublicences for library dependencies).
+Neighborhood Manager is a collection of libraries and applications housed at https://github.com/RackHD/neighborhood-manager. The code for Neighborhood Manager is written in Golang and makes use of Makefiles. It is available under the Apache 2.0 license (or compatible sublicences for library dependencies).
 
 Code and bug submissions are handled on GitHub using the Issues tab for this repository above.
 
