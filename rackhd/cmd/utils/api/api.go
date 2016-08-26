@@ -104,7 +104,7 @@ func (e *Server) HandleServeObject(w http.ResponseWriter, r *http.Request) {
 func (e *Server) Register(datacenter, serviceName string) {
 	rGen := rand.New(rand.NewSource(time.Now().UnixNano()))
 	n := fmt.Sprintf("%d", rGen.Int())
-	err := e.Store.Register(&regStore.CatalogRegistration{
+	if err := e.Store.Register(&regStore.CatalogRegistration{
 		Node:       n,
 		Address:    e.Address,
 		Datacenter: datacenter,
@@ -122,9 +122,7 @@ func (e *Server) Register(datacenter, serviceName string) {
 			ServiceID:   serviceName,
 			ServiceName: serviceName,
 		},
-	}, nil)
-
-	if err != nil {
+	}, nil); err != nil {
 		log.Printf("Error registering serviceName: %s\n", err)
 	}
 
