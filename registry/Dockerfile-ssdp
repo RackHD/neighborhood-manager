@@ -1,6 +1,0 @@
-FROM debian:wheezy
-
-ADD ./bin/ssdpspoofer /bin/ssdpspoofer
-ADD ./cmd/ssdpspoofer/ssdpSpoof.json /bin/ssdpSpoof.json
-
-ENTRYPOINT ["/bin/ssdpspoofer"]

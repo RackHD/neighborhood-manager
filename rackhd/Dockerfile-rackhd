@@ -1,5 +1,0 @@
-FROM rackhd/golang:1.7.0-wheezy
-
-ADD ./bin/rackhd /go/bin/rackhd
-
-ENTRYPOINT ["/go/bin/rackhd"]
