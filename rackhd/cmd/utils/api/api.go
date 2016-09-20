@@ -13,6 +13,7 @@ import (
 	"github.com/RackHD/neighborhood-manager/libreg"
 	regStore "github.com/RackHD/neighborhood-manager/libreg/registry"
 	"github.com/RackHD/neighborhood-manager/libreg/registry/consul"
+	"github.com/gorilla/mux"
 )
 
 // Server is the proxy server struct
@@ -34,9 +35,13 @@ type NodeObject struct {
 // Serve starts the Server on address:port and handles the routes
 func (e *Server) Serve() {
 	m := http.NewServeMux()
+	r := mux.NewRouter()
 	m.HandleFunc("/test", e.HandleTest)
-	m.HandleFunc("/object", e.HandleServeObject)
-	m.HandleFunc("/array", e.HandleServeArray)
+	r.HandleFunc("/array", e.HandleServeArray).Methods("GET")
+	r.HandleFunc("/object/{id}", e.HandleServeObject).Methods("GET")
+	r.HandleFunc("/object/{id}", e.HandleCreateObject).Methods("POST")
+	r.HandleFunc("/object/{id}", e.HandleUpdateObject).Methods("PUT", "PATCH")
+	r.HandleFunc("/object/{id}", e.HandleDeleteObject).Methods("DELETE")
 	http.ListenAndServe(fmt.Sprintf("%s:%d", e.Address, e.Port), m)
 }
 
@@ -62,6 +67,34 @@ func NewServer(endpointIP, serviceName, datacenter, backendAddr string, backend 
 	}
 
 	return nil, errors.New("Unable to find backend cluster")
+}
+
+// Register is...
+func (e *Server) Register(datacenter, serviceName string) {
+	rGen := rand.New(rand.NewSource(time.Now().UnixNano()))
+	n := fmt.Sprintf("%d", rGen.Int())
+	if err := e.Store.Register(&regStore.CatalogRegistration{
+		Node:       n,
+		Address:    e.Address,
+		Datacenter: datacenter,
+		Service: &regStore.AgentService{
+			ID:      serviceName,
+			Service: serviceName,
+			Port:    e.Port,
+			Address: e.Address,
+		},
+		Check: &regStore.AgentCheck{
+			Node:        n,
+			CheckID:     "service:" + serviceName,
+			Name:        "Service '" + serviceName + "' check",
+			Status:      "passing",
+			ServiceID:   serviceName,
+			ServiceName: serviceName,
+		},
+	}, nil); err != nil {
+		log.Printf("Error registering serviceName: %s\n", err)
+	}
+
 }
 
 // HandleTest is....well a test
@@ -98,32 +131,4 @@ func (e *Server) HandleServeObject(w http.ResponseWriter, r *http.Request) {
 		Numbers: rand.Intn(90000),
 	}
 	json.NewEncoder(w).Encode(object)
-}
-
-// Register is...
-func (e *Server) Register(datacenter, serviceName string) {
-	rGen := rand.New(rand.NewSource(time.Now().UnixNano()))
-	n := fmt.Sprintf("%d", rGen.Int())
-	if err := e.Store.Register(&regStore.CatalogRegistration{
-		Node:       n,
-		Address:    e.Address,
-		Datacenter: datacenter,
-		Service: &regStore.AgentService{
-			ID:      serviceName,
-			Service: serviceName,
-			Port:    e.Port,
-			Address: e.Address,
-		},
-		Check: &regStore.AgentCheck{
-			Node:        n,
-			CheckID:     "service:" + serviceName,
-			Name:        "Service '" + serviceName + "' check",
-			Status:      "passing",
-			ServiceID:   serviceName,
-			ServiceName: serviceName,
-		},
-	}, nil); err != nil {
-		log.Printf("Error registering serviceName: %s\n", err)
-	}
-
 }
