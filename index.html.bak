@@ -26,9 +26,9 @@
 
 <img src="https://travis-ci.org/RackHD/neighborhood-manager.svg?branch=master" alt="travis-ci">
 
-https://coveralls.io/repos/github/RackHD/neighborhood-manager/badge.svg?branch=master
-##### Registry
-https://godoc.org/github.com/RackHD/neighborhood-manager/registry
+<img src="https://coveralls.io/repos/github/RackHD/neighborhood-manager/badge.svg?branch=master" alt="coveralls">
+<p>Registry<p>
+<a href="https://godoc.org/github.com/RackHD/neighborhood-manager/registry"</a>
 ##### Libreg
 https://godoc.org/github.com/RackHD/neighborhood-manager/libreg
 
