@@ -25,7 +25,7 @@ _testmain.go
 *.test
 *.prof
 *.coverprofile
-*.html
+
 
 bin
 vendor
