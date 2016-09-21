@@ -28,7 +28,7 @@
 
 <img src="https://coveralls.io/repos/github/RackHD/neighborhood-manager/badge.svg?branch=master" alt="coveralls">
 <p>Registry<p>
-<a href="https://godoc.org/github.com/RackHD/neighborhood-manager/registry"</a>
+<a href="https://godoc.org/github.com/RackHD/neighborhood-manager/registry"
 ##### Libreg
 https://godoc.org/github.com/RackHD/neighborhood-manager/libreg
 

@@ -1,6 +1,8 @@
 ---
+layout: post
+title: Neighborhood Manager
 ---
-Neighborhood Manager
+
 ====================
 
 [![Build Status](https://travis-ci.org/RackHD/neighborhood-manager.svg?branch=master)](https://travis-ci.org/RackHD/neighborhood-manager)
