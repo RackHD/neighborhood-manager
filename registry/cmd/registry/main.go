@@ -13,10 +13,11 @@ import (
 )
 
 var binaryName, buildDate, buildUser, commitHash, goVersion, osArch, releaseVersion string
-var backendAddr string
+var backendAddr, datacenter string
 
 func init() {
 	flag.StringVar(&backendAddr, "address", "127.0.0.1:8500", "Address:port of the backend store")
+	flag.StringVar(&datacenter, "datacenter", "dc1", "Datacenter name of the backend storage")
 }
 
 func main() {
@@ -31,7 +32,7 @@ func main() {
 	flag.Parse()
 
 	consul.Register()
-	registry, err := registry.NewRegistry(libreg.CONSUL, "dc-docker", backendAddr)
+	registry, err := registry.NewRegistry(libreg.CONSUL, datacenter, backendAddr)
 	if err != nil {
 		log.Fatalf("Error creating new Service Registry: %s", err)
 	}

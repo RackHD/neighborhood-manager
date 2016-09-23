@@ -40,7 +40,7 @@ services:
       - "8500/udp"
       - "8600"
       - "8600/udp"
-    command: "-address=consulclient:8500"
+    command: "-address=consulclient:8500 -datacenter=dc-docker"
     depends_on:
       - consulclient
   ssdpspoofer:
