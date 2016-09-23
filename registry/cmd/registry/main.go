@@ -17,7 +17,7 @@ var backendAddr, datacenter string
 
 func init() {
 	flag.StringVar(&backendAddr, "address", "127.0.0.1:8500", "Address:port of the backend store")
-	flag.StringVar(&datacenter, "datacenter", "dc-docker", "Datacenter name of the backend storage")
+	flag.StringVar(&datacenter, "datacenter", "dc1", "Datacenter name of the backend storage")
 }
 
 func main() {
