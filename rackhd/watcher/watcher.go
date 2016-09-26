@@ -43,7 +43,7 @@ func (m *Monitor) GetAddresses() (map[string]struct{}, error) {
 		addr := fmt.Sprintf("%s:%d", entry.ServiceAddress, entry.ServicePort)
 		addresses[addr] = struct{}{}
 	}
-	return addresses, err
+	return addresses, nil
 }
 
 // GetService fetches catalog entries for the given serviceName
