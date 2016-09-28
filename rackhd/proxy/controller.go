@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -17,6 +18,11 @@ import (
 
 // Responses is an array of Response structs
 type Responses []Response
+
+// Err creates an error message to print
+type Err struct {
+	Msg string `json:"msg"`
+}
 
 // Server is the proxy server struct
 type Server struct {
@@ -58,8 +64,7 @@ func (p *Server) HandleTest(w http.ResponseWriter, r *http.Request) {
 // HandleNodes sends, recieves, and processes all the data
 func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	//	fmt.Printf("Request Recieved => %s\n", time.Now())
+	//	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	addrMap, err := p.GetAddresses(w, r)
 	if len(addrMap) == 0 {
 		w.WriteHeader(200)
@@ -73,7 +78,8 @@ func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
 	}
 	if (r.Method != "GET") && (len(addrMap) > 1) {
 		w.WriteHeader(400)
-		w.Write([]byte(fmt.Sprintln("Unsupported api call to multiple hosts. Use query string method."))) //TODO make this json
+		msg := Err{Msg: "Unsupported api call to multiple hosts. Use query string method."}
+		json.NewEncoder(w).Encode(msg)
 		return
 	}
 	ar := p.GetResp(r, addrMap)
@@ -101,7 +107,6 @@ func (p *Server) GetResp(r *http.Request, addrs map[string]struct{}) Responses {
 			respGet, err := client.Do(req)
 			elapsed := time.Since(start)
 			fmt.Printf("%v => %s\n\n", elapsed, entry)
-			//			fmt.Printf("Request Sent => %s\n", time.Now())
 			if err != nil {
 				cr <- NewResponseFromError(err)
 				return
@@ -168,12 +173,32 @@ func (p *Server) GetQueryAddresses(querySlice []string) map[string]struct{} {
 	return queryMap
 }
 
+// RespHeaderWriter writes the StatusCode and Headers
+func (p *Server) RespHeaderWriter(r *http.Request, w http.ResponseWriter, ar Responses) {
+	var status int
+	status = 500
+	if len(ar) <= 1 {
+		for k, v := range ar[0].Header {
+			for _, value := range v {
+				w.Header().Set(k, value)
+			}
+		}
+	}
+	for _, r := range ar {
+		if r.StatusCode < status {
+			status = r.StatusCode
+		}
+	}
+	w.WriteHeader(status)
+}
+
 // RespCheck identifies the type of initialResp.Body and calls the appropriate
 // helper function to write to the ResponseWriter.
 func (p *Server) RespCheck(r *http.Request, w http.ResponseWriter, ar Responses) {
+	var cutSize int
+
+	p.RespHeaderWriter(r, w, ar)
 	w.Write([]byte("["))
-	var cutSize, status int
-	status = 500
 	for i, r := range ar {
 		if r.Body == nil {
 			continue
@@ -189,18 +214,6 @@ func (p *Server) RespCheck(r *http.Request, w http.ResponseWriter, ar Responses)
 		if i != len(ar)-1 {
 			w.Write([]byte(","))
 		}
-		if r.StatusCode < status {
-			status = r.StatusCode
-		}
-	}
-	if len(ar) <= 1 {
-		for k, v := range ar[0].Header {
-			for _, value := range v {
-				w.Header().Set(k, value)
-			}
-		}
 	}
 	w.Write([]byte("]"))
-	w.WriteHeader(status)
-	//	fmt.Printf("Response Written => %s\n", time.Now())
 }
