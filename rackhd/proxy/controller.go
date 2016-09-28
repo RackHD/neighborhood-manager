@@ -57,8 +57,9 @@ func (p *Server) HandleTest(w http.ResponseWriter, r *http.Request) {
 
 // HandleNodes sends, recieves, and processes all the data
 func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	fmt.Printf("Request Recieved => %s\n", time.Now())
+	//	fmt.Printf("Request Recieved => %s\n", time.Now())
 	addrMap, err := p.GetAddresses(w, r)
 	if len(addrMap) == 0 {
 		w.WriteHeader(200)
@@ -77,6 +78,8 @@ func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
 	}
 	ar := p.GetResp(r, addrMap)
 	p.RespCheck(r, w, ar)
+	elapsed := time.Since(start)
+	fmt.Println(elapsed)
 }
 
 // GetResp makes channels for the response and errors from http.Get.
@@ -95,7 +98,7 @@ func (p *Server) GetResp(r *http.Request, addrs map[string]struct{}) Responses {
 			}
 			client := cleanhttp.DefaultClient()
 			respGet, err := client.Do(req)
-			fmt.Printf("Request Sent => %s\n", time.Now())
+			//			fmt.Printf("Request Sent => %s\n", time.Now())
 			if err != nil {
 				cr <- NewResponseFromError(err)
 				return
@@ -196,5 +199,5 @@ func (p *Server) RespCheck(r *http.Request, w http.ResponseWriter, ar Responses)
 	}
 	w.Write([]byte("]"))
 	w.WriteHeader(status)
-	fmt.Printf("Response Written => %s\n", time.Now())
+	//	fmt.Printf("Response Written => %s\n", time.Now())
 }
