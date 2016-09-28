@@ -1,10 +1,10 @@
-hash: 1430ace24aa0f5928da1786bae12d7db3fff57f1b4878448245da0fbda724509
-updated: 2016-08-22T17:27:50.804668522Z
+hash: 2b890c093c96eb470377b1f5353c8a2e406a845d341f69279d97e24858290a08
+updated: 2016-09-28T09:23:37.518411878-04:00
 imports:
 - name: github.com/fsnotify/fsnotify
   version: f12c6236fe7b5cf6bcf30e5935d08cb079d78334
 - name: github.com/hashicorp/consul
-  version: 36dc9201f2e006d4b5db1f0446b17357811297bf
+  version: a189091a3530051285c12c726ca28ea55e015336
   subpackages:
   - api
 - name: github.com/hashicorp/go-cleanhttp
@@ -14,10 +14,10 @@ imports:
   subpackages:
   - hcl/ast
   - hcl/parser
-  - hcl/token
-  - json/parser
   - hcl/scanner
   - hcl/strconv
+  - hcl/token
+  - json/parser
   - json/scanner
   - json/token
 - name: github.com/hashicorp/serf
@@ -56,16 +56,16 @@ imports:
 - name: golang.org/x/crypto
   version: 7e016f1856e33d687a3a722085e249982e673aff
   subpackages:
-  - ssh
   - curve25519
   - ed25519
   - ed25519/internal/edwards25519
+  - ssh
 - name: golang.org/x/net
   version: 7394c112eae4dba7e96bfcfe738e6373d61772b4
   subpackages:
-  - ipv4
   - bpf
   - internal/iana
+  - ipv4
 - name: golang.org/x/sys
   version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
   subpackages:
@@ -77,4 +77,34 @@ imports:
   - unicode/norm
 - name: gopkg.in/yaml.v2
   version: e4d366fc3c7938e2958e662b4258c7a89e1f0e3e
-testImports: []
+testImports:
+- name: github.com/onsi/ginkgo
+  version: 462326b1628e124b23f42e87a8f2750e3c4e2d24
+  subpackages:
+  - config
+  - internal/codelocation
+  - internal/containernode
+  - internal/failer
+  - internal/leafnodes
+  - internal/remote
+  - internal/spec
+  - internal/specrunner
+  - internal/suite
+  - internal/testingtproxy
+  - internal/writer
+  - reporters
+  - reporters/stenographer
+  - types
+- name: github.com/onsi/gomega
+  version: a78ae492d53aad5a7a232d0d0462c14c400e3ee7
+  subpackages:
+  - format
+  - internal/assertion
+  - internal/asyncassertion
+  - internal/testingtsupport
+  - matchers
+  - matchers/support/goraph/bipartitegraph
+  - matchers/support/goraph/edge
+  - matchers/support/goraph/node
+  - matchers/support/goraph/util
+  - types

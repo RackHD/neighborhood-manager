@@ -8,6 +8,7 @@ import (
 
 // Response is the internal proxy response object
 type Response struct {
+	Header     http.Header
 	StatusCode int
 	Body       []byte
 	RequestURL string
@@ -22,6 +23,7 @@ func NewResponse(resp *http.Response) (*Response, error) {
 		return nil, err
 	}
 	proxyResponse := &Response{
+		Header:     resp.Header,
 		StatusCode: resp.StatusCode,
 		Body:       body,
 		RequestURL: resp.Request.URL.String(),
@@ -30,8 +32,8 @@ func NewResponse(resp *http.Response) (*Response, error) {
 	return proxyResponse, err
 }
 
-// NewResposeFromError sets errors
-func NewResposeFromError(err error) *Response {
+// NewResponseFromError sets errors
+func NewResponseFromError(err error) *Response {
 	proxyRespnse := &Response{
 		StatusCode: 500,
 		Error:      err,

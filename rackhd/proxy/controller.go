@@ -68,6 +68,11 @@ func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("%s", err)))
 		return
 	}
+	if (r.Method != "GET") && (len(addrMap) > 1) {
+		w.WriteHeader(400)
+		w.Write([]byte(fmt.Sprintln("Unsupported api call to multiple hosts. Use query string method.")))
+		return
+	}
 	ar := p.GetResp(r, addrMap)
 	p.RespCheck(r, w, ar)
 }
@@ -83,20 +88,20 @@ func (p *Server) GetResp(r *http.Request, addrs map[string]struct{}) Responses {
 			defer p.wg.Done()
 			req, err := NewRequest(r, entry)
 			if err != nil {
-				cr <- NewResposeFromError(err)
+				cr <- NewResponseFromError(err)
 				return
 			}
 			client := cleanhttp.DefaultClient()
 			respGet, err := client.Do(req)
 			fmt.Println("request sent")
 			if err != nil {
-				cr <- NewResposeFromError(err)
+				cr <- NewResponseFromError(err)
 				return
 			}
 			defer respGet.Body.Close()
 			responseCopy, err := NewResponse(respGet)
 			if err != nil {
-				cr <- NewResposeFromError(err)
+				cr <- NewResponseFromError(err)
 				return
 			}
 			cr <- responseCopy
@@ -159,7 +164,8 @@ func (p *Server) GetQueryAddresses(querySlice []string) map[string]struct{} {
 // helper function to write to the ResponseWriter.
 func (p *Server) RespCheck(r *http.Request, w http.ResponseWriter, ar Responses) {
 	w.Write([]byte("["))
-	var cutSize int
+	var cutSize, status int
+	status = 500
 	for i, r := range ar {
 		if r.Body == nil {
 			continue
@@ -175,6 +181,17 @@ func (p *Server) RespCheck(r *http.Request, w http.ResponseWriter, ar Responses)
 		if i != len(ar)-1 {
 			w.Write([]byte(","))
 		}
+		if r.StatusCode < status {
+			status = r.StatusCode
+		}
+	}
+	if len(ar) <= 1 {
+		for k, v := range ar[0].Header {
+			for _, value := range v {
+				w.Header().Set(k, value)
+			}
+		}
 	}
 	w.Write([]byte("]"))
+	w.WriteHeader(status)
 }
