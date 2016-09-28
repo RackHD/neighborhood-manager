@@ -79,7 +79,7 @@ func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
 	ar := p.GetResp(r, addrMap)
 	p.RespCheck(r, w, ar)
 	elapsed := time.Since(start)
-	fmt.Println(elapsed)
+	fmt.Printf("Total Time => %v\n\n", elapsed)
 }
 
 // GetResp makes channels for the response and errors from http.Get.
@@ -97,7 +97,10 @@ func (p *Server) GetResp(r *http.Request, addrs map[string]struct{}) Responses {
 				return
 			}
 			client := cleanhttp.DefaultClient()
+			start := time.Now()
 			respGet, err := client.Do(req)
+			elapsed := time.Since(start)
+			fmt.Printf("%v => %s\n\n", elapsed, entry)
 			//			fmt.Printf("Request Sent => %s\n", time.Now())
 			if err != nil {
 				cr <- NewResponseFromError(err)
