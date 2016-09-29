@@ -73,15 +73,16 @@ func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		w.WriteHeader(500)
-		w.Write([]byte(fmt.Sprintf("%s", err)))
-		return
-	}
-	if (r.Method != "GET") && (len(addrMap) > 1) {
-		w.WriteHeader(400)
-		msg := Err{Msg: "Unsupported api call to multiple hosts. Use query string method."}
+		msg := Err{Msg: "Internal error fetching endpoint addresses."}
 		json.NewEncoder(w).Encode(msg)
 		return
 	}
+	// if (r.Method != "GET") && (len(addrMap) > 1) {
+	// 	w.WriteHeader(400)
+	// 	msg := Err{Msg: "Unsupported api call to multiple hosts. Use query string method."}
+	// 	json.NewEncoder(w).Encode(msg)
+	// 	return
+	// }
 	ar := p.GetResp(r, addrMap)
 	p.RespCheck(r, w, ar)
 	elapsed := time.Since(start)
@@ -200,7 +201,7 @@ func (p *Server) RespCheck(r *http.Request, w http.ResponseWriter, ar Responses)
 	p.RespHeaderWriter(r, w, ar)
 	w.Write([]byte("["))
 	for i, r := range ar {
-		if r.Body == nil {
+		if r.Body == nil || ((r.Body[0] == '[') && (r.Body[1] == ']')) {
 			continue
 		}
 		if r.Body[0] == '[' {
