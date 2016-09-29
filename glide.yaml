@@ -1,7 +1,14 @@
 package: github.com/RackHD/neighborhood-manager
 import:
 - package: github.com/hashicorp/consul
+  version: ~0.7.0
   subpackages:
   - api
+- package: github.com/hashicorp/go-cleanhttp
 - package: github.com/king-jam/gossdp
 - package: github.com/spf13/viper
+testImport:
+- package: github.com/onsi/ginkgo
+  version: ~1.2.0
+- package: github.com/onsi/gomega
+  version: ~1.0.0

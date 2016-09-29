@@ -14,6 +14,8 @@ The [Service Registry] is a utility that will listen on the network for services
 ## RackHD Proxy
 The [RackHD Proxy] is a utility that acts as a proxy to the RackHD API.
 
+
+
 [Service Registry]: https://github.com/RackHD/neighborhood-manager/tree/master/registry
 [RackHD Proxy]: https://github.com/RackHD/neighborhood-manager/tree/master/rackhd
 
