@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"bytes"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -43,7 +44,13 @@ func NewResponseFromError(err error) *Response {
 
 // NewRequest copies a http.Request & Header and sets the new host
 func NewRequest(r *http.Request, host string) (*http.Request, error) {
-	req, err := http.NewRequest(r.Method, "http://"+host+r.URL.Path, r.Body)
+	buff, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Printf("Error reading Request.Body %s\n", err)
+		return nil, err
+	}
+	reader := bytes.NewReader(buff)
+	req, err := http.NewRequest(r.Method, "http://"+host+r.URL.Path, reader)
 	if err != nil {
 		return nil, err
 	}
