@@ -64,8 +64,8 @@ func (p *Server) HandleTest(w http.ResponseWriter, r *http.Request) {
 // HandleNodes sends, recieves, and processes all the data
 func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	addrMap, err := p.GetAddresses(w, r)
+	fmt.Printf("ADDRESS MAP %+v\n\n", addrMap)
 	if len(addrMap) == 0 {
 		w.WriteHeader(200)
 		w.Write([]byte("[]"))
@@ -77,13 +77,8 @@ func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(msg)
 		return
 	}
-	// if (r.Method != "GET") && (len(addrMap) > 1) {
-	// 	w.WriteHeader(400)
-	// 	msg := Err{Msg: "Unsupported api call to multiple hosts. Use query string method."}
-	// 	json.NewEncoder(w).Encode(msg)
-	// 	return
-	// }
 	ar := p.GetResp(r, addrMap)
+	p.RespHeaderWriter(r, w, ar)
 	p.RespCheck(r, w, ar)
 	elapsed := time.Since(start)
 	fmt.Printf("Total Request Time  =>  %v\n", elapsed)
@@ -100,6 +95,7 @@ func (p *Server) GetResp(r *http.Request, addrs map[string]struct{}) Responses {
 			defer p.wg.Done()
 			req, err := NewRequest(r, entry)
 			if err != nil {
+				fmt.Println("ERROR HERE 1")
 				cr <- NewResponseFromError(err)
 				return
 			}
@@ -139,12 +135,14 @@ func (p *Server) GetAddresses(w http.ResponseWriter, r *http.Request) (map[strin
 	querySlice := r.URL.Query()
 	if len(querySlice["ip"]) > 0 {
 		addrMap := p.GetQueryAddresses(querySlice["ip"])
+		fmt.Printf("Query String: %+v\n\n", addrMap)
 		return addrMap, nil
 	}
 	addrMap, err := p.GetStoredAddresses()
 	if err != nil {
 		return nil, err
 	}
+	fmt.Printf("Query String from consul: %+v\n\n", addrMap)
 	return addrMap, nil
 }
 
@@ -178,18 +176,12 @@ func (p *Server) GetQueryAddresses(querySlice []string) map[string]struct{} {
 func (p *Server) RespHeaderWriter(r *http.Request, w http.ResponseWriter, ar Responses) {
 	var status int
 	status = 500
-	if len(ar) <= 1 {
-		for k, v := range ar[0].Header {
-			for _, value := range v {
-				w.Header().Set(k, value)
-			}
+	for _, s := range ar {
+		if s.StatusCode < status {
+			status = s.StatusCode
 		}
 	}
-	for _, r := range ar {
-		if r.StatusCode < status {
-			status = r.StatusCode
-		}
-	}
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
 }
 
@@ -197,8 +189,6 @@ func (p *Server) RespHeaderWriter(r *http.Request, w http.ResponseWriter, ar Res
 // helper function to write to the ResponseWriter.
 func (p *Server) RespCheck(r *http.Request, w http.ResponseWriter, ar Responses) {
 	var cutSize int
-
-	p.RespHeaderWriter(r, w, ar)
 	w.Write([]byte("["))
 	for i, r := range ar {
 		if r.Body == nil || ((r.Body[0] == '[') && (r.Body[1] == ']')) {
