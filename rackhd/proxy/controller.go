@@ -65,7 +65,6 @@ func (p *Server) HandleTest(w http.ResponseWriter, r *http.Request) {
 func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	addrMap, err := p.GetAddresses(w, r)
-	fmt.Printf("ADDRESS MAP %+v\n\n", addrMap)
 	if len(addrMap) == 0 {
 		w.WriteHeader(200)
 		w.Write([]byte("[]"))
@@ -95,7 +94,6 @@ func (p *Server) GetResp(r *http.Request, addrs map[string]struct{}) Responses {
 			defer p.wg.Done()
 			req, err := NewRequest(r, entry)
 			if err != nil {
-				fmt.Println("ERROR HERE 1")
 				cr <- NewResponseFromError(err)
 				return
 			}
@@ -135,14 +133,12 @@ func (p *Server) GetAddresses(w http.ResponseWriter, r *http.Request) (map[strin
 	querySlice := r.URL.Query()
 	if len(querySlice["ip"]) > 0 {
 		addrMap := p.GetQueryAddresses(querySlice["ip"])
-		fmt.Printf("Query String: %+v\n\n", addrMap)
 		return addrMap, nil
 	}
 	addrMap, err := p.GetStoredAddresses()
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("Query String from consul: %+v\n\n", addrMap)
 	return addrMap, nil
 }
 
