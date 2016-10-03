@@ -8,7 +8,7 @@ Neighborhood Manager
 ## Service Registry [![GoDoc](https://godoc.org/github.com/RackHD/neighborhood-manager/registry?status.svg)](https://godoc.org/github.com/RackHD/neighborhood-manager/registry)
 The [Service Registry] is a utility that will listen on the network for services that advertise themselves. The specific list of services a user would like to be notified about is configurable. When an advertisement is seen on the network from a configured service, the Service Registry collects information about the service, and registers the details with a storage backend of the user's choosing. Other applications can access this storage for aggregated information about all services available on a given network.
 
-## RackHD Proxy
+## RackHD Proxy [![GoDoc](https://godoc.org/github.com/RackHD/neighborhood-manager/rackhd?status.svg)](https://godoc.org/github.com/RackHD/neighborhood-manager/rackhd)
 The [RackHD Proxy] is a utility that acts as a proxy to the RackHD API.
 
 ## Libreg [![GoDoc](https://godoc.org/github.com/RackHD/neighborhood-manager/libreg?status.svg)](https://godoc.org/github.com/RackHD/neighborhood-manager/libreg)
