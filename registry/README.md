@@ -2,22 +2,23 @@
 
 
 # Neighborhood Manager Service Registry
-The Service Registry is a utility that will sit on the network and listen for services that advertise themselves. The list of services a user wants to know about can be configured. When an advertisement is seen from a matching service, the Service Registry collects information about the service, and registers it with a storage backend of the users choosing. Other applications can access this storage for aggregated information about all services on a network. 
+The Service Registry is a utility that will sit on the network and listen for services that advertise themselves via [SSDP]. The list of services a user wants to know about can be configured. When an advertisement is seen from a matching service, the Service Registry collects information about the service, and registers it with a storage backend of the user's choosing. Other applications can access this storage for aggregated information about all services on a network.
 
+The Service Registry must have the ability to see multicast broadcasts from the services that advertise themselves. If there is a need to register services separated in multiple subnets, many instances of the Service Registry can be deployed to each broadcast domain and aggregation will still successfully occur.
 
 ## Background Information
-This section details how to set up a production environment for the Service Registry. If you are interested in a quick demo of the functionality, skip to the Try It Out section to start everything up quickly in containers. 
+This section details how to set up a production environment for the Service Registry. If you are interested in a quick demo of the functionality, skip to the Try It Out section to start everything up quickly in containers.
 
 ### Backend
 Some type of storage backend is needed for the Service Registry to store information. At this time, the only backend supported is [Consul].  
 
-The best practice for using Consul is to set up a cluster of at least three servers on different hosts, and run a client on the same host that the Service Registry will run on. This allows uninterrupted service if one of the servers in the cluster dies, and is more robust than running a server locally on the same host as the Service Registry. 
+The best practice for using Consul is to set up a cluster of at least three servers on different hosts, and run a client on the same host that the Service Registry will run on. This allows uninterrupted service if one of the servers in the cluster dies, and is more robust than running a server locally on the same host as the Service Registry.
 
 #### Server
 To create a cluster of Consul servers, reference this article on [configuring consul], and see the section **Creating the Bootstrap Configuration**, then follow into the next section **Creating the Regular Server Configuration**
 
 #### Client
-When a cluster is in place, a consul client must be started on the same host that Service Registry will run on.  The most extensible way to do this is to put all parameters in a config file, such as `/etc/consul.d/client/config.json`. 
+When a cluster is in place, a consul client must be started on the same host that Service Registry will run on.  The most extensible way to do this is to put all parameters in a config file, such as `/etc/consul.d/client/config.json`.
 ```
 {
     "server":false,
@@ -77,11 +78,11 @@ Move to that directory and run the Service Registry.
 ```
 cd ../bin
 ./registry
-``` 
+```
 
 
 ## Try It Out
-The steps in this section will guide you through getting a test/dev environment up and running. Use these steps if you want to see the Service Registry in action. 
+The steps in this section will guide you through getting a test/dev environment up and running. Use these steps if you want to see the Service Registry in action.
 
 ### Prerequisites
 * [Git]  
@@ -95,7 +96,7 @@ The steps in this section will guide you through getting a test/dev environment 
 4. `make run-reg` (Note that this will take some time when running for the first time. Docker has to pull several images from the internet. If any of the downloads fail, simply re-do the `make run-reg` command)
 
 ### Interacting with the environment
-You now have four docker containers running: 
+You now have four docker containers running:
 * Service Registry
 * Consul Client
 * Consul Server
@@ -105,9 +106,9 @@ The SSDP Spoofer sends out dummy advertisement messages made to look like Inserv
 
 1. Open a new terminal prompt
 2. Change to the `neighborhood-manager` source directory
-3. `make consul-shell` 
+3. `make consul-shell`
 
-Now you can use the [Consul Catalog API] to interact with the backend storage. For example, to retrieve all services that have been registered: 
+Now you can use the [Consul Catalog API] to interact with the backend storage. For example, to retrieve all services that have been registered:
 ```
 root@c1208c34725f:/go/src/github.com/RackHD/neighborhood-manager# curl -s http://consulclient:8500/v1/catalog/services | python -mjson.tool
 {
@@ -121,7 +122,7 @@ root@c1208c34725f:/go/src/github.com/RackHD/neighborhood-manager# curl -s http:/
     "consul": []
 }
 ```
-Notice the URL to which you are sending the request. The Docker containers have been configured in a way such that you can reference the container running the Consul client by name, even though the IP address of the container will change between runs. Port 8500 is the default port for HTTP communications in Consul. 
+Notice the URL to which you are sending the request. The Docker containers have been configured in a way such that you can reference the container running the Consul client by name, even though the IP address of the container will change between runs. Port 8500 is the default port for HTTP communications in Consul.
 
 
 As another example, to see all nodes that are offering the RackHD 2.0 API service:
@@ -142,34 +143,8 @@ root@50283b1b6a03:/go/src/github.com/RackHD/neighborhood-manager# curl http://co
     }
 ]
 ```
-When you are done, run `exit` to stop the shell container, and `docker-compose kill` to stop the four containers running the Service Registry and its environment. 
+When you are done, run `exit` to stop the shell container, and `docker-compose kill` to stop the four containers running the Service Registry and its environment.
 
-
-
-## Dependency Management  
-### Adding a library dependency  
-When a new library is used for the first time, it must be added to Glide. Open the file `glide.yaml` and add a new line under the `import` heading:
-```
-import:
-- package: github.com/king-jam/gossdp
-```
-replacing the example GitHub link with the path that `go get` needs to grab the library. 
-
-When this is done, save `glide.yaml` and run `glide update` to copy the dependent source code to the `vendor/` folder.  
-
-After this, the steps in the next section should be done to lock in the specific version of the dependent library. 
-
-### Updating a library dependency
-When a dependent library has an updated commit that is desired (such as a big fix, added feature, etc), the library's entry in `glide.lock` should be updated. Open the file and find its entry, such as 
-```
-- name: github.com/hashicorp/consul
-  version: 36dc9201f2e006d4b5db1f0446b17357811297bf
-```
-Replace the existing commit hash with the hash of the new desired commit.  
-Save and close the file, then run `glide install`  
-
-[Git]: https://git-scm.com/
-[Docker]: https://docs.docker.com/engine/installation/
 [Docker-compose]: https://docs.docker.com/compose/install/
 [Consul Catalog API]: https://www.consul.io/docs/agent/http/catalog.html
 [Consul]: https://www.consul.io/downloads.html
