@@ -40,15 +40,23 @@ This call: Lists services in a given DC:
 `curl http://address:port/v1/catalog/services` where address:port is the address and port that the consul agent-client is listening on.
 
 ## Building
+We use docker to build our binaries.  The following steps assume a host is installed with the latest docker version.
 Download the [source] from GitHub  
-`go get -u github.com/rackhd/neighborhood-manager`  
-`cd rackhd`
+`git clone https://github.com/RackHD/neighborhood-manager.git`  
 
 Build the dependencies  
 `make deps`
 
-Build the proxy  
+Build the proxy
 `make build`
+
+If the host system does not have docker installed the following commands can be run to build locally.
+
+Build the dependencies  
+`make deps-local`
+
+Build the Service Registry  
+`make build-proxy-local`
 
 ## Running
 After building, the proxy binary (named `rackhd`) will be in the `rackhd/bin/` folder of from the source directory.

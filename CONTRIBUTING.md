@@ -1,5 +1,5 @@
-Neighborhood Manager Contributing Guidelines & Tips
-===================================================
+Neighborhood Manager Contribution Guidelines
+============================================
 
 ## Dependency Management  
 ### Adding a library dependency  
@@ -22,6 +22,3 @@ When a dependent library has an updated commit that is desired (such as a big fi
 ```
 Replace the existing commit hash with the hash of the new desired commit.  
 Save and close the file, then run `glide install`  
-
-[Git]: https://git-scm.com/
-[Docker]: https://docs.docker.com/engine/installation/

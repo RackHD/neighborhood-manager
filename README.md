@@ -12,10 +12,18 @@ The [RackHD Proxy] is a utility that acts as a proxy to the RackHD API.
 
 ## Libreg [![GoDoc](https://godoc.org/github.com/RackHD/neighborhood-manager/libreg?status.svg)](https://godoc.org/github.com/RackHD/neighborhood-manager/libreg)
 
-Libreg is an abstraction library to interface with a backend datastore.  Currently supports Consul.
+[Libreg] is an abstraction library to interface with a backend datastore.  Currently supports Consul.
 
 [Service Registry]: https://github.com/RackHD/neighborhood-manager/tree/master/registry
 [RackHD Proxy]: https://github.com/RackHD/neighborhood-manager/tree/master/rackhd
+[Libreg]: https://github.com/RackHD/neighborhood-manager/tree/master/libreg
+
+Prerequisites
+-------------
+
+This project is written in golang and some commands in the documentation assume a working go installation.
+
+This project also uses docker and for those commands we assume the latest docker version is installed.
 
 Contribute
 ----------

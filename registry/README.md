@@ -60,6 +60,7 @@ In this file, the `ServiceTag` and `ServiceTag2` identifiers under the `tags` fi
 The `registry.json` file found in the source code is currently configured to listen to advertisements from [Inservice-Agent] and [RackHD]
 
 ## Building
+We use docker to build our binaries.  The following steps assume a host is installed with the latest docker version.
 Download the [source] from GitHub  
 `git clone https://github.com/RackHD/neighborhood-manager.git`  
 
@@ -68,6 +69,14 @@ Build the dependencies
 
 Build the Service Registry  
 `make build`
+
+If the host system does not have docker installed the following commands can be run to build locally.
+
+Build the dependencies  
+`make deps-local`
+
+Build the Service Registry  
+`make build-registry-local`
 
 ## Running
 After building, the Service Registry binary (named `registry`) will be in the `bin/` folder of the source directory. To run it from there, copy `registry.json` to that location.  
@@ -153,3 +162,5 @@ When you are done, run `exit` to stop the shell container, and `docker-compose k
 [RackHD]: https://github.com/RackHD
 [configuring consul]: https://www.digitalocean.com/community/tutorials/how-to-configure-consul-in-a-production-environment-on-ubuntu-14-04
 [source]: https://github.com/RackHD/neighborhood-manager
+[Git]: https://git-scm.com/
+[Docker]: https://docs.docker.com/engine/installation/
