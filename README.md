@@ -17,6 +17,8 @@ The [RackHD Proxy] is a utility that acts as a proxy to the RackHD API.
 [Service Registry]: https://github.com/RackHD/neighborhood-manager/tree/master/registry
 [RackHD Proxy]: https://github.com/RackHD/neighborhood-manager/tree/master/rackhd
 [Libreg]: https://github.com/RackHD/neighborhood-manager/tree/master/libreg
+Basic Architecture Diagram
+------------------
 
 ![diagram](https://github.com/RackHD/neighborhood-manager/blob/gh-pages/NM_02OCT2016-1.png?raw=true)
 
