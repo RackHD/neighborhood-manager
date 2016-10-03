@@ -61,8 +61,7 @@ The `registry.json` file found in the source code is currently configured to lis
 
 ## Building
 Download the [source] from GitHub  
-`go get -u github.com/rackhd/neighborhood-manager`  
-`cd registry`
+`git clone https://github.com/RackHD/neighborhood-manager.git`  
 
 Build the dependencies  
 `make deps`
@@ -72,14 +71,13 @@ Build the Service Registry
 
 ## Running
 After building, the Service Registry binary (named `registry`) will be in the `bin/` folder of the source directory. To run it from there, copy `registry.json` to that location.  
-`cp registry.json ../bin/`  
+`cp registry/registry.json registry/bin/`  
 
 Move to that directory and run the Service Registry.  
 ```
-cd ../bin
+cd registry/bin
 ./registry
 ```
-
 
 ## Try It Out
 The steps in this section will guide you through getting a test/dev environment up and running. Use these steps if you want to see the Service Registry in action.

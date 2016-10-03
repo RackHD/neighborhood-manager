@@ -4,17 +4,16 @@ Neighborhood Manager
 [![Build Status](https://travis-ci.org/RackHD/neighborhood-manager.svg?branch=master)](https://travis-ci.org/RackHD/neighborhood-manager)
 [![Coverage Status](https://coveralls.io/repos/github/RackHD/neighborhood-manager/badge.svg?branch=master)](https://coveralls.io/github/RackHD/neighborhood-manager?branch=master)
 ##### Registry
-[![GoDoc](https://godoc.org/github.com/RackHD/neighborhood-manager/registry?status.svg)](https://godoc.org/github.com/RackHD/neighborhood-manager/registry)
-##### Libreg
-[![GoDoc](https://godoc.org/github.com/RackHD/neighborhood-manager/libreg?status.svg)](https://godoc.org/github.com/RackHD/neighborhood-manager/libreg)
 
-## Service Registry
+## Service Registry [![GoDoc](https://godoc.org/github.com/RackHD/neighborhood-manager/registry?status.svg)](https://godoc.org/github.com/RackHD/neighborhood-manager/registry)
 The [Service Registry] is a utility that will listen on the network for services that advertise themselves. The specific list of services a user would like to be notified about is configurable. When an advertisement is seen on the network from a configured service, the Service Registry collects information about the service, and registers the details with a storage backend of the user's choosing. Other applications can access this storage for aggregated information about all services available on a given network.
 
 ## RackHD Proxy
 The [RackHD Proxy] is a utility that acts as a proxy to the RackHD API.
 
+## Libreg [![GoDoc](https://godoc.org/github.com/RackHD/neighborhood-manager/libreg?status.svg)](https://godoc.org/github.com/RackHD/neighborhood-manager/libreg)
 
+Libreg is an abstraction library to interface with a backend datastore.  Currently supports Consul.
 
 [Service Registry]: https://github.com/RackHD/neighborhood-manager/tree/master/registry
 [RackHD Proxy]: https://github.com/RackHD/neighborhood-manager/tree/master/rackhd
@@ -29,14 +28,8 @@ Code and bug submissions are handled on GitHub using the Issues tab for this rep
 Community
 ---------
 
-We also have a #InfraEnablers Slack channel: You can get an invite by requesting one at http://community.emccode.com.
+We also have a #InfraEnablers Slack channel: You can request an invite at http://community.emccode.com.
 
-Documentation
--------------
-
-You can find documentation for Registry here: [![GoDoc](https://godoc.org/github.com/RackHD/neighborhood-manager/registry?status.svg)](https://godoc.org/github.com/RackHD/neighborhood-manager/registry)
-
-You can find documentation for Libreg here: [![GoDoc](https://godoc.org/github.com/RackHD/neighborhood-manager/libreg?status.svg)](https://godoc.org/github.com/RackHD/neighborhood-manager/libreg)
 
 Licensing
 ---------
