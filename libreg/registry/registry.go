@@ -64,11 +64,20 @@ type Registry interface {
 	// Nodes lists all nodes in a given DC
 	Nodes(options *QueryOptions) ([]*Node, error)
 
+	// NodesWatch watches for changes to the nodes list
+	NodesWatch(options *QueryOptions, stopCh <-chan struct{}) (<-chan []*Node, error)
+
 	// Services lists all services in a given DC
 	Services(options *QueryOptions) (map[string][]string, error)
 
+	// ServicesWatch watches for changes to the list of services in a given DC
+	ServicesWatch(options *QueryOptions, stopCh <-chan struct{}) (<-chan map[string][]string, error)
+
 	// Service lists the nodes in a given service
 	Service(service, tag string, options *QueryOptions) ([]*CatalogService, error)
+
+	// ServiceWatch watches for changes to a service in a given DC
+	ServiceWatch(service, tag string, options *QueryOptions, stopChan <-chan struct{}) (<-chan []*CatalogService, error)
 
 	// Node lists the services provided by a given node
 	Node(node string, options *QueryOptions) (*CatalogNode, error)
