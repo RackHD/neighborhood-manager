@@ -99,6 +99,12 @@ func (m *Mock) Nodes(options *registry.QueryOptions) ([]*registry.Node, error) {
 	return keys, nil
 }
 
+// NodesWatch watches for changes to the nodes in a given DC
+func (m *Mock) NodesWatch(options *registry.QueryOptions, stopChan <-chan struct{}) (<-chan []*registry.Node, error) {
+	watchCh := make(chan []*registry.Node)
+	return watchCh, nil
+}
+
 // Services lists all services in a given DC
 func (m *Mock) Services(options *registry.QueryOptions) (map[string][]string, error) {
 	serviceMap := make(map[string][]string)
@@ -113,6 +119,12 @@ func (m *Mock) Services(options *registry.QueryOptions) (map[string][]string, er
 	}
 
 	return serviceMap, nil
+}
+
+// ServicesWatch watches for changes to the list of services in a given DC
+func (m *Mock) ServicesWatch(options *registry.QueryOptions, stopChan <-chan struct{}) (<-chan map[string][]string, error) {
+	watchCh := make(chan map[string][]string)
+	return watchCh, nil
 }
 
 // Service lists the nodes in a given service
@@ -149,6 +161,12 @@ func (m *Mock) Service(service, tag string, options *registry.QueryOptions) ([]*
 		}
 	}
 	return c, nil
+}
+
+// ServiceWatch watches for changes to the list of nodes under a given service
+func (m *Mock) ServiceWatch(service, tag string, options *registry.QueryOptions, stopChan <-chan struct{}) (<-chan []*registry.CatalogService, error) {
+	watchCh := make(chan []*registry.CatalogService)
+	return watchCh, nil
 }
 
 // Node lists the services provided by a given node

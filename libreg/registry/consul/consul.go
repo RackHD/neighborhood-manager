@@ -12,6 +12,12 @@ import (
 	"github.com/hashicorp/consul/api"
 )
 
+const (
+	// DefaultWatchWaitTime is how long we will block when watching
+	// for services or nodes to change/update
+	DefaultWatchWaitTime = 15 * time.Second
+)
+
 var (
 	// ErrMultipleEndpointsUnsupported is thrown when there are
 	// multiple endpoints specified for Consul
@@ -156,12 +162,100 @@ func (s *Consul) Nodes(options *registry.QueryOptions) ([]*registry.Node, error)
 	return retNodes, err
 }
 
+// NodesWatch watches for changes to the nodes in a given DC
+func (s *Consul) NodesWatch(options *registry.QueryOptions, stopChan <-chan struct{}) (<-chan []*registry.Node, error) {
+	catalog := s.client.Catalog()
+	queryOps := s.getQueryOptions(options)
+	watchCh := make(chan []*registry.Node)
+
+	go func() {
+		defer close(watchCh)
+
+		// Override the wait time option to create the watch
+		queryOps.WaitTime = DefaultWatchWaitTime
+
+		for {
+			select {
+			case <-stopChan:
+				return
+			default:
+			}
+
+			nodes, meta, err := catalog.Nodes(queryOps)
+			if err != nil {
+				return
+			}
+
+			// If LastIndex didn't change then it means `Get` returned
+			// because of the WaitTime and the key didn't change.
+			if queryOps.WaitIndex == meta.LastIndex {
+				continue
+			}
+
+			queryOps.WaitIndex = meta.LastIndex
+
+			var retNodes []*registry.Node
+			for _, v := range nodes {
+				retNodes = append(retNodes, &registry.Node{
+					Node:    v.Node,
+					Address: v.Address,
+				})
+			}
+
+			watchCh <- retNodes
+		}
+	}()
+
+	return watchCh, nil
+}
+
 // Services lists all services in a given DC
 func (s *Consul) Services(options *registry.QueryOptions) (map[string][]string, error) {
 	catalog := s.client.Catalog()
 	queryOps := s.getQueryOptions(options)
 	services, _, err := catalog.Services(queryOps)
 	return services, err
+}
+
+// ServicesWatch watches for changes to the list of services in a given DC
+func (s *Consul) ServicesWatch(options *registry.QueryOptions, stopChan <-chan struct{}) (<-chan map[string][]string, error) {
+	catalog := s.client.Catalog()
+	queryOps := s.getQueryOptions(options)
+	watchCh := make(chan map[string][]string)
+
+	go func() {
+		defer close(watchCh)
+
+		// Override the wait time option to create the watch
+		queryOps.WaitTime = DefaultWatchWaitTime
+
+		for {
+			select {
+			case <-stopChan:
+				return
+			default:
+			}
+
+			services, meta, err := catalog.Services(queryOps)
+			if err != nil {
+				return
+			}
+
+			// If LastIndex didn't change then it means `Get` returned
+			// because of the WaitTime and the key didn't change.
+			if queryOps.WaitIndex == meta.LastIndex {
+				continue
+			}
+
+			queryOps.WaitIndex = meta.LastIndex
+
+			if services != nil {
+				watchCh <- services
+			}
+		}
+	}()
+
+	return watchCh, nil
 }
 
 // Service lists the nodes in a given service
@@ -186,6 +280,62 @@ func (s *Consul) Service(service, tag string, options *registry.QueryOptions) ([
 		})
 	}
 	return retServices, err
+}
+
+// ServiceWatch watches for changes to the list of nodes under a given service
+func (s *Consul) ServiceWatch(service, tag string, options *registry.QueryOptions, stopChan <-chan struct{}) (<-chan []*registry.CatalogService, error) {
+	catalog := s.client.Catalog()
+	queryOps := s.getQueryOptions(options)
+	watchCh := make(chan []*registry.CatalogService)
+
+	go func() {
+		defer close(watchCh)
+
+		// Override the wait time option to create the watch
+		queryOps.WaitTime = DefaultWatchWaitTime
+
+		for {
+			select {
+			case <-stopChan:
+				return
+			default:
+			}
+
+			services, meta, err := catalog.Service(
+				service,
+				tag,
+				queryOps)
+			if err != nil {
+				return
+			}
+
+			// If LastIndex didn't change then it means `Get` returned
+			// because of the WaitTime and the key didn't change.
+			if queryOps.WaitIndex == meta.LastIndex {
+				continue
+			}
+
+			queryOps.WaitIndex = meta.LastIndex
+
+			var retServices []*registry.CatalogService
+			for _, v := range services {
+				retServices = append(retServices, &registry.CatalogService{
+					Node:                     v.Node,
+					Address:                  v.Address,
+					ServiceID:                v.ServiceID,
+					ServiceName:              v.ServiceName,
+					ServiceAddress:           v.ServiceAddress,
+					ServiceTags:              v.ServiceTags,
+					ServicePort:              v.ServicePort,
+					ServiceEnableTagOverride: v.ServiceEnableTagOverride,
+				})
+			}
+
+			watchCh <- retServices
+		}
+	}()
+
+	return watchCh, nil
 }
 
 // Node lists the services provided by a given node
