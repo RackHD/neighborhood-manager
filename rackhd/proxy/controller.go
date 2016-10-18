@@ -36,6 +36,7 @@ type Server struct {
 func (p *Server) Serve() {
 	m := http.NewServeMux()
 	m.HandleFunc("/test", p.HandleTest)
+	m.HandleFunc("/instances", p.HandleInstances)
 	m.HandleFunc("/", p.HandleNodes)
 	http.ListenAndServe(fmt.Sprintf("%s:%d", p.Address, p.Port), m)
 }
@@ -54,6 +55,23 @@ func NewServer(proxyIP, serviceName, datacenter, backendAddr string, backend reg
 		wg:      &sync.WaitGroup{},
 	}
 	return proxyServer, nil
+}
+
+// HandleInstances returns the RackHD IPs under management
+func (p *Server) HandleInstances(w http.ResponseWriter, r *http.Request) {
+	addrMap, err := p.GetAddresses(w, r)
+	if len(addrMap) == 0 {
+		w.WriteHeader(200)
+		w.Write([]byte("[]"))
+		return
+	}
+	if err != nil {
+		w.WriteHeader(500)
+		msg := Err{Msg: "Internal error fetching endpoint addresses."}
+		json.NewEncoder(w).Encode(msg)
+		return
+	}
+	json.NewEncoder(w).Encode(addrMap)
 }
 
 // HandleTest is....well a test
