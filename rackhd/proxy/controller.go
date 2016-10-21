@@ -76,6 +76,7 @@ func (p *Server) HandleNodes(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(msg)
 		return
 	}
+	DecodeBody(r)
 	ar := p.GetResp(r, addrMap)
 	p.RespHeaderWriter(r, w, ar)
 	p.RespCheck(r, w, ar)
