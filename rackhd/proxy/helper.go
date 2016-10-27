@@ -16,6 +16,11 @@ type Response struct {
 	Error      error
 }
 
+func (r *Response) Write(in []byte) (int, error) {
+	r.Body = append(r.Body[:], in[:]...)
+	return len(in), nil
+}
+
 // NewResponse copies a http.Response into a proxy Response
 func NewResponse(resp *http.Response) (*Response, error) {
 	body, err := ioutil.ReadAll(resp.Body)

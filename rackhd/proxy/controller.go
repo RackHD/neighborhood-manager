@@ -10,25 +10,21 @@ import (
 	"sync"
 	"time"
 
-	regStore "github.com/RackHD/neighborhood-manager/libreg/registry"
-	"github.com/RackHD/neighborhood-manager/libreg/registry/consul"
-	"github.com/RackHD/neighborhood-manager/rackhd/watcher"
 	"github.com/hashicorp/go-cleanhttp"
 )
 
 // Responses is an array of Response structs
 type Responses []Response
 
-// Err creates an error message to print
-type Err struct {
-	Msg string `json:"msg"`
-}
+// // Err creates an error message to print
+// type Err struct {
+// 	Msg string `json:"msg"`
+// }
 
 // Server is the proxy server struct
 type Server struct {
 	Address string
 	Port    int
-	Store   *watcher.Monitor
 	wg      *sync.WaitGroup
 }
 
@@ -42,16 +38,10 @@ func (p *Server) Serve() {
 }
 
 // NewServer initializes a new Server
-func NewServer(proxyIP, serviceName, datacenter, backendAddr string, backend regStore.Backend, proxyPort int) (*Server, error) {
-	consul.Register()
-	m, err := watcher.NewMonitor(serviceName, datacenter, backendAddr, backend)
-	if err != nil {
-		return nil, err
-	}
+func NewServer(proxyIP string, proxyPort int) (*Server, error) {
 	proxyServer := &Server{
 		Address: proxyIP,
 		Port:    proxyPort,
-		Store:   m,
 		wg:      &sync.WaitGroup{},
 	}
 	return proxyServer, nil
@@ -162,11 +152,11 @@ func (p *Server) GetAddresses(w http.ResponseWriter, r *http.Request) (map[strin
 
 // GetStoredAddresses calls GetAddresses and returns a map of addresses
 func (p *Server) GetStoredAddresses() (map[string]struct{}, error) {
-	addresses, err := p.Store.GetAddresses()
-	if err != nil {
-		log.Printf("Did not get IP List ==> %s\n", err)
-	}
-	return addresses, err
+	// addresses, err := p.Store.GetAddresses()
+	// if err != nil {
+	// 	log.Printf("Did not get IP List ==> %s\n", err)
+	// }
+	return nil, nil
 }
 
 // GetQueryAddresses retrives a url flag and returns a map of address(es)
