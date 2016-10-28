@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io/ioutil"
 	"log"
+	//	"net"
 	"net/http"
 	"sync"
 
@@ -152,5 +153,29 @@ func GetStoredAddresses(identifier string) (map[string]struct{}, error) {
 	// if err != nil {
 	// 	log.Printf("Did not get IP List ==> %s\n", err)
 	// }
+	return nil, nil
+}
+
+// GetQuery checks if there is a query and retrives it
+func GetQuery(queryKey string, r *http.Request, rw http.ResponseWriter) (map[string]struct{}, error) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return nil, err
+	}
+	querySlice := r.URL.Query()
+	if len(querySlice[queryKey]) > 0 {
+		queryMap := make(map[string]struct{})
+		for _, elem := range querySlice[queryKey] {
+			// ip, port, err := net.SplitHostPort(elem)
+			// if err != nil {
+			// 	return nil, err
+			// }
+			// if net.ParseIP(ip) != nil {
+			// 	queryMap[ip+":"+port] = struct{}{}
+			// }
+			queryMap[elem] = struct{}{}
+		}
+		return queryMap, nil
+	}
 	return nil, nil
 }
