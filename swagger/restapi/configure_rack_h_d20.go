@@ -8,6 +8,7 @@ import (
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
 
+	"github.com/RackHD/neighborhood-manager/rackhd/proxy"
 	"github.com/RackHD/neighborhood-manager/swagger/restapi/operations"
 	"github.com/RackHD/neighborhood-manager/swagger/restapi/operations/api_2_0"
 )
@@ -43,22 +44,22 @@ func configureAPI(api *operations.RackHD20API) http.Handler {
 	api.JSONProducer = runtime.JSONProducer()
 
 	api.API20AddRoleHandler = api_2_0.AddRoleHandlerFunc(func(params api_2_0.AddRoleParams) middleware.Responder {
-		return middleware.NotImplemented("operation api_2_0.AddRole has not yet been implemented")
+		return proxy.HandleAllMiddleware(params.HTTPRequest)
 	})
 	api.API20AddUserHandler = api_2_0.AddUserHandlerFunc(func(params api_2_0.AddUserParams) middleware.Responder {
-		return middleware.NotImplemented("operation api_2_0.AddUser has not yet been implemented")
+		return proxy.HandleAllMiddleware(params.HTTPRequest)
 	})
 	api.API20CatalogsGetHandler = api_2_0.CatalogsGetHandlerFunc(func(params api_2_0.CatalogsGetParams) middleware.Responder {
-		return middleware.NotImplemented("operation api_2_0.CatalogsGet has not yet been implemented")
+		return proxy.HandleAllMiddleware(params.HTTPRequest)
 	})
 	api.API20CatalogsIDGetHandler = api_2_0.CatalogsIDGetHandlerFunc(func(params api_2_0.CatalogsIDGetParams) middleware.Responder {
 		return middleware.NotImplemented("operation api_2_0.CatalogsIDGet has not yet been implemented")
 	})
 	api.API20ConfigGetHandler = api_2_0.ConfigGetHandlerFunc(func(params api_2_0.ConfigGetParams) middleware.Responder {
-		return middleware.NotImplemented("operation api_2_0.ConfigGet has not yet been implemented")
+		return proxy.HandleAllMiddleware(params.HTTPRequest)
 	})
 	api.API20ConfigPatchHandler = api_2_0.ConfigPatchHandlerFunc(func(params api_2_0.ConfigPatchParams) middleware.Responder {
-		return middleware.NotImplemented("operation api_2_0.ConfigPatch has not yet been implemented")
+		return proxy.HandleAllMiddleware(params.HTTPRequest)
 	})
 	api.API20CreateTagHandler = api_2_0.CreateTagHandlerFunc(func(params api_2_0.CreateTagParams) middleware.Responder {
 		return middleware.NotImplemented("operation api_2_0.CreateTag has not yet been implemented")
@@ -73,7 +74,7 @@ func configureAPI(api *operations.RackHD20API) http.Handler {
 		return middleware.NotImplemented("operation api_2_0.FilesGet has not yet been implemented")
 	})
 	api.API20FilesGetAllHandler = api_2_0.FilesGetAllHandlerFunc(func(params api_2_0.FilesGetAllParams) middleware.Responder {
-		return middleware.NotImplemented("operation api_2_0.FilesGetAll has not yet been implemented")
+		return proxy.HandleAllMiddleware(params.HTTPRequest)
 	})
 	api.API20FilesMd5GetHandler = api_2_0.FilesMd5GetHandlerFunc(func(params api_2_0.FilesMd5GetParams) middleware.Responder {
 		return middleware.NotImplemented("operation api_2_0.FilesMd5Get has not yet been implemented")
@@ -85,7 +86,7 @@ func configureAPI(api *operations.RackHD20API) http.Handler {
 		return middleware.NotImplemented("operation api_2_0.FilesPut has not yet been implemented")
 	})
 	api.API20GetAllTagsHandler = api_2_0.GetAllTagsHandlerFunc(func(params api_2_0.GetAllTagsParams) middleware.Responder {
-		return middleware.NotImplemented("operation api_2_0.GetAllTags has not yet been implemented")
+		return proxy.HandleAllMiddleware(params.HTTPRequest)
 	})
 	api.API20GetBootstrapHandler = api_2_0.GetBootstrapHandlerFunc(func(params api_2_0.GetBootstrapParams) middleware.Responder {
 		return middleware.NotImplemented("operation api_2_0.GetBootstrap has not yet been implemented")
@@ -106,10 +107,10 @@ func configureAPI(api *operations.RackHD20API) http.Handler {
 		return middleware.NotImplemented("operation api_2_0.GetUser has not yet been implemented")
 	})
 	api.API20ListRolesHandler = api_2_0.ListRolesHandlerFunc(func(params api_2_0.ListRolesParams) middleware.Responder {
-		return middleware.NotImplemented("operation api_2_0.ListRoles has not yet been implemented")
+		return proxy.HandleAllMiddleware(params.HTTPRequest)
 	})
 	api.API20ListUsersHandler = api_2_0.ListUsersHandlerFunc(func(params api_2_0.ListUsersParams) middleware.Responder {
-		return middleware.NotImplemented("operation api_2_0.ListUsers has not yet been implemented")
+		return proxy.HandleAllMiddleware(params.HTTPRequest)
 	})
 	api.API20LookupsDelByIDHandler = api_2_0.LookupsDelByIDHandlerFunc(func(params api_2_0.LookupsDelByIDParams) middleware.Responder {
 		return middleware.NotImplemented("operation api_2_0.LookupsDelByID has not yet been implemented")
@@ -145,16 +146,12 @@ func configureAPI(api *operations.RackHD20API) http.Handler {
 		return middleware.NotImplemented("operation api_2_0.NodesDelTagByID has not yet been implemented")
 	})
 	api.API20NodesGetAllHandler = api_2_0.NodesGetAllHandlerFunc(func(params api_2_0.NodesGetAllParams) middleware.Responder {
-		// pass params.HTTPRequest
-
-		return middleware.Responder
-		return middleware.NotImplemented("operation api_2_0.NodesGetAll has not yet been implemented")
+		return proxy.HandleAllMiddleware(params.HTTPRequest)
 	})
 	api.API20NodesGetByIDHandler = api_2_0.NodesGetByIDHandlerFunc(func(params api_2_0.NodesGetByIDParams) middleware.Responder {
-		return middleware.NotImplemented("operation api_2_0.NodesGetByID has not yet been implemented")
+		return proxy.HandleSingleMiddleware(params.Identifier, params.HTTPRequest)
 	})
 	api.API20NodesGetCatalogByIDHandler = api_2_0.NodesGetCatalogByIDHandlerFunc(func(params api_2_0.NodesGetCatalogByIDParams) middleware.Responder {
-		params.
 		return middleware.NotImplemented("operation api_2_0.NodesGetCatalogByID has not yet been implemented")
 	})
 	api.API20NodesGetCatalogSourceByIDHandler = api_2_0.NodesGetCatalogSourceByIDHandlerFunc(func(params api_2_0.NodesGetCatalogSourceByIDParams) middleware.Responder {

@@ -5,7 +5,13 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sync"
+
+	"github.com/hashicorp/go-cleanhttp"
 )
+
+// Responses is an array of Response structs
+type Responses []Response
 
 // Response is the internal proxy response object
 type Response struct {
@@ -15,6 +21,8 @@ type Response struct {
 	RequestURL string
 	Error      error
 }
+
+var wg *sync.WaitGroup
 
 func (r *Response) Write(in []byte) (int, error) {
 	r.Body = append(r.Body[:], in[:]...)
@@ -65,4 +73,84 @@ func NewRequest(r *http.Request, host string) (*http.Request, error) {
 		}
 	}
 	return req, nil
+}
+
+// GetResponses makes channels for the response and errors from http.Get.
+// A go func is spun up for each http.Get and the responses are fed
+// into their respective channels.
+func GetResponses(r *http.Request, addrs map[string]struct{}) Responses {
+	cr := make(chan *Response, len(addrs))
+	for entry := range addrs {
+		wg.Add(1)
+		go func(entry string, r *http.Request) {
+			defer wg.Done()
+			req, err := NewRequest(r, entry)
+			if err != nil {
+				cr <- NewResponseFromError(err)
+				return
+			}
+			client := cleanhttp.DefaultClient()
+			respGet, err := client.Do(req)
+			if err != nil {
+				cr <- NewResponseFromError(err)
+				return
+			}
+			defer respGet.Body.Close()
+			responseCopy, err := NewResponse(respGet)
+			if err != nil {
+				cr <- NewResponseFromError(err)
+				return
+			}
+			cr <- responseCopy
+		}(entry, r)
+	}
+	wg.Wait()
+	close(cr)
+	var allResp Responses
+	for entry := range cr {
+		allResp = append(allResp, *entry)
+	}
+	return allResp
+}
+
+// RespCheck identifies the type of initialResp.Body and writes to the ResponseWriter.
+func RespCheck(allResp Responses, resp *Response) {
+	var cutSize int
+	if len(allResp) <= 1 {
+		resp.Header = allResp[0].Header
+	}
+	resp.Write([]byte("["))
+	for i, r := range allResp {
+		if r.Body == nil || ((r.Body[0] == '[') && (r.Body[1] == ']')) {
+			continue
+		}
+		if r.Body[0] == '[' {
+			cutSize = 1
+		} else if r.Body[0] == '{' {
+			cutSize = 0
+		} else {
+			continue
+		}
+		resp.Write(r.Body[cutSize : len(r.Body)-cutSize])
+		if i != len(allResp)-1 {
+			resp.Write([]byte(","))
+		}
+		if resp.StatusCode > r.StatusCode {
+			resp.StatusCode = r.StatusCode
+		}
+	}
+	resp.Write([]byte("]"))
+}
+
+// GetStoredAddresses calls GetAddresses and returns a map of addresses
+func GetStoredAddresses(identifier string) (map[string]struct{}, error) {
+	if identifier != "" {
+		//GO fetch one endpoint
+		return nil, nil
+	}
+	// addresses, err := p.Store.GetAddresses()
+	// if err != nil {
+	// 	log.Printf("Did not get IP List ==> %s\n", err)
+	// }
+	return nil, nil
 }
