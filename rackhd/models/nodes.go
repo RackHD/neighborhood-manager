@@ -72,7 +72,7 @@ func CreateNodeCache(node *RhdNode) error {
 
 // GetRhdIDByNodeID returns the RHD ID for a node
 func GetRhdIDByNodeID(id string) (string, error) {
-	nodePath := nodesPrefix + id
+	nodesPath := nodesPrefix + id
 	pair, err := db.Get(nodesPath, nil)
 	return string(pair.Value), err
 }
