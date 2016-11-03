@@ -1,5 +1,10 @@
 package: github.com/RackHD/neighborhood-manager
 import:
+- package: github.com/docker/libkv
+  version: ~0.2.1
+  subpackages:
+  - store
+  - store/consul
 - package: github.com/hashicorp/consul
   version: ~0.7.0
   subpackages:
@@ -7,6 +12,7 @@ import:
 - package: github.com/hashicorp/go-cleanhttp
 - package: github.com/king-jam/gossdp
 - package: github.com/spf13/viper
+- package: github.com/streadway/amqp
 testImport:
 - package: github.com/onsi/ginkgo
   version: ~1.2.0

@@ -1,6 +1,11 @@
-hash: 2b890c093c96eb470377b1f5353c8a2e406a845d341f69279d97e24858290a08
-updated: 2016-09-28T09:23:37.518411878-04:00
+hash: 7c32608f6d6cd807c9980e7a2d4a1a33b8228ef96330356cdb61e5e43238b693
+updated: 2016-11-03T16:39:42.413706504-04:00
 imports:
+- name: github.com/docker/libkv
+  version: aabc039ad04deb721e234f99cd1b4aa28ac71a40
+  subpackages:
+  - store
+  - store/consul
 - name: github.com/fsnotify/fsnotify
   version: f12c6236fe7b5cf6bcf30e5935d08cb079d78334
 - name: github.com/hashicorp/consul
@@ -53,6 +58,8 @@ imports:
   version: 103ce5cd2042f2fe629c1957abb64ab3e7f50235
 - name: github.com/spf13/viper
   version: 7fb2782df3d83e0036cc89f461ed0422628776f4
+- name: github.com/streadway/amqp
+  version: 2e25825abdbd7752ff08b270d313b93519a0a232
 - name: golang.org/x/crypto
   version: 7e016f1856e33d687a3a722085e249982e673aff
   subpackages:
