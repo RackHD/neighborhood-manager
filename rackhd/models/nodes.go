@@ -30,7 +30,7 @@ func CreateNode(node *RhdNode) error {
 
 // UpdateNode updates a RhdNode on the backend
 func UpdateNode(node *RhdNode) error {
-	nodePath := rhdPrefix + node.RhdID + "/" + nodePrefix + node.ID
+	nodePath := rhdPrefix + node.RhdID + "/" + nodesPrefix + node.ID
 	if err := CreateNodeCache(node); err != nil {
 		return err
 	}
@@ -67,13 +67,13 @@ func GetNodesByRhdIDByNodeIDs(rid string, ids []string) ([]*RhdNode, error) {
 // CreateNodeCache stores the cache layer lookup functionality
 func CreateNodeCache(node *RhdNode) error {
 	nodePath := nodesPrefix + node.ID
-	return db.Put(nodePath, node.RhdID, nil)
+	return db.Put(nodePath, []byte(node.RhdID), nil)
 }
 
 // GetRhdIDByNodeID returns the RHD ID for a node
 func GetRhdIDByNodeID(id string) (string, error) {
 	nodePath := nodesPrefix + id
-	pair, err := db.Get(nodePath, nil)
+	pair, err := db.Get(nodesPath, nil)
 	return string(pair.Value), err
 }
 
