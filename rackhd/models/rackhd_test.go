@@ -51,10 +51,10 @@ var _ = Describe("RackHD Models", func() {
 			})
 
 			It("should populate the fields correctly", func() {
-				Expect(rhd.HttpConf).Should(BeAssignableToTypeOf(models.HttpConfig{}))
+				Expect(rhd.HTTPConf).Should(BeAssignableToTypeOf(models.HTTPConfig{}))
 				Expect(rhd.AmqpConf).Should(BeAssignableToTypeOf(models.AmqpConfig{}))
 				Expect(rhd.ID).To(Equal(rhd1UUID))
-				Expect(rhd.HttpConf.URL.String()).To(Equal(rhd1HTTP))
+				Expect(rhd.HTTPConf.URL.String()).To(Equal(rhd1HTTP))
 				Expect(rhd.AmqpConf.URI.String()).To(Equal(rhd1AMQP))
 			})
 
@@ -92,9 +92,9 @@ var _ = Describe("RackHD Models", func() {
 			})
 
 			It("should populate the HTTP field correctly", func() {
-				Expect(rhd.HttpConf).Should(BeAssignableToTypeOf(models.HttpConfig{}))
+				Expect(rhd.HTTPConf).Should(BeAssignableToTypeOf(models.HTTPConfig{}))
 				Expect(rhd.AmqpConf).Should(BeAssignableToTypeOf(models.AmqpConfig{}))
-				Expect(rhd.HttpConf.URL.String()).To(Equal(rhd1HTTP))
+				Expect(rhd.HTTPConf.URL.String()).To(Equal(rhd1HTTP))
 				Expect(rhd.AmqpConf.URI.String()).NotTo(Equal(rhd1AMQP))
 			})
 
@@ -193,7 +193,7 @@ var _ = Describe("RackHD Models", func() {
 			It("should return the right RHD", func() {
 				rhd, _ := models.GetRhdByID(rhd2UUID)
 				Expect(rhd.ID).To(Equal(rhd2UUID))
-				Expect(rhd.HttpConf.URL.String()).To(Equal(rhd2HTTP))
+				Expect(rhd.HTTPConf.URL.String()).To(Equal(rhd2HTTP))
 				Expect(rhd.AmqpConf.URI.String()).To(Equal(rhd2AMQP))
 			})
 		})
