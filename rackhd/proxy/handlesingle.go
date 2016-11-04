@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -30,7 +31,8 @@ func (s *HandleSingle) WriteResponse(rw http.ResponseWriter, rp runtime.Producer
 	resp := Response{}
 	if len(addrMap) == 0 {
 
-		resp.Body = []byte("{No endpoints under management.}")
+		msg := Err{Msg: "Internal error fetching endpoint addresses."}
+		resp.Body, err = json.Marshal(msg)
 		resp.StatusCode = http.StatusOK
 
 	} else if err != nil {
@@ -57,6 +59,7 @@ func (s *HandleSingle) WriteResponse(rw http.ResponseWriter, rp runtime.Producer
 		rw.WriteHeader(http.StatusInternalServerError)
 	}
 
+	//	dec := json.NewDecoder(resp.Body)
 	if err := rp.Produce(rw, resp.Body); err != nil {
 		panic(err)
 	}

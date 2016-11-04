@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	//	"encoding/json"
 	"fmt"
 	"net/http"
 	"sync"
@@ -31,7 +32,9 @@ func (a *HandleAll) WriteResponse(rw http.ResponseWriter, rp runtime.Producer) {
 	resp := Response{}
 	if len(addrMap) == 0 {
 
-		resp.Body = []byte("{No endpoints under management.}")
+		resp.Body = []byte("Internal error fetching endpoint addresses.")
+		//		msg := Err{Msg: "Internal error fetching endpoint addresses."}
+		//		resp.Body, err = json.Marshal(msg)
 		resp.StatusCode = http.StatusOK
 
 	} else if err != nil {
@@ -58,7 +61,7 @@ func (a *HandleAll) WriteResponse(rw http.ResponseWriter, rp runtime.Producer) {
 		rw.WriteHeader(http.StatusInternalServerError)
 	}
 
-	if err := rp.Produce(rw, resp.Body); err != nil {
+	if err := rp.Produce(rw, string(resp.Body)); err != nil {
 		panic(err)
 	}
 }

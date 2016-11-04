@@ -2,6 +2,8 @@ package proxy
 
 import (
 	"bytes"
+	//	"encoding/json"
+	//	"io"
 	"io/ioutil"
 	"log"
 	//	"net"
@@ -9,6 +11,7 @@ import (
 	"sync"
 
 	"github.com/hashicorp/go-cleanhttp"
+	"github.com/neighborhood-manager/rackhd/models"
 )
 
 // Responses is an array of Response structs
@@ -21,6 +24,11 @@ type Response struct {
 	Body       []byte
 	RequestURL string
 	Error      error
+}
+
+// Err creates an error message to print
+type Err struct {
+	Msg string `json:"msg"`
 }
 
 var wg *sync.WaitGroup
@@ -149,11 +157,15 @@ func GetStoredAddresses(identifier string) (map[string]struct{}, error) {
 		//GO fetch one endpoint
 		return nil, nil
 	}
-	// addresses, err := p.Store.GetAddresses()
-	// if err != nil {
-	// 	log.Printf("Did not get IP List ==> %s\n", err)
-	// }
-	return nil, nil
+	addrMap := make(map[string]struct{})
+	rHDs, err := models.GetAllRhd()
+	if err != nil {
+		return nil, err
+	}
+	for _, object := range rHDs {
+		addrMap[object.HttpConf.URL.Host] = struct{}{}
+	}
+	return addrMap, nil
 }
 
 // GetQuery checks if there is a query and retrives it
@@ -179,3 +191,23 @@ func GetQuery(queryKey string, r *http.Request, rw http.ResponseWriter) (map[str
 	}
 	return nil, nil
 }
+
+//
+// // DecodeBody is used to JSON decode a body
+// func DecodeBody(resp *Response, out interface{}) error {
+// 	dec := json.NewDecoder(resp.Body)
+// 	return dec.Decode(out)
+// }
+//
+// // EncodeBody is used to encode a request body
+// func EncodeBody(obj interface{}) (io.Reader, error) {
+// 	if obj == nil {
+// 		return nil, nil
+// 	}
+// 	buf := bytes.NewBuffer(nil)
+// 	enc := json.NewEncoder(buf)
+// 	if err := enc.Encode(obj); err != nil {
+// 		return nil, err
+// 	}
+// 	return buf, nil
+// }
