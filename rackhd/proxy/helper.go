@@ -7,11 +7,12 @@ import (
 	"io/ioutil"
 	"log"
 	//	"net"
+	"fmt"
 	"net/http"
 	"sync"
 
+	"github.com/RackHD/neighborhood-manager/rackhd/models"
 	"github.com/hashicorp/go-cleanhttp"
-	"github.com/neighborhood-manager/rackhd/models"
 )
 
 // Responses is an array of Response structs
@@ -157,14 +158,18 @@ func GetStoredAddresses(identifier string) (map[string]struct{}, error) {
 		//GO fetch one endpoint
 		return nil, nil
 	}
+	fmt.Printf("HERE=====>>> %s\n\n", identifier)
 	addrMap := make(map[string]struct{})
 	rHDs, err := models.GetAllRhd()
 	if err != nil {
+		fmt.Printf("HERE1 ===>> %s\n", err)
+
 		return nil, err
 	}
 	for _, object := range rHDs {
-		addrMap[object.HttpConf.URL.Host] = struct{}{}
+		addrMap[object.HTTPConf.URL.Host] = struct{}{}
 	}
+	fmt.Printf("HERE=====>>> ADDRMAP %+v\n\n", addrMap)
 	return addrMap, nil
 }
 
