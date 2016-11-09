@@ -11,6 +11,7 @@ import (
 
 	regStore "github.com/RackHD/neighborhood-manager/libreg/registry"
 	"github.com/RackHD/neighborhood-manager/libreg/registry/consul"
+	"github.com/RackHD/neighborhood-manager/rackhd/manager"
 	"github.com/RackHD/neighborhood-manager/rackhd/models"
 	"github.com/RackHD/neighborhood-manager/rackhd/watcher"
 	"github.com/RackHD/neighborhood-manager/swagger/restapi"
@@ -44,11 +45,11 @@ func main() {
 	consul.Register()
 	models.InitBackend()
 	msgChan := make(chan *watcher.Message)
-	ms
 	_, err := watcher.NewMonitor(serviceName, datacenter, backendAddr, regStore.CONSUL, msgChan)
 	if err != nil {
 		fmt.Printf("Error creating monitor %s\n", err)
 	}
+	_, err = rhdman.NewRackHDMan(msgChan)
 
 	// New manager
 	// pass channel into manager

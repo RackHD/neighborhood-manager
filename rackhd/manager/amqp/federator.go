@@ -2,14 +2,23 @@ package federator
 
 import (
 	"fmt"
-	"github.com/RackHD/neighborhood-manager/rackhd/manager"
 	"github.com/michaelklishin/rabbit-hole"
 	"github.com/streadway/amqp"
-	"log"
-	"net"
 	"net/url"
-	"sync"
 )
+
+var exchangeList = []ExchangeConfig{
+	ExchangeConfig{
+		ExchangeName: "on.events",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
+		ExchangeName: "on.heartbeat",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+}
 
 // ExchangeConfig is ...
 type ExchangeConfig struct {
@@ -18,25 +27,16 @@ type ExchangeConfig struct {
 	Durable      bool
 }
 
-// RackHD is ....
-type RackHD struct {
-	URI    amqp.URI
-	StopCh chan struct{}
-}
-
 // AmqpFed is the AMQP Federation & Monitoring Service
 type AmqpFed struct {
-	URI      amqp.URI
-	MgmtURI  url.URL
-	conn     *amqp.Connection
-	tag      string
-	wg       *sync.WaitGroup
-	monLock  *sync.Mutex
-	monitors map[string]RackHD
+	URI     amqp.URI
+	MgmtURI url.URL
+	conn    *amqp.Connection
+	tag     string
 }
 
 // NewAmqpFed creates a new federation
-func NewAmqpFed(amqpURI, mgmtPort, ctag string, exchangeList []ExchangeConfig) (*AmqpFed, error) {
+func NewAmqpFed(amqpURI, mgmtPort, ctag string) (*AmqpFed, error) {
 	// take in list of exchanges by type and variable
 	uri, err := amqp.ParseURI(amqpURI)
 	mgmt, err := url.Parse(fmt.Sprintf("http://%s:%s", uri.Host, mgmtPort))
@@ -44,13 +44,10 @@ func NewAmqpFed(amqpURI, mgmtPort, ctag string, exchangeList []ExchangeConfig) (
 		return nil, fmt.Errorf("Could not parse AMQP URI")
 	}
 	a := &AmqpFed{
-		URI:      uri,
-		MgmtURI:  *mgmt,
-		conn:     nil,
-		tag:      ctag,
-		wg:       &sync.WaitGroup{},
-		monLock:  &sync.Mutex{},
-		monitors: make(map[string]RackHD),
+		URI:     uri,
+		MgmtURI: *mgmt,
+		conn:    nil,
+		tag:     ctag,
 	}
 
 	a.conn, err = amqp.Dial(amqpURI)
@@ -66,71 +63,34 @@ func NewAmqpFed(amqpURI, mgmtPort, ctag string, exchangeList []ExchangeConfig) (
 
 // Shutdown starts the Server on address:port and handles the routes
 func (a *AmqpFed) Shutdown() error {
-	a.monLock.Lock()
-	defer a.monLock.Unlock()
-	for _, v := range a.monitors {
-		close(v.StopCh)
-	}
-	a.wg.Wait()
 	if err := a.conn.Close(); err != nil {
 		return fmt.Errorf("AMQP connection close error: %s", err)
 	}
 	return nil
 }
 
-//AddRackHD is ...
-func (a *AmqpFed) AddRackHD(address string) error {
-	amqpURI, conf, err := rhdman.GetRackHDamqpURI(address)
-	if err != nil {
-		return err
-	}
-	if amqpURI.Host == "0.0.0.0" {
-		host, _, err := net.SplitHostPort(address)
-		if err != nil {
-			return err
-		}
-		amqpURI.Host = host
-	} else if amqpURI.Host == "127.0.0.1" {
-		return fmt.Errorf("AMQP not exposed externally")
-	}
-	hostname, ok := conf["HOSTNAME"]
-	if !ok {
-		hostname = "localhost"
-		log.Println("Choosing sane default RHD name")
-	}
+//AddRackHD takes in an amqpURI address
+func (a *AmqpFed) AddRackHD(amqpURI amqp.URI, uuid string) error {
 
-	if err := a.CreateFedUpstream(amqpURI, hostname.(string)); err != nil {
+	if err := a.CreateFedUpstream(amqpURI, uuid); err != nil {
 		return fmt.Errorf("Unable to create upstream connection")
 	}
-
-	r, ok := a.monitors[address]
-	if ok {
-		//already exists, stop the goroutine
-		close(r.StopCh)
-	}
-
-	newR := RackHD{
-		URI:    amqpURI,
-		StopCh: make(chan struct{}),
-	}
-
-	a.monitors[address] = newR
 
 	return nil
 }
 
 // RemoveRackHD is ...
 func (a *AmqpFed) RemoveRackHD(address string) error {
-	a.monLock.Lock()
-	defer a.monLock.Unlock()
-
-	r, ok := a.monitors[address]
-	if ok {
-		//already exists, stop the goroutine
-		close(r.StopCh)
-	}
-
-	delete(a.monitors, address)
+	// a.monLock.Lock()
+	// defer a.monLock.Unlock()
+	//
+	// r, ok := a.monitors[address]
+	// if ok {
+	// 	//already exists, stop the goroutine
+	// 	close(r.StopCh)
+	// }
+	//
+	// delete(a.monitors, address)
 
 	return nil
 }
@@ -217,10 +177,5 @@ func (a *AmqpFed) CreateFedPolicy() error {
 		return fmt.Errorf("Failed to create federate-rackhd policy")
 	}
 
-	return nil
-}
-
-// NewRackhdMonitor is ...
-func (a *AmqpFed) NewRackhdMonitor() error {
 	return nil
 }
