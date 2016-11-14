@@ -5,11 +5,67 @@ import (
 	"github.com/michaelklishin/rabbit-hole"
 	"github.com/streadway/amqp"
 	"net/url"
+	//	"strings"
 )
 
 var exchangeList = []ExchangeConfig{
 	ExchangeConfig{
+		ExchangeName: "on.configuration",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
+		ExchangeName: "on.dhcp",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
 		ExchangeName: "on.events",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
+		ExchangeName: "on.http",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
+		ExchangeName: "on.logging",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
+		ExchangeName: "on.task-graph-runner",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
+		ExchangeName: "on.scheduler",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
+		ExchangeName: "on.task",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
+		ExchangeName: "on.tftp",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
+		ExchangeName: "on.waterline",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
+		ExchangeName: "on.test",
+		ExchangeType: "topic",
+		Durable:      true,
+	},
+	ExchangeConfig{
+		ExchangeName: "on.ssdp",
 		ExchangeType: "topic",
 		Durable:      true,
 	},
@@ -49,7 +105,6 @@ func NewAmqpFed(amqpURI, mgmtPort, ctag string) (*AmqpFed, error) {
 		conn:    nil,
 		tag:     ctag,
 	}
-
 	a.conn, err = amqp.Dial(amqpURI)
 	if err != nil {
 		return nil, fmt.Errorf("Dial: %s", err)
@@ -71,7 +126,6 @@ func (a *AmqpFed) Shutdown() error {
 
 //AddRackHD takes in an amqpURI address
 func (a *AmqpFed) AddRackHD(amqpURI amqp.URI, uuid string) error {
-
 	if err := a.CreateFedUpstream(amqpURI, uuid); err != nil {
 		return fmt.Errorf("Unable to create upstream connection")
 	}
@@ -128,8 +182,14 @@ func (a *AmqpFed) CreateFedUpstream(addr amqp.URI, name string) error {
 	if err != nil {
 		return fmt.Errorf("Failed to create RMQ HTTP Client")
 	}
+	var target = ""
+	if addr.Vhost == "/" {
+		target = fmt.Sprintf("%s%s", addr.String(), url.QueryEscape(addr.Vhost))
+	} else {
+		target = addr.String()
+	}
 	fedDefinition := rabbithole.FederationDefinition{
-		Uri:     addr.String(),
+		Uri:     target,
 		Expires: 36000000,
 		MaxHops: 1,
 		AckMode: "on-confirm",

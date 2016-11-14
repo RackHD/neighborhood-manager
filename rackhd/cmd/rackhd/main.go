@@ -4,43 +4,28 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net"
-	"net/url"
-	"strconv"
+	"os"
 
-	"github.com/RackHD/neighborhood-manager/libreg/registry"
-	"github.com/RackHD/neighborhood-manager/rackhd/proxy"
+	loads "github.com/go-openapi/loads"
+	flags "github.com/jessevdk/go-flags"
+
+	regStore "github.com/RackHD/neighborhood-manager/libreg/registry"
+	"github.com/RackHD/neighborhood-manager/libreg/registry/consul"
+	"github.com/RackHD/neighborhood-manager/rackhd/api/swagger/monorail"
+	"github.com/RackHD/neighborhood-manager/rackhd/api/swagger/monorail/operations"
+	"github.com/RackHD/neighborhood-manager/rackhd/manager"
+	"github.com/RackHD/neighborhood-manager/rackhd/models"
+	"github.com/RackHD/neighborhood-manager/rackhd/watcher"
 )
 
 var binaryName, buildDate, buildUser, commitHash, goVersion, osArch, releaseVersion string
-var backendAddr, proxyAddr, serviceName, datacenter string
+var backendAddr, serviceName, datacenter string
 
 // init takes in configurable flags
 func init() {
 	flag.StringVar(&backendAddr, "backend-address", "127.0.0.1:8500", "address:port of the backend store")
-	flag.StringVar(&proxyAddr, "proxy-address", "http://0.0.0.0:10001", "http://address:port of the proxy server")
 	flag.StringVar(&serviceName, "service-name", "RackHD-service:api:2.0", "The service being proxied")
 	flag.StringVar(&datacenter, "datacenter", "dc1", "The consul datacenter string")
-}
-
-// extractIPPort splits the Address flag into an ip string anf port int
-func extractIPPort(location string) (string, int, error) {
-	addr, err := url.Parse(location)
-	if err != nil {
-		return "", 0, err
-	}
-
-	agentIP, portStr, err := net.SplitHostPort(addr.Host)
-	if err != nil {
-		return "", 0, err
-	}
-
-	agentPort, err := strconv.Atoi(portStr)
-	if err != nil {
-		return "", 0, err
-	}
-
-	return agentIP, agentPort, nil
 }
 
 // Main
@@ -54,23 +39,49 @@ func main() {
 	log.Println("  Go version: " + goVersion)
 	log.Println("  OS/Arch: " + osArch)
 
-	flag.Parse()
+	// Temp disabled for testing (hard code flag vars)
+	//	flag.Parse()
 
-	// Parse proxyAddr
-	proxyIP, proxyPort, err := extractIPPort(proxyAddr)
+	consul.Register()
+	models.InitBackend()
+	msgChan := make(chan *watcher.Message)
+	_, err := watcher.NewMonitor(serviceName, datacenter, backendAddr, regStore.CONSUL, msgChan)
 	if err != nil {
-		log.Fatalf("Error parsing proxy address: %s\n", err)
+		fmt.Printf("Error creating monitor %s\n", err)
+	}
+	m, err := manager.NewManager(msgChan)
+	if err != nil {
+		log.Fatal("Unable to connect to Rabbitmq: ", err)
+	}
+	go m.RunManager()
+
+	swaggerSpec, err := loads.Analyzed(monorail.SwaggerJSON, "")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	api := operations.NewRackHD20API(swaggerSpec)
+	server := monorail.NewServer(api)
+	defer server.Shutdown()
+
+	parser := flags.NewParser(server, flags.Default)
+	parser.ShortDescription = `Neighborhood Manager 1.0`
+	parser.LongDescription = `The NM spec which combines multiple APIs into one`
+
+	server.ConfigureFlags()
+
+	if _, err := parser.Parse(); err != nil {
+		code := 1
+		if fe, ok := err.(*flags.Error); ok {
+			if fe.Type == flags.ErrHelp {
+				code = 0
+			}
+		}
+		os.Exit(code)
 	}
 
-	// Proxy server configuration
-	h, err := proxy.NewServer(proxyIP, serviceName, datacenter, backendAddr, registry.CONSUL, proxyPort)
-	if err != nil {
-		log.Fatalf("Proxy server configuration failed: %s\n", err)
+	server.ConfigureAPI()
+
+	if err := server.Serve(); err != nil {
+		log.Fatalln(err)
 	}
-
-	fmt.Printf("Service name is => %s\n", serviceName)
-	fmt.Printf("Proxy is served on => %s:%d\n", h.Address, h.Port)
-
-	// Start the handler server for the proxy endpoint
-	h.Serve()
 }

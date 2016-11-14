@@ -1,0 +1,5941 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Redfish v1.0.0
+# during dev, should point to your local machine
+#host: localhost:8080
+# basePath prefixes all resource paths
+basePath: /redfish/v1
+#
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+tags:
+  - name: "/redfish/v1"
+    description: DMTF/SPMF Redfish v1.0.0
+paths:
+  /:
+    x-swagger-router-controller: service-root
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic', 'anonymous' ]
+      summary: retrieve list of root-level resources
+      description: >
+        This object represents the root Redfish service.  All values for resources described
+        by this schema shall comply to the requirements as described in the Redfish specification.
+        This object represents the root Redfish service.
+      operationId: getServiceRoot
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/ServiceRoot.1.0.0_ServiceRoot"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Chassis:
+    x-swagger-router-controller: chassis
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of physical components
+      description: >
+        Defines a collection of physical components managed by the service
+      operationId: listChassis
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/ChassisCollection_ChassisCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Chassis/{identifier}:
+    x-swagger-router-controller: chassis
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve specific information for a physical component
+      description: >
+        Retrieves a detailed information catalog for the physical component
+        specified by identifier
+      operationId: getChassis
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: skuChassis
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Chassis.1.0.0_Chassis"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Chassis/{identifier}/Thermal:
+    x-swagger-router-controller: chassis
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: Retrieve thermal characteristics of a chassis
+      description: >
+        defines a collection of thermal elements contained within a resource.
+      operationId: getThermal
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: skuChassis
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Thermal.1.0.0_Thermal"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Chassis/{identifier}/Power:
+    x-swagger-router-controller: chassis
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: Retrieve power characteristics of a chassis
+      description: >
+        defines a collection of power elements contained within a resource.
+      operationId: getPower
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: skuChassis
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Power.1.0.0_Power"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of computer systems
+      description: retrieve list of computer systems
+      operationId: listSystems
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/ComputerSystemCollection_ComputerSystemCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve information for a specific computer systems (physical and/or virtual)
+      description: >
+        defines a computer system and its respective properties.  A computer system represents a
+        machine (physical or virtual) and the local resources such as memory, cpu and other
+        devices that can be accessed from that machine.
+      operationId: getSystem
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          description: node identifier
+          x-param-handler: sku
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/ComputerSystem.1.0.0_ComputerSystem"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/Processors:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve the processor collection for the specified system identifier
+      description: >
+        defines a collection of processors contained within a resource.
+      operationId: listSystemProcessors
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/ProcessorCollection_ProcessorCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/Processors/{socket}:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve a specified processor for the specified system identifier
+      description: >
+        This represents the properties of a processor attached to a System.
+      operationId: getSystemProcessor
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+        - name: socket
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Processor.1.0.0_Processor"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/SimpleStorage:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve the simple storage collection
+      description: >
+        Defines a collection of simple storage collections that are
+        present on the system described by identifier
+      operationId: listSimpleStorage
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/SimpleStorageCollection_SimpleStorageCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/SimpleStorage/{index}:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: Retrieve the simple storage collection by device identifier
+      description: >
+        Defines a collection of storage devices on the device specified by
+        identifier that are present on the system described by identifier
+      operationId: getSimpleStorage
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+        - name: index
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/SimpleStorage.1.0.0_SimpleStorage"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/LogServices:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of the logs for a computer system
+      description: >
+        Defines a collection of log services that are available for the system
+        described by identifier
+      operationId: listLogService
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/LogServiceCollection_LogServiceCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/LogServices/sel:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of the logs for a computer system
+      description: >
+        Defines a collection of SEL entries for the system described by
+        identifier.
+      operationId: getSelLogService
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/LogService.1.0.0_LogService"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/LogServices/sel/Entries:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of the logs entries for associated for log service
+      description: >
+        Defines a collection of entries for the system described by identifier
+      operationId: listSelLogServiceEntries
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/LogEntryCollection_LogEntryCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/LogServices/sel/Entries/{entryId}:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve log entry by logId associated for log service
+      description: >
+        Defines a log entry specified by entryId within the LogService of the
+        specified type for the system described by identifier
+      operationId: getSelLogServiceEntry
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+        - name: entryId
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/LogEntry.1.0.0_LogEntry"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/Actions/ComputerSystem.Reset:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve the list of reset types for the specified compute node
+      description: >
+        Retrieve  a list of valid reset types for the system described by identifier
+      operationId: listResetTypes
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/RackHD.ResetAction_ResetAction"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      x-privileges: [ 'ConfigureComponents' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: reset a node
+      description: >
+        Perform the reset specified in the post data arguments on the system
+        described by identifier
+      operationId: doReset
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RackHD.ResetAction_ResetAction"
+      responses:
+        202:
+          description: Success
+          $ref: "#/responses/status_202"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/Actions/RackHD.BootImage:
+    x-swagger-router-controller: systems
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve the list of boot image types for the specified compute node
+      description: >
+        Retrieve  a list of valid boot image types for the system described by identifier
+      operationId: listBootImage
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/RackHD.BootImage_BootImageList"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      x-privileges: [ 'ConfigureComponents' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: install a boot image on a node
+      description: >
+        Perform the boot image installation specified in the post data arguments on
+        the system described by identifier
+      operationId: doBootImage
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RackHD.BootImage_BootImage"
+      responses:
+        202:
+          description: Success
+          $ref: "#/responses/status_202"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/EthernetInterfaces:
+    x-swagger-router-controller: unimplemented
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve the simple storage collection
+      description: >
+        Defines a collection of ethernet interfaces that are
+        present on the system described by identifier
+      operationId: unimplemented
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/EthernetInterfaceCollection_EthernetInterfaceCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Systems/{identifier}/EthernetInterfaces/{index}:
+    x-swagger-router-controller: unimplemented
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: Retrieve the ethernet interface by device identifier
+      description: >
+        Defines an ethernet interface present on the system described by identifier
+      operationId: unimplemented
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+          x-param-handler: sku
+        - name: index
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/EthernetInterface.1.0.0_EthernetInterface"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /AccountService:
+    x-swagger-router-controller: account-service
+    get:
+      x-privileges: [ 'ConfigureUsers' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve account service information
+      operationId: getAccountService
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/AccountService.1.0.0_AccountService"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /AccountService/Accounts:
+    x-swagger-router-controller: account-service
+    get:
+      x-privileges: [ 'ConfigureUsers' ]
+      x-authentication-type: [ 'redfish', 'basic']
+      summary: retrieve information about the accounts
+      operationId: getAccounts
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/ManagerAccountCollection_ManagerAccountCollection"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      x-privileges: [ 'ConfigureUsers' ]
+      x-authentication-type: [ 'redfish', 'basic', 'anonymous' ]
+      summary: create a user with the provided information
+      operationId: createAccount
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ManagerAccount.1.0.0_ManagerAccount.post"
+      responses:
+        201:
+          description: Success
+          $ref: "#/responses/status_201"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /EventService:
+    x-swagger-router-controller: event-service
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of policies used by event service listeners
+      operationId: eventServiceRoot
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/EventService.1.0.0_EventService"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+  /EventService/Subscriptions:
+    x-swagger-router-controller: event-service
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve collection of subscribed events
+      operationId: getEventsCollection
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/EventDestinationCollection_EventDestinationCollection"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+    post:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve collection of subscribed events
+      operationId: createSubscription
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EventDestination.1.0.0_EventDestination"
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/EventDestinationCollection_EventDestinationCollection"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        409:
+          $ref: "#/responses/status_409"
+  /EventService/Subscriptions/{index}:
+    x-swagger-router-controller: event-service
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve specific event subscription
+      operationId: getEvent
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: index
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/EventDestination.1.0.0_EventDestination"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+    delete:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: delete specific event subscription
+      operationId: deleteEvent
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: index
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: Success
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+  /EventService/Actions/EventService.SubmitTestEvent:
+    x-swagger-router-controller: event-service
+    post:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: submit a test event action
+      operationId: testEvent
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: body
+          in: body
+          required: false
+          schema:
+            $ref: "#/definitions/testEvent"
+      responses:
+        202:
+          description: Success
+          $ref: "#/responses/status_202"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+  /AccountService/Accounts/{name}:
+    x-swagger-router-controller: account-service
+    get:
+      x-privileges: [ 'ConfigureUsers' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve information about the specified account
+      operationId: getAccount
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/ManagerAccount.1.0.0_ManagerAccount"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      x-privileges: [ 'ConfigureUsers' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: delete the specified account
+      operationId: removeAccount
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: Success
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    patch:
+      x-privileges: [ 'ConfigureUsers', 'ConfigureSelf' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: update the user with the provided information
+      operationId: modifyAccount
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ManagerAccount.1.0.0_ManagerAccount"
+      responses:
+        202:
+          description: Success
+          $ref: "#/responses/status_202"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Managers:
+    x-swagger-router-controller: managers
+    get:
+      x-privileges: [ 'ConfigureManager' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of management servers
+      operationId: listManagers
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/ManagerCollection_ManagerCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Managers/{identifier}:
+    x-swagger-router-controller: managers
+    get:
+      x-privileges: [ 'ConfigureManager' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve information about a specified management servers
+      operationId: getManager
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Manager.1.0.0_Manager"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    patch:
+      x-privileges: [ 'ConfigureManager' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: update the specified management server
+      operationId: patchManager
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Manager.1.0.0_Manager"
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Manager.1.0.0_Manager"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        405:
+          $ref: "#/responses/status_405"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Managers/RackHD/EthernetInterfaces:
+    x-swagger-router-controller: managers
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve information about the ethernet interfaces
+      operationId: listLocalEthernetInterfaces
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/EthernetInterfaceCollection_EthernetInterfaceCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Managers/{identifier}/EthernetInterfaces:
+    x-swagger-router-controller: managers
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve information about the ethernet interfaces
+      operationId: listManagerEthernetInterfaces
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/EthernetInterfaceCollection_EthernetInterfaceCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Managers/RackHD/EthernetInterfaces/{index}:
+    x-swagger-router-controller: managers
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve information about the specified ethernet interface
+      operationId: getLocalEthernetInterface
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: index
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/EthernetInterface.1.0.0_EthernetInterface"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Managers/{identifier}/EthernetInterfaces/{index}:
+    x-swagger-router-controller: managers
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve information about the specified ethernet interface
+      operationId: getManagerEthernetInterface
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+        - name: index
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/EthernetInterface.1.0.0_EthernetInterface"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Managers/{identifier}/VirtualMedia/{index}:
+    x-swagger-router-controller: unimplemented
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve information about the virtual media
+      operationId: unimplemented
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+        - name: index
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/VirtualMedia.1.0.0_VirtualMedia"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        501:
+          $ref: "#/responses/status_501"
+  /Managers/{identifier}/SerialInterfaces/{index}:
+    x-swagger-router-controller: unimplemented
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve information about the serial interface
+      operationId: unimplemented
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+        - name: index
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/SerialInterface.1.0.0_SerialInterface"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        501:
+          $ref: "#/responses/status_501"
+  /Registries:
+    x-swagger-router-controller: registry
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: Retrieve list of registries
+      operationId: listRegistry
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/MessageRegistryFileCollection_MessageRegistryFileCollection"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Registries/{identifier}:
+    x-swagger-router-controller: registry
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: Retrieve information on a specific registry
+      operationId: getRegistryFile
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/MessageRegistryFile.1.0.0_MessageRegistryFile"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Registries/en/{identifier}:
+      x-swagger-router-controller: registry
+      get:
+        x-privileges: [ 'Login' ]
+        x-authentication-type: [ 'redfish', 'basic' ]
+        summary: retrieve the content of a specific registry
+        operationId: getRegistryFileContents
+        tags: [ "/redfish/v1" ]
+        parameters:
+          - name: identifier
+            in: path
+            required: true
+            type: string
+        responses:
+          200:
+            description: Success
+            schema:
+              $ref: "#/definitions/MessageRegistryFile.1.0.0_MessageRegistryFile"
+          401:
+            $ref: "#/responses/status_401"
+          403:
+            $ref: "#/responses/status_403"
+          500:
+            description: Error
+            schema:
+              $ref: "#/definitions/ErrorResponse"
+  /AccountService/Roles:
+    x-swagger-router-controller: roles
+    get:
+      x-privileges: [ 'ConfigureUsers' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of roles
+      operationId: listRoles
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/RoleCollection_RoleCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /AccountService/Roles/{identifier}:
+    x-swagger-router-controller: roles
+    get:
+      x-privileges: [ 'ConfigureUsers' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve privileges for a role
+      operationId: getRole
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Role.1.0.0_Role"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Schemas:
+    x-swagger-router-controller: schemas
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of schemas
+      operationId: listSchemas
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/JsonSchemaFileCollection_JsonSchemaFileCollection"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /Schemas/{identifier}:
+    x-swagger-router-controller: schemas
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve information for a specific schema
+      operationId: getSchema
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/JsonSchemaFile.1.0.0_JsonSchemaFile"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /SchemaStore/en/{identifier}:
+      x-swagger-router-controller: schemas
+      get:
+        x-privileges: [ 'Login' ]
+        x-authentication-type: [ 'redfish', 'basic' ]
+        summary: display the content of a schema json
+        operationId: getSchemaContent
+        tags: [ "/redfish/v1" ]
+        parameters:
+          - name: identifier
+            in: path
+            required: true
+            type: string
+        responses:
+          200:
+            description: Success
+            schema:
+              $ref: "#/definitions/JsonSchemaFile.1.0.0_JsonSchemaFile"
+          401:
+            $ref: "#/responses/status_401"
+          403:
+            $ref: "#/responses/status_403"
+          500:
+            description: Error
+            schema:
+              $ref: "#/definitions/ErrorResponse"
+  /SessionService:
+    x-swagger-router-controller: session-service
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve a list of sessions
+      operationId: getSessionService
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/SessionService.1.0.0_SessionService"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /SessionService/Sessions:
+    x-swagger-router-controller: session-service
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve a sessions description
+      operationId: getSessions
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/SessionCollection_SessionCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      x-privileges: [ 'Login' ]
+      summary: create a new session
+      operationId: postSession
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Session.1.0.0_Session"
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/Session.1.0.0_Session"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /SessionService/Sessions/{identifier}:
+    x-swagger-router-controller: session-service
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve session information
+      operationId: getSessionInfo
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Session.1.0.0_Session"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      x-privileges: [ 'ConfigureSelf' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: logout of the session
+      operationId: doLogoutSession
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Session.1.0.0_Session"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /TaskService:
+    x-swagger-router-controller: task-service
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of all tasks
+      description: This object represents the root Redfish service.
+      operationId: taskServiceRoot
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/TaskService.1.0.0_TaskService"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /TaskService/Tasks:
+    x-swagger-router-controller: task-service
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of all tasks
+      description: This object represents the root Redfish service.
+      operationId: listTasks
+      tags: [ "/redfish/v1" ]
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/TaskCollection_TaskCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /TaskService/Tasks/{identifier}:
+    x-swagger-router-controller: task-service
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve a task entry by task Id
+      description: This object represents the root Redfish service.
+      operationId: getTask
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Task.1.0.0_Task"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /TaskService/Oem/Tasks/{identifier}:
+    x-swagger-router-controller: task-service
+    get:
+      x-privileges: [ 'Login' ]
+      x-authentication-type: [ 'redfish', 'basic' ]
+      summary: retrieve list of tasks per system Id
+      description: This object represents the root Redfish service.
+      operationId: getSystemTasks
+      tags: [ "/redfish/v1" ]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/TaskCollection_TaskCollection"
+        400:
+          $ref: "#/responses/status_400"
+        401:
+          $ref: "#/responses/status_401"
+        403:
+          $ref: "#/responses/status_403"
+        404:
+          $ref: "#/responses/status_404"
+        500:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+
+responses:
+  status_201:
+    description: >
+      A request that created a new resource completed successfully. The Location header shall
+      be set to the canonical URI for the newly created resource. A representation of the newly
+      created resource may be included in the response body.
+  status_202:
+    description: >
+      The request has been accepted for processing, but the processing has not been completed.
+      The Location header shall be set to the URI of a Task resource that can later be queried
+      to determine the status of the operation. A representation of the Task resource may be
+      included in the response body.
+  status_400:
+    description: >
+      The request could not be processed because it contains missing or invalid information
+      (such as validation error on an input field, a missing required value, and so on).
+      An extended error shall be returned in the response body, as defined in section Extended
+      Error Handling.
+  status_401:
+    description: >
+      The authentication credentials included with this request are missing or invalid.
+  status_403:
+    description: >
+      The server recognized the credentials in the request, but those credentials do not
+      possess authorization to perform this request.
+  status_404:
+    description: >
+      The request specified a URI of a resource that does not exist.
+  status_405:
+    description: >
+      The method specified in the Request-Line is not allowed for the resource
+      identified by the Request-URI.
+  status_409:
+    description: >
+      The request could not be completed due to a conflict with the current state
+      of the target resource.
+  status_501:
+    description: >
+      The server does not (currently) support the functionality required to fulfill the request.
+      This is the appropriate response when the server does not recognize the request method
+      and is not capable of supporting the method for any resource.
+definitions:
+  AccountService.1.0.0_AccountService:
+    description: This is the schema definition for the Account Service.  It represents
+      the properties for the service itself and has links to the actual list of accounts.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      AccountLockoutCounterResetAfter:
+        description: The interval of time since the last failed login attempt at which
+          point the lockout threshold counter for the account is reset to zero. Must
+          be less than or equal to AccountLockoutDuration
+        minimum: 0
+        readOnly: false
+        type: number
+      AccountLockoutDuration:
+        description: The time an account is locked after the account lockout threshold
+          is met. Must be >= AccountLockoutResetAfter. If set to 0, no lockout will
+          occur.
+        minimum: 0
+        readOnly: false
+        type: number
+      AccountLockoutThreshold:
+        description: The number of failed login attempts before a user account is
+          locked for a specified duration. (0=never locked)
+        minimum: 0
+        readOnly: false
+        type: number
+      Accounts:
+        $ref: '#/definitions/ManagerAccountCollection_ManagerAccountCollection'
+        description: Link to a collection of Manager Accounts
+        readOnly: true
+      AuthFailureLoggingThreshold:
+        description: This is the number of authorization failures that need to occur
+          before the failure attempt is logged to the manager log.
+        minimum: 0
+        readOnly: false
+        type: number
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      MaxPasswordLength:
+        description: This is the maximum password length for this service.
+        minimum: 0
+        readOnly: true
+        type: number
+      MinPasswordLength:
+        description: This is the minimum password length for this service.
+        minimum: 0
+        readOnly: true
+        type: number
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      Roles:
+        $ref: '#/definitions/RoleCollection_RoleCollection'
+        description: Link to a collection of Roles
+        readOnly: true
+      ServiceEnabled:
+        description: This indicates whether this service is enabled.
+        type: boolean
+      Status:
+        $ref: '#/definitions/Resource_Status'
+    type: object
+  Chassis.1.0.0_Chassis:
+    description: This is the schema definition for the Chassis resource.  It represents
+      the properties for physical components for any system.  This one object is intended
+      to represent racks, rackmount servers, blades, standalone, modular systems,
+      enclosures, and all other containers.  The non-cpu/device centric parts of the
+      schema are all accessed either directly or indirectly through this resource.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Actions:
+        description: The Actions object contains the available custom actions on this
+          resource.
+        properties:
+          '#Chassis.Reset':
+            $ref: '#/definitions/Chassis.1.0.0_Reset'
+          Oem:
+            properties: {}
+            type: object
+        readOnly: true
+        type: object
+      AssetTag:
+        description: The user assigned asset tag for this chassis.
+        type: string
+      ChassisType:
+        description: This property indicates the type of physical form factor of this
+          resource.
+        enum:
+        - Rack
+        - Blade
+        - Enclosure
+        - StandAlone
+        - RackMount
+        - Card
+        - Cartridge
+        - Row
+        - Pod
+        - Expansion
+        - Sidecar
+        - Zone
+        - Sled
+        - Shelf
+        - Drawer
+        - Module
+        - Component
+        - Other
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      IndicatorLED:
+        description: The state of the indicator LED, used to identify the chassis.
+        enum:
+        - Unknown
+        - Lit
+        - Blinking
+        - 'Off'
+        type: string
+      Links:
+        description: The links object contains the links to other resources that are
+          related to this resource.
+        properties:
+          ComputerSystems:
+            description: An array of references to the computer systems contained
+              in this chassis.  This will only reference ComputerSystems that are
+              directly and wholly contained in this chassis.
+            items:
+              $ref: '#/definitions/odata.4.0.0_idRef'
+            readOnly: true
+            type: array
+          ComputerSystems@odata.count:
+            readOnly: true
+            type: number
+          ComputerSystems@odata.navigationLink:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+          ContainedBy:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+            description: A reference to the chassis that this chassis is contained
+              by.
+            readOnly: true
+          Contains:
+            description: An array of references to any other chassis that this chassis
+              has in it.
+            items:
+              $ref: '#/definitions/odata.4.0.0_idRef'
+            readOnly: true
+            type: array
+          Contains@odata.count:
+            readOnly: true
+            type: number
+          Contains@odata.navigationLink:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+          CooledBy:
+            description: An array of ID[s] of resources that cool this chassis. Normally
+              the ID will be a chassis or a specific set of fans.
+            items:
+              $ref: '#/definitions/odata.4.0.0_idRef'
+            readOnly: true
+            type: array
+          CooledBy@odata.count:
+            readOnly: true
+            type: number
+          CooledBy@odata.navigationLink:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+          ManagedBy:
+            description: An array of references to the managers contained in this
+              chassis.
+            items:
+              $ref: '#/definitions/odata.4.0.0_idRef'
+            readOnly: true
+            type: array
+          ManagedBy@odata.count:
+            readOnly: true
+            type: number
+          ManagedBy@odata.navigationLink:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+          Oem:
+            $ref: '#/definitions/Resource_Oem'
+            description: Oem extension object.
+          PoweredBy:
+            description: An array of ID[s] of resources that power this chassis. Normally
+              the ID will be a chassis or a specific set of powerSupplies
+            items:
+              $ref: '#/definitions/odata.4.0.0_idRef'
+            readOnly: true
+            type: array
+          PoweredBy@odata.count:
+            readOnly: true
+            type: number
+          PoweredBy@odata.navigationLink:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: object
+      LogServices:
+        $ref: '#/definitions/LogServiceCollection_LogServiceCollection'
+        description: A reference to the logs for this chassis.
+        readOnly: true
+      Manufacturer:
+        description: This is the manufacturer of this chassis.
+        readOnly: true
+        type: string
+      Model:
+        description: This is the model number for the chassis.
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      PartNumber:
+        description: The part number for this chassis.
+        readOnly: true
+        type: string
+      Power:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+        description: A reference to the power properties (power supplies, power policies,
+          sensors) for this chassis.
+        readOnly: true
+      SKU:
+        description: This is the SKU for this chassis.
+        readOnly: true
+        type: string
+      SerialNumber:
+        description: The serial number for this chassis.
+        readOnly: true
+        type: string
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      Thermal:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+        description: A reference to the thermal properties (fans, cooling, sensors)
+          for this chassis.
+        readOnly: true
+    required:
+    - ChassisType
+    type: object
+  Chassis.1.0.0_Reset:
+    properties:
+      target:
+        description: Link to invoke action
+        format: uri
+        type: string
+      title:
+        description: Friendly action name
+        type: string
+    type: object
+  ChassisCollection_ChassisCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  ComputerSystem.1.0.0_Boot:
+    description: This object contains the boot information for the current resource.
+    properties:
+      BootSourceOverrideEnabled:
+        description: Describes the state of the Boot Source Override feature
+        enum:
+        - Disabled
+        - Once
+        - Continuous
+        readOnly: false
+        type: string
+      BootSourceOverrideTarget:
+        description: The current boot source to be used at next boot instead of the
+          normal boot device, if BootSourceOverrideEnabled is true.
+        enum:
+        - None
+        - Pxe
+        - Floppy
+        - Cd
+        - Usb
+        - Hdd
+        - BiosSetup
+        - Utilities
+        - Diags
+        - UefiShell
+        - UefiTarget
+        readOnly: false
+        type: string
+      UefiTargetBootSourceOverride:
+        description: This property is the Uefi Device Path of the device to boot from
+          when BootSourceOverrideSupported is UefiTarget.
+        readOnly: false
+        type: string
+    type: object
+  ComputerSystem.1.0.0_ComputerSystem:
+    description: This schema defines a computer system and its respective properties.  A
+      computer system represents a machine (physical or virtual) and the local resources
+      such as memory, cpu and other devices that can be accessed from that machine.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Actions:
+        description: The Actions object contains the available custom actions on this
+          resource.
+        properties:
+          '#ComputerSystem.Reset':
+            $ref: '#/definitions/ComputerSystem.1.0.0_Reset'
+          Oem:
+            properties: {}
+            type: object
+        readOnly: true
+        type: object
+      AssetTag:
+        description: The user definable tag that can be used to track this computer
+          system for inventory or other client purposes
+        readOnly: false
+        type: string
+      BiosVersion:
+        description: The version of the system BIOS or primary system firmware.
+        type: string
+      Boot:
+        $ref: '#/definitions/ComputerSystem.1.0.0_Boot'
+        description: Information about the boot settings for this system
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      EthernetInterfaces:
+        $ref: '#/definitions/EthernetInterfaceCollection_EthernetInterfaceCollection'
+        description: A reference to the collection of Ethernet interfaces associated
+          with this system
+        readOnly: true
+      HostName:
+        description: The DNS Host Name, without any domain information
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      IndicatorLED:
+        description: The state of the indicator LED, used to identify the system
+        enum:
+        - Unknown
+        - Lit
+        - Blinking
+        - 'Off'
+        readOnly: false
+        type: string
+      Links:
+        description: Contains links to other resources that are related to this resource.
+        properties:
+          Chassis:
+            description: An array of references to the chassis in which this system
+              is contained
+            items:
+              $ref: '#/definitions/odata.4.0.0_idRef'
+            readOnly: true
+            type: array
+          Chassis@odata.count:
+            readOnly: true
+            type: number
+          Chassis@odata.navigationLink:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+          CooledBy:
+            description: An array of ID[s] of resources that cool this computer system.
+              Normally the ID will be a chassis or a specific set of fans.
+            items:
+              $ref: '#/definitions/odata.4.0.0_idRef'
+            readOnly: true
+            type: array
+          CooledBy@odata.count:
+            readOnly: true
+            type: number
+          CooledBy@odata.navigationLink:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+          ManagedBy:
+            description: An array of references to the Managers responsible for this
+              system
+            items:
+              $ref: '#/definitions/odata.4.0.0_idRef'
+            readOnly: true
+            type: array
+          ManagedBy@odata.count:
+            readOnly: true
+            type: number
+          ManagedBy@odata.navigationLink:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+          Oem:
+            $ref: '#/definitions/Resource_Oem'
+            description: Oem extension object.
+          PoweredBy:
+            description: An array of ID[s] of resources that power this computer system.
+              Normally the ID will be a chassis or a specific set of powerSupplies
+            items:
+              $ref: '#/definitions/odata.4.0.0_idRef'
+            readOnly: true
+            type: array
+          PoweredBy@odata.count:
+            readOnly: true
+            type: number
+          PoweredBy@odata.navigationLink:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: object
+      LogServices:
+        $ref: '#/definitions/LogServiceCollection_LogServiceCollection'
+        description: A reference to the collection of Log Services associated with
+          this system
+        readOnly: true
+      Manufacturer:
+        description: The manufacturer or OEM of this system.
+        readOnly: true
+        type: string
+      MemorySummary:
+        $ref: '#/definitions/ComputerSystem.1.0.0_MemorySummary'
+        description: This object describes the central memory of the system in general
+          detail.
+      Model:
+        description: The model number for this system
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      PartNumber:
+        description: The part number for this system
+        readOnly: true
+        type: string
+      PowerState:
+        description: This is the current power state of the system
+        enum:
+        - 'On'
+        - 'Off'
+        - Unknown
+        - Reset
+        readOnly: true
+        type: string
+      ProcessorSummary:
+        $ref: '#/definitions/ComputerSystem.1.0.0_ProcessorSummary'
+        description: This object describes the central processors of the system in
+          general detail.
+      Processors:
+        $ref: '#/definitions/ProcessorCollection_ProcessorCollection'
+        description: A reference to the collection of Processors associated with this
+          system
+        readOnly: true
+      SKU:
+        description: The manufacturer SKU for this system
+        readOnly: true
+        type: string
+      SerialNumber:
+        description: The serial number for this system
+        readOnly: true
+        type: string
+      SimpleStorage:
+        $ref: '#/definitions/SimpleStorageCollection_SimpleStorageCollection'
+        description: A reference to the collection of storage devices associated with
+          this system
+        readOnly: true
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      SystemType:
+        description: The type of computer system represented by this resource.
+        enum:
+        - Physical
+        - Virtual
+        - OS
+        - PhysicallyPartitioned
+        - VirtuallyPartitioned
+        readOnly: true
+        type: string
+      UUID:
+        description: The universal unique identifier (UUID) for this system
+        pattern: ([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})
+        readOnly: true
+        type: string
+    type: object
+  ComputerSystem.1.0.0_MemorySummary:
+    description: This object describes the memory of the system in general detail.
+    properties:
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      TotalSystemMemoryGiB:
+        description: The total installed, operating system-accessible memory (RAM),
+          measured in GiB.
+        minimum: 0
+        readOnly: true
+        type: number
+    type: object
+  ComputerSystem.1.0.0_ProcessorSummary:
+    description: This object describes the central processors of the system in general
+      detail.
+    properties:
+      Count:
+        description: The number of processors in the system.
+        minimum: 0
+        readOnly: true
+        type: number
+      Model:
+        description: The processor model for the primary or majority of processors
+          in this system.
+        readOnly: true
+        type: string
+      Status:
+        $ref: '#/definitions/Resource_Status'
+    type: object
+  ComputerSystem.1.0.0_Reset:
+    properties:
+      target:
+        description: Link to invoke action
+        format: uri
+        type: string
+      title:
+        description: Friendly action name
+        type: string
+    type: object
+  ComputerSystemCollection_ComputerSystemCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  EthernetInterface.1.0.0_EthernetInterface:
+    description: This schema defines a simple ethernet NIC resource.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      AutoNeg:
+        description: This indicates if the speed and duplex are automatically negotiated
+          and configured on this interface.
+        type: boolean
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      FQDN:
+        description: This is the complete, fully qualified domain name obtained by
+          DNS for this interface.
+        type: string
+      FullDuplex:
+        description: This indicates if the interface is in Full Duplex mode or not.
+        type: boolean
+      HostName:
+        description: The DNS Host Name, without any domain information
+        type: string
+      IPv4Addresses:
+        description: The IPv4 addresses assigned to this interface
+        items:
+          $ref: '#/definitions/IPAddresses.1.0.0_IPv4Address'
+        readOnly: true
+        type: array
+      IPv6AddressPolicyTable:
+        description: An array representing the RFC3484 Address Selection Policy Table.
+        items:
+          $ref: '#/definitions/EthernetInterface.1.0.0_IPv6AddressPolicyEntry'
+        type: array
+      IPv6Addresses:
+        description: This array of objects enumerates all of the currently assigned
+          IPv6 addresses on this interface.
+        items:
+          $ref: '#/definitions/IPAddresses.1.0.0_IPv6Address'
+        readOnly: true
+        type: array
+      IPv6DefaultGateway:
+        description: This is the IPv6 default gateway address that is currently in
+          use on this interface.
+        readOnly: true
+        type: string
+      IPv6StaticAddresses:
+        description: This array of objects represents all of the IPv6 static addresses
+          to be assigned on this interface.
+        items:
+          $ref: '#/definitions/IPAddresses.1.0.0_IPv6StaticAddress'
+        readOnly: true
+        type: array
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      InterfaceEnabled:
+        description: This indicates whether this interface is enabled.
+        type: boolean
+      MACAddress:
+        description: This is the currently configured MAC address of the (logical
+          port) interface.
+        pattern: ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+        type: string
+      MTUSize:
+        description: This is the currently configured Maximum Transmission Unit (MTU)
+          in bytes on this interface.
+        type: number
+      MaxIPv6StaticAddresses:
+        description: This indicates the maximum number of Static IPv6 addresses that
+          can be configured on this interface.
+        readOnly: true
+        type: number
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      NameServers:
+        description: This represents DNS name servers that are currently in use on
+          this interface.
+        items:
+          type: string
+        readOnly: true
+        type: array
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      PermanentMACAddress:
+        description: This is the permanent MAC address assigned to this interface
+          (port)
+        pattern: ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+        readOnly: true
+        type: string
+      SpeedMbps:
+        description: This is the current speed in Mbps of this interface.
+        type: number
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      UefiDevicePath:
+        description: The UEFI device path for this interface
+        readOnly: true
+        type: string
+      VLAN:
+        $ref: '#/definitions/VLanNetworkInterface.1.0.0_VLAN'
+        description: If this Network Interface supports more than one VLAN, this property
+          will not be present and the client should look for VLANs collection in the
+          link section of this resource.
+      VLANs:
+        $ref: '#/definitions/VLanNetworkInterfaceCollection_VLanNetworkInterfaceCollection'
+        description: This is a reference to a collection of VLANs and is only used
+          if the interface supports more than one VLANs.
+        readOnly: true
+    type: object
+  EthernetInterface.1.0.0_IPv6AddressPolicyEntry:
+    properties:
+      Label:
+        description: The IPv6 Label (as defined in RFC 6724 section 2.1)
+        maximum: 100
+        minimum: 0
+        type: number
+      Precedence:
+        description: The IPv6 Precedence (as defined in RFC 6724 section 2.1
+        maximum: 100
+        minimum: 1
+        type: number
+      Prefix:
+        description: The IPv6 Address Prefix (as defined in RFC 3484 section 2.1)
+        type: string
+    type: object
+  EthernetInterfaceCollection_EthernetInterfaceCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  EventDestination.1.0.0_EventDestination:
+    description: This is the base type for resources and referenceable members.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Context:
+        description: A client-supplied string that is stored with the event destination
+          subscription.
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Destination:
+        description: The URI of the destination Event Service.
+        readOnly: true
+        type: string
+      EventTypes:
+        description: This property shall contain the types of events that shall be
+          sent to the desination.
+        items:
+          enum:
+          - StatusChange
+          - ResourceUpdated
+          - ResourceAdded
+          - ResourceRemoved
+          - Alert
+          type: string
+        readOnly: true
+        type: array
+      HttpHeaders:
+        description: This is for setting HTTP headers, such as authorization information.  This
+          object will be null on a GET.
+        items:
+          $ref: '#/definitions/EventDestination.1.0.0_HttpHeaderProperty'
+        type: array
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      Protocol:
+        description: The protocol type of the event connection.
+        enum:
+        - Redfish
+        readOnly: true
+        type: string
+    required:
+    - Destination
+    - EventTypes
+    - Context
+    - Protocol
+    type: object
+  EventDestination.1.0.0_HttpHeaderProperty:
+    description: The value of the HTTP header is the property value.  The header name
+      is the property name.
+    properties: {}
+    type: object
+  EventDestinationCollection_EventDestinationCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  EventService.1.0.0_EventService:
+    description: This is the schema definition for the Event Service. It represents
+      the properties for the service itself and has links to the actual list of subscriptions.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Actions:
+        description: The Actions object contains the available custom actions on this
+          resource.
+        properties:
+          '#EventService.SubmitTestEvent':
+            $ref: '#/definitions/EventService.1.0.0_SubmitTestEvent'
+          Oem:
+            properties: {}
+            type: object
+        readOnly: true
+        type: object
+      DeliveryRetryAttempts:
+        description: This is the number of attempts an event posting is retried before
+          the subscription is terminated.
+        readOnly: true
+        type: number
+      DeliveryRetryIntervalSeconds:
+        description: This represents the number of seconds between retry attempts
+          for sending any given Event
+        readOnly: true
+        type: number
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      EventTypesForSubscription:
+        description: This is the types of Events that can be subscribed to.
+        items:
+          enum:
+          - StatusChange
+          - ResourceUpdated
+          - ResourceAdded
+          - ResourceRemoved
+          - Alert
+          type: string
+        readOnly: true
+        type: array
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      ServiceEnabled:
+        description: This indicates whether this service is enabled.
+        type: boolean
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      Subscriptions:
+        $ref: '#/definitions/EventDestinationCollection_EventDestinationCollection'
+        description: This is a reference to a collection of Event Destination resources.
+        readOnly: true
+    type: object
+  EventService.1.0.0_SubmitTestEvent:
+    properties:
+      target:
+        description: Link to invoke action
+        format: uri
+        type: string
+      title:
+        description: Friendly action name
+        type: string
+    type: object
+  IPAddresses.1.0.0_IPv4Address:
+    properties:
+      Address:
+        description: This is the IPv4 Address.
+        pattern: ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+        type: string
+      AddressOrigin:
+        description: This indicates how the address was determined.
+        enum:
+        - Static
+        - DHCP
+        - BOOTP
+        - IPv4LinkLocal
+        readOnly: true
+        type: string
+      Gateway:
+        description: This is the IPv4 gateway for this address.
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+      SubnetMask:
+        description: This is the IPv4 Subnet mask.
+        pattern: ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+        type: string
+    type: object
+  IPAddresses.1.0.0_IPv6Address:
+    properties:
+      Address:
+        description: This is the IPv6 Address.
+        type: string
+      AddressOrigin:
+        description: This indicates how the address was determined.
+        enum:
+        - Static
+        - DHCPv6
+        - LinkLocal
+        - SLAAC
+        readOnly: true
+        type: string
+      AddressState:
+        description: The current state of this address as defined in RFC 4862.
+        enum:
+        - Preferred
+        - Deprecated
+        - Tentative
+        - Failed
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+      PrefixLength:
+        description: This is the IPv6 Address Prefix Length.
+        maximum: 128
+        minimum: 1
+        readOnly: true
+        type: number
+    type: object
+  IPAddresses.1.0.0_IPv6StaticAddress:
+    description: This object represents a single IPv6 static address to be assigned
+      on a network interface.
+    properties:
+      Address:
+        description: A valid IPv6 address.
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+      PrefixLength:
+        description: The Prefix Length of this IPv6 address.
+        maximum: 128
+        minimum: 1
+        readOnly: true
+        type: number
+    required:
+    - Address
+    - PrefixLength
+    type: object
+  JsonSchemaFile.1.0.0_JsonSchemaFile:
+    description: This is the schema definition for the Schema File locator resource.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Languages:
+        description: Language codes for the schemas available.
+        items:
+          type: string
+        readOnly: true
+        type: array
+      Location:
+        description: Location information for this schema file.
+        items:
+          $ref: '#/definitions/JsonSchemaFile.1.0.0_Location'
+        readOnly: true
+        type: array
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      Schema:
+        description: The type name this schema describes.
+        readOnly: true
+        type: string
+    required:
+    - Languages
+    - Schema
+    - Location
+    type: object
+  JsonSchemaFile.1.0.0_Location:
+    properties:
+      ArchiveFile:
+        description: If the schema is hosted on the service in an archive file, this
+          is the name of the file within the archive.
+        readOnly: true
+        type: string
+      ArchiveUri:
+        description: If the schema is hosted on the service in an archive file, this
+          is the link to the archive file.
+        readOnly: true
+        type: string
+      Language:
+        description: The language code for the file the schema is in.
+        readOnly: true
+        type: string
+      PublicationUri:
+        description: Link to publicly available (canonical) URI for schema.
+        readOnly: true
+        type: string
+      Uri:
+        description: Link to locally available URI for schema.
+        readOnly: true
+        type: string
+    type: object
+  JsonSchemaFileCollection_JsonSchemaFileCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  LogEntry.1.0.0_LogEntry:
+    description: This resource represents the log record format for logs.  It is designed
+      to be used for SEL logs from IPMI as well as Event Logs and OEM specific logs.  The
+      EntryType field indicates the type of log and there are other properties dependent
+      on it's value.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Created:
+        description: The time the log entry was created.
+        format: date-time
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      EntryCode:
+        description: If the EntryType is SEL, this will have the entry code for the
+          log entry.
+        enum:
+        - Assert
+        - Deassert
+        - Lower Non-critical - going low
+        - Lower Non-critical - going high
+        - Lower Critical - going low
+        - Lower Critical - going high
+        - Lower Non-recoverable - going low
+        - Lower Non-recoverable - going high
+        - Upper Non-critical - going low
+        - Upper Non-critical - going high
+        - Upper Critical - going low
+        - Upper Critical - going high
+        - Upper Non-recoverable - going low
+        - Upper Non-recoverable - going high
+        - Transition to Idle
+        - Transition to Active
+        - Transition to Busy
+        - State Deasserted
+        - State Asserted
+        - Predictive Failure deasserted
+        - Predictive Failure asserted
+        - Limit Not Exceeded
+        - Limit Exceeded
+        - Performance Met
+        - Performance Lags
+        - Transition to OK
+        - Transition to Non-Critical from OK
+        - Transition to Critical from less severe
+        - Transition to Non-recoverable from less severe
+        - Transition to Non-Critical from more severe
+        - Transition to Critical from Non-recoverable
+        - Transition to Non-recoverable
+        - Monitor
+        - Informational
+        - Device Removed / Device Absent
+        - Device Inserted / Device Present
+        - Device Disabled
+        - Device Enabled
+        - Transition to Running
+        - Transition to In Test
+        - Transition to Power Off
+        - Transition to On Line
+        - Transition to Off Line
+        - Transition to Off Duty
+        - Transition to Degraded
+        - Transition to Power Save
+        - Install Error
+        - Fully Redundant
+        - Redundancy Lost
+        - Redundancy Degraded
+        - Non-redundant:Sufficient Resources from Redundant
+        - Non-redundant:Sufficient Resources from Insufficient Resources
+        - Non-redundant:Insufficient Resources
+        - Redundancy Degraded from Fully Redundant
+        - Redundancy Degraded from Non-redundant
+        - D0 Power State
+        - D1 Power State
+        - D2 Power State
+        - D3 Power State
+        readOnly: true
+        type: string
+      EntryType:
+        description: his is the type of log entry.
+        enum:
+        - Event
+        - SEL
+        - Oem
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Links:
+        description: The links object contains the links to other resources that are
+          related to this resource.
+        properties:
+          Oem:
+            $ref: '#/definitions/Resource_Oem'
+            description: Oem extension object.
+          OriginOfCondition:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+            description: This is the URI of the resource that caused the log entry
+            readOnly: true
+        readOnly: true
+        type: object
+      Message:
+        description: 'This property decodes from EntryType:  If it is Event then it
+          is a message string.  Otherwise, it is SEL or Oem specific.  In most cases,
+          this will be the actual Log Entry.'
+        readOnly: true
+        type: string
+      MessageArgs:
+        description: The values of this property shall be any arguments for the message.
+        items:
+          type: string
+        readOnly: true
+        type: array
+      MessageId:
+        description: 'This property decodes from EntryType:  If it is Event then it
+          is a message id.  Otherwise, it is SEL or Oem specific.  This value is only
+          used for registries - for more information, see the specification.'
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      OemRecordFormat:
+        description: If the entry type is Oem, this will contain more information
+          about the record format from the Oem.
+        readOnly: true
+        type: string
+      SensorNumber:
+        description: 'This property decodes from EntryType:  If it is SEL, it is the
+          sensor number; if Event then the count of events.  Otherwise, it is Oem
+          specific.'
+        readOnly: true
+        type: number
+      SensorType:
+        description: If the EntryType is SEL, this will have the sensor type that
+          the log entry pertains to.
+        enum:
+        - Platform Security Violation Attempt
+        - Temperature
+        - Voltage
+        - Current
+        - Fan
+        - Physical Chassis Security
+        - Processor
+        - Power Supply / Converter
+        - PowerUnit
+        - CoolingDevice
+        - Other Units-based Sensor
+        - Memory
+        - Drive Slot/Bay
+        - POST Memory Resize
+        - System Firmware Progress
+        - Event Logging Disabled
+        - System Event
+        - Critical Interrupt
+        - Button/Switch
+        - Module/Board
+        - Microcontroller/Coprocessor
+        - Add-in Card
+        - Chassis
+        - ChipSet
+        - Other FRU
+        - Cable/Interconnect
+        - Terminator
+        - SystemBoot/Restart
+        - Boot Error
+        - BaseOSBoot/InstallationStatus
+        - OS Stop/Shutdown
+        - Slot/Connector
+        - System ACPI PowerState
+        - Watchdog
+        - Platform Alert
+        - Entity Presence
+        - Monitor ASIC/IC
+        - LAN
+        - Management Subsystem Health
+        - Battery
+        - Session Audit
+        - Version Change
+        - FRUState
+        readOnly: true
+        type: string
+      Severity:
+        description: This is the severity of the log entry.
+        enum:
+        - OK
+        - Warning
+        - Critical
+        readOnly: true
+        type: string
+    required:
+    - EntryType
+    type: object
+  LogEntryCollection_LogEntryCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  LogService.1.0.0_ClearLog:
+    properties:
+      target:
+        description: Link to invoke action
+        format: uri
+        type: string
+      title:
+        description: Friendly action name
+        type: string
+    type: object
+  LogService.1.0.0_LogService:
+    description: This resource represents the log service for the resource or service
+      to which it is associated.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Actions:
+        description: The Actions object contains the available custom actions on this
+          resource.
+        properties:
+          '#LogService.ClearLog':
+            $ref: '#/definitions/LogService.1.0.0_ClearLog'
+          Oem:
+            properties: {}
+            type: object
+        readOnly: true
+        type: object
+      DateTime:
+        description: The current DateTime (with offset) for the log service, used
+          to set or read time.
+        format: date-time
+        readOnly: false
+        type: string
+      DateTimeLocalOffset:
+        description: 'The time offset from UTC that the DateTime property is set to
+          in format: +06:00 .'
+        pattern: ([-+][0-1][0-9]:[0-5][0-9])
+        readOnly: false
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Entries:
+        $ref: '#/definitions/LogEntryCollection_LogEntryCollection'
+        description: References to the log entry collection.
+        readOnly: true
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      MaxNumberOfRecords:
+        description: The maximum number of log entries this service can have.
+        minimum: 0
+        readOnly: true
+        type: number
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      OverWritePolicy:
+        description: The overwrite policy for this service that takes place when the
+          log is full.
+        enum:
+        - Unknown
+        - WrapsWhenFull
+        - NeverOverWrites
+        readOnly: true
+        type: string
+      ServiceEnabled:
+        description: This indicates whether this service is enabled.
+        type: boolean
+      Status:
+        $ref: '#/definitions/Resource_Status'
+    type: object
+  LogServiceCollection_LogServiceCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  Manager.1.0.0_CommandShell:
+    description: Used for describing services like Serial Console, Command Shell or
+      Graphical Console
+    properties:
+      ConnectTypesSupported:
+        description: This object is used to enumerate the Command Shell connection
+          types allowed by the implementation.
+        items:
+          enum:
+          - SSH
+          - Telnet
+          - IPMI
+          - Oem
+          type: string
+        readOnly: true
+        type: array
+      MaxConcurrentSessions:
+        description: Indicates the maximum number of service sessions, regardless
+          of protocol, this manager is able to support.
+        minimum: 0
+        readOnly: true
+        type: number
+      ServiceEnabled:
+        description: Indicates if the service is enabled for this manager.
+        type: boolean
+    type: object
+  Manager.1.0.0_ForceFailover:
+    properties:
+      target:
+        description: Link to invoke action
+        format: uri
+        type: string
+      title:
+        description: Friendly action name
+        type: string
+    type: object
+  Manager.1.0.0_GraphicalConsole:
+    description: Used for describing services like Serial Console, Command Shell or
+      Graphical Console
+    properties:
+      ConnectTypesSupported:
+        description: This object is used to enumerate the Graphical Console connection
+          types allowed by the implementation.
+        items:
+          enum:
+          - KVMIP
+          - Oem
+          type: string
+        readOnly: true
+        type: array
+      MaxConcurrentSessions:
+        description: Indicates the maximum number of service sessions, regardless
+          of protocol, this manager is able to support.
+        minimum: 0
+        readOnly: true
+        type: number
+      ServiceEnabled:
+        description: Indicates if the service is enabled for this manager.
+        type: boolean
+    type: object
+  Manager.1.0.0_Manager:
+    description: This is the schema definition for a Manager.  Examples of managers
+      are BMCs, Enclosure Managers, Management Controllers and other subsystems assigned
+      managability functions.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Actions:
+        description: The Actions object contains the available custom actions on this
+          resource.
+        properties:
+          '#Manager.ForceFailover':
+            $ref: '#/definitions/Manager.1.0.0_ForceFailover'
+          '#Manager.ModifyRedundancySet':
+            $ref: '#/definitions/Manager.1.0.0_ModifyRedundancySet'
+          '#Manager.Reset':
+            $ref: '#/definitions/Manager.1.0.0_Reset'
+          Oem:
+            properties: {}
+            type: object
+        readOnly: true
+        type: object
+      CommandShell:
+        $ref: '#/definitions/Manager.1.0.0_CommandShell'
+        description: Information about the Command Shell service provided by this
+          manager.
+      DateTime:
+        description: The current DateTime (with offset) for the manager, used to set
+          or read time.
+        format: date-time
+        readOnly: false
+        type: string
+      DateTimeLocalOffset:
+        description: 'The time offset from UTC that the DateTime property is set to
+          in format: +06:00 .'
+        pattern: ([-+][0-1][0-9]:[0-5][0-9])
+        readOnly: false
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      EthernetInterfaces:
+        $ref: '#/definitions/EthernetInterfaceCollection_EthernetInterfaceCollection'
+        description: This is a reference to a collection of NICs that this manager
+          uses for network communication.  It is here that clients will find NIC configuration
+          options and settings.
+        readOnly: true
+      FirmwareVersion:
+        description: The firmware version of this Manager
+        readOnly: true
+        type: string
+      GraphicalConsole:
+        $ref: '#/definitions/Manager.1.0.0_GraphicalConsole'
+        description: The value of this property shall contain the information about
+          the Graphical Console (KVM-IP) service of this manager.
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Links:
+        description: This object contains the links to other resources that are related
+          to this resource.
+        properties:
+          ManagerForChassis:
+            description: This property is an array of references to the chasis that
+              this manager has control over.
+            items:
+              $ref: '#/definitions/odata.4.0.0_idRef'
+            readOnly: true
+            type: array
+          ManagerForChassis@odata.count:
+            readOnly: true
+            type: number
+          ManagerForChassis@odata.navigationLink:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+          ManagerForServers:
+            description: This property is an array of references to the systems that
+              this manager has control over.
+            items:
+              $ref: '#/definitions/odata.4.0.0_idRef'
+            readOnly: true
+            type: array
+          ManagerForServers@odata.count:
+            readOnly: true
+            type: number
+          ManagerForServers@odata.navigationLink:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+          Oem:
+            $ref: '#/definitions/Resource_Oem'
+            description: Oem extension object.
+        readOnly: true
+        type: object
+      LogServices:
+        $ref: '#/definitions/LogServiceCollection_LogServiceCollection'
+        description: This is a reference to a collection of Logs used by the manager.
+        readOnly: true
+      ManagerType:
+        description: This property represents the type of manager that this resource
+          represents.
+        enum:
+        - ManagementController
+        - EnclosureManager
+        - BMC
+        - RackManager
+        - AuxiliaryController
+        readOnly: true
+        type: string
+      Model:
+        description: The model information of this Manager as defined by the manufacturer
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      NetworkProtocol:
+        $ref: '#/definitions/ManagerNetworkProtocol.1.0.0_ManagerNetworkProtocol'
+        description: This is a reference to the network services and their settings
+          that the manager controls.  It is here that clients will find network configuration
+          options as well as network services.
+        readOnly: true
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      Redundancy:
+        description: Redundancy information for the managers of this system
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Redundancy@odata.count:
+        readOnly: true
+        type: number
+      Redundancy@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      SerialConsole:
+        $ref: '#/definitions/Manager.1.0.0_SerialConsole'
+        description: Information about the Serial Console service provided by this
+          manager.
+      SerialInterfaces:
+        $ref: '#/definitions/SerialInterfaceCollection_SerialInterfaceCollection'
+        description: This is a reference to a collection of serial interfaces that
+          this manager uses for serial and console communication.  It is here that
+          clients will find serial configuration options and settings.
+        readOnly: true
+      ServiceEntryPointUUID:
+        description: The UUID of the Redfish Service Entry Point provided by this
+          manager
+        pattern: ([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})
+        readOnly: true
+        type: string
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      UUID:
+        description: The Universal Unique Identifier (UUID) for this Manager
+        pattern: ([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})
+        readOnly: true
+        type: string
+      VirtualMedia:
+        $ref: '#/definitions/VirtualMediaCollection_VirtualMediaCollection'
+        description: This is a reference to the Virtual Media services for this particular
+          manager.
+        readOnly: true
+    type: object
+  Manager.1.0.0_ModifyRedundancySet:
+    properties:
+      target:
+        description: Link to invoke action
+        format: uri
+        type: string
+      title:
+        description: Friendly action name
+        type: string
+    type: object
+  Manager.1.0.0_Reset:
+    properties:
+      target:
+        description: Link to invoke action
+        format: uri
+        type: string
+      title:
+        description: Friendly action name
+        type: string
+    type: object
+  Manager.1.0.0_SerialConsole:
+    description: Used for describing services like Serial Console, Command Shell or
+      Graphical Console
+    properties:
+      ConnectTypesSupported:
+        description: This object is used to enumerate the Serial Console connection
+          types allowed by the implementation.
+        items:
+          enum:
+          - SSH
+          - Telnet
+          - IPMI
+          - Oem
+          type: string
+        readOnly: true
+        type: array
+      MaxConcurrentSessions:
+        description: Indicates the maximum number of service sessions, regardless
+          of protocol, this manager is able to support.
+        minimum: 0
+        readOnly: true
+        type: number
+      ServiceEnabled:
+        description: Indicates if the service is enabled for this manager.
+        type: boolean
+    type: object
+  ManagerAccount.1.0.0_ManagerAccount:
+    description: This schema defines a user account to be used in conjunction with
+      a manager.  This will affect the Redfish service connection if this manager
+      is responsible for the Redfish service.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Enabled:
+        description: This property is used by a User Administrator to disable an account
+          w/o having to delet the user information.  When set to true, the user can
+          login.  When set to false, the account is administratively disabled and
+          the user cannot login.
+        type: boolean
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Links:
+        description: The links object contains the links to other resources that are
+          related to this resource.
+        properties:
+          Oem:
+            $ref: '#/definitions/Resource_Oem'
+            description: Oem extension object.
+          Role:
+            $ref: '#/definitions/odata.4.0.0_idRef'
+            description: A reference to the Role object defining Privileges for this
+              account--returned when the resource is read. The ID of the role is the
+              same as property RoleId.
+            readOnly: true
+        readOnly: true
+        type: object
+      Locked:
+        description: This property indicates that the account has been auto-locked
+          by the account service because the lockout threshold has been exceeded.  When
+          set to true, the account is locked. A user admin can write the property
+          to false to manually unlock, or the account service will unlock it once
+          the lockout duration period has passed.
+        type: boolean
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      Password:
+        description: This property is used with a PATCH or PUT to write the password
+          for the account.  This property is null on a GET.
+        type: string
+      RoleId:
+        description: This property contains the Role for this account.
+        type: string
+      UserName:
+        description: This property contains the user name for the account.
+        type: string
+    type: object
+  ManagerAccount.1.0.0_ManagerAccount.post:
+    allOf:
+      - $ref:  "#/definitions/ManagerAccount.1.0.0_ManagerAccount"
+      - type: object
+        required:
+        - Password
+        - RoleId
+        - UserName
+        properties:
+          Password:
+            description: This property is used with a PATCH or PUT to write the password
+              for the account.  This property is null on a GET.
+            type: string
+          RoleId:
+            description: This property contains the Role for this account.
+            type: string
+          UserName:
+            description: This property contains the user name for the account.
+            type: string
+
+  ManagerAccountCollection_ManagerAccountCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  ManagerCollection_ManagerCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  ManagerNetworkProtocol.1.0.0_ManagerNetworkProtocol:
+    description: This resource is used to obtain or modify the network services managed
+      by a given manager.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      FQDN:
+        description: This is the fully qualified domain name for the manager obtained
+          by DNS including the host name and top-level domain name.
+        readOnly: true
+        type: string
+      HTTP:
+        $ref: '#/definitions/ManagerNetworkProtocol.1.0.0_Protocol'
+        description: Settings for this Manager's HTTP protocol support
+        readOnly: true
+      HTTPS:
+        $ref: '#/definitions/ManagerNetworkProtocol.1.0.0_Protocol'
+        description: Settings for this Manager's HTTPS protocol support
+        readOnly: true
+      HostName:
+        description: The DNS Host Name of this manager, without any domain information
+        readOnly: true
+        type: string
+      IPMI:
+        $ref: '#/definitions/ManagerNetworkProtocol.1.0.0_Protocol'
+        description: Settings for this Manager's IPMI-over-LAN protocol support
+        readOnly: true
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      KVMIP:
+        $ref: '#/definitions/ManagerNetworkProtocol.1.0.0_Protocol'
+        description: Settings for this Manager's KVM-IP protocol support
+        readOnly: true
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      SNMP:
+        $ref: '#/definitions/ManagerNetworkProtocol.1.0.0_Protocol'
+        description: Settings for this Manager's SNMP support
+        readOnly: true
+      SSDP:
+        $ref: '#/definitions/ManagerNetworkProtocol.1.0.0_SSDProtocol'
+        description: Settings for this Manager's SSDP support
+        readOnly: true
+      SSH:
+        $ref: '#/definitions/ManagerNetworkProtocol.1.0.0_Protocol'
+        description: Settings for this Manager's SSH (Secure Shell) protocol support
+        readOnly: true
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      Telnet:
+        $ref: '#/definitions/ManagerNetworkProtocol.1.0.0_Protocol'
+        description: Settings for this Manager's Telnet protocol support
+        readOnly: true
+      VirtualMedia:
+        $ref: '#/definitions/ManagerNetworkProtocol.1.0.0_Protocol'
+        description: Settings for this Manager's Virtual Media support
+        readOnly: true
+    type: object
+  ManagerNetworkProtocol.1.0.0_Protocol:
+    properties:
+      Port:
+        description: Indicates the protocol port.
+        minimum: 0
+        type: number
+      ProtocolEnabled:
+        description: Indicates if the protocol is enabled or disabled
+        type: boolean
+    type: object
+  ManagerNetworkProtocol.1.0.0_SSDProtocol:
+    properties:
+      NotifyIPv6Scope:
+        description: Indicates the scope for the IPv6 Notify messages for SSDP.
+        enum:
+        - Link
+        - Site
+        - Organization
+        type: string
+      NotifyMulticastIntervalSeconds:
+        description: Indicates how often the Multicast is done from this service for
+          SSDP.
+        minimum: 0
+        type: number
+      NotifyTTL:
+        description: Indicates the time to live hop count for SSDPs Notify messages.
+        minimum: 1
+        type: number
+      Port:
+        description: Indicates the protocol port.
+        minimum: 0
+        type: number
+      ProtocolEnabled:
+        description: Indicates if the protocol is enabled or disabled
+        type: boolean
+    type: object
+  Message.1.0.0_Message:
+    properties:
+      Message:
+        description: This is the human readable message, if provided.
+        type: string
+      MessageArgs:
+        description: This array of message arguments are substituted for the arguments
+          in the message when looked up in the message registry.
+        items:
+          type: string
+        type: array
+      MessageId:
+        description: This is the key for this message which can be used to look up
+          the message in a message registry.
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: Oem extension object.
+      RelatedProperties:
+        description: This is an array of properties described by the message.
+        items:
+          type: string
+        type: array
+      Resolution:
+        description: Used to provide suggestions on how to resolve the situation that
+          caused the error.
+        type: string
+      Severity:
+        description: This is the severity of the errors.
+        type: string
+    type: object
+  MessageRegistryFile.1.0.0_Location:
+    properties:
+      ArchiveFile:
+        description: If the schema is hosted on the service in an archive file, this
+          is the name of the file within the archive.
+        readOnly: true
+        type: string
+      ArchiveUri:
+        description: If the schema is hosted on the service in an archive file, this
+          is the link to the archive file.
+        readOnly: true
+        type: string
+      Language:
+        description: The language code for the file the schema is in.
+        readOnly: true
+        type: string
+      PublicationUri:
+        description: Link to publicly available (canonical) URI for schema.
+        readOnly: true
+        type: string
+      Uri:
+        description: Link to locally available URI for schema.
+        readOnly: true
+        type: string
+    type: object
+  MessageRegistryFile.1.0.0_MessageRegistryFile:
+    description: This is the schema definition for the Schema File locator resource.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Languages:
+        description: Language codes for the schemas available.
+        items:
+          type: string
+        readOnly: true
+        type: array
+      Location:
+        description: Location information for this schema file.
+        items:
+          $ref: '#/definitions/MessageRegistryFile.1.0.0_Location'
+        readOnly: true
+        type: array
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      Registry:
+        description: The Registry Name, Major and Minor version used in MessageID
+          construction.
+        readOnly: true
+        type: string
+    required:
+    - Languages
+    - Registry
+    - Location
+    type: object
+  MessageRegistryFileCollection_MessageRegistryFileCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        format: uri
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  Power.1.0.0_Power:
+    description: This is the schema definition for the Power Metrics.  It represents
+      the properties for Power Consumption and Power Limiting.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      PowerControl:
+        description: This is the definition for power control function (power reading/limiting).
+        items:
+          $ref: '#/definitions/Power.1.0.0_PowerControl'
+        readOnly: true
+        type: array
+      PowerControl@odata.count:
+        readOnly: true
+        type: number
+      PowerControl@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      PowerSupplies:
+        description: Details of the power supplies associated with this system or
+          device
+        items:
+          $ref: '#/definitions/Power.1.0.0_PowerSupply'
+        readOnly: true
+        type: array
+      PowerSupplies@odata.count:
+        readOnly: true
+        type: number
+      PowerSupplies@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Redundancy:
+        description: Redundancy information for the power subsystem of this system
+          or device
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Redundancy@odata.count:
+        readOnly: true
+        type: number
+      Redundancy@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Voltages:
+        description: This is the definition for voltage sensors.
+        items:
+          $ref: '#/definitions/Power.1.0.0_Voltage'
+        readOnly: true
+        type: array
+      Voltages@odata.count:
+        readOnly: true
+        type: number
+      Voltages@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+    type: object
+  Power.1.0.0_PowerControl:
+    description: This is the base type for addressable members of an array.
+    properties:
+      MemberId:
+        description: This is the identifier for the member within the collection.
+        type: string
+      Name:
+        description: Power Control Function name.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      PowerAllocatedWatts:
+        description: The total amount of power that has been allocated (or budegeted)to  chassis
+          resources.
+        minimum: 0
+        readOnly: true
+        type: number
+      PowerAvailableWatts:
+        description: The amount of power not already budgeted and therefore available
+          for additional allocation. (powerCapacity - powerAllocated).  This indicates
+          how much reserve power capacity is left.
+        minimum: 0
+        readOnly: true
+        type: number
+      PowerCapacityWatts:
+        description: The total amount of power available to the chassis for allocation.
+          This may the power supply capacity, or power budget assigned to the chassis
+          from an up-stream chassis.
+        minimum: 0
+        readOnly: true
+        type: number
+      PowerConsumedWatts:
+        description: The actual power being consumed by the chassis.
+        minimum: 0
+        readOnly: true
+        type: number
+      PowerLimit:
+        $ref: '#/definitions/Power.1.0.0_PowerLimit'
+        description: Power limit status and configuration information for this chassis
+      PowerMetrics:
+        $ref: '#/definitions/Power.1.0.0_PowerMetric'
+        description: Power readings for this chassis.
+      PowerRequestedWatts:
+        description: The potential power that the chassis resources are requesting
+          which may be higher than the current level being consumed since requested
+          power includes budget that the chassis resource wants for future use.
+        minimum: 0
+        readOnly: true
+        type: number
+      RelatedItem:
+        description: The ID(s) of the resources associated with this Power Limit
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        type: array
+      RelatedItem@odata.count:
+        readOnly: true
+        type: number
+      RelatedItem@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Status:
+        $ref: '#/definitions/Resource_Status'
+    type: object
+  Power.1.0.0_PowerLimit:
+    description: This object contains power limit status and configuration information
+      for the chassis.
+    properties:
+      CorrectionInMs:
+        description: The time required for the limiting process to reduce power consumption
+          to below the limit.
+        type: number
+      LimitException:
+        description: The action that is taken if the power cannot be maintained below
+          the LimitInWatts.
+        enum:
+        - NoAction
+        - HardPowerOff
+        - LogEventOnly
+        - Oem
+        type: string
+      LimitInWatts:
+        description: The Power limit in watts. Set to null to disable power capping.
+        minimum: 0
+        type: number
+    type: object
+  Power.1.0.0_PowerMetric:
+    properties:
+      AverageConsumedWatts:
+        description: The average power level over the measurement window (the last
+          IntervalInMin minutes).
+        minimum: 0
+        readOnly: true
+        type: number
+      IntervalInMin:
+        description: The time interval (or window) in which the PowerMetrics are measured
+          over.
+        minimum: 0
+        readOnly: true
+        type: number
+      MaxConsumedWatts:
+        description: The highest power consumption level that has occured over the
+          measurement window (the last IntervalInMin minutes).
+        minimum: 0
+        readOnly: true
+        type: number
+      MinConsumedWatts:
+        description: The lowest power consumption level over the measurement window
+          (the last IntervalInMin minutes).
+        minimum: 0
+        readOnly: true
+        type: number
+    type: object
+  Power.1.0.0_PowerSupply:
+    description: Details of a power supplies associated with this system or device
+    properties:
+      FirmwareVersion:
+        description: The firmware version for this Power Supply
+        readOnly: true
+        type: string
+      LastPowerOutputWatts:
+        description: The average power output of this Power Supply
+        minimum: 0
+        readOnly: true
+        type: number
+      LineInputVoltage:
+        description: The line input voltage at which the Power Supply is operating
+        readOnly: true
+        type: number
+      LineInputVoltageType:
+        description: The line voltage type supported as an input to this Power Supply
+        enum:
+        - Unknown
+        - ACLowLine
+        - ACMidLine
+        - ACHighLine
+        - DCNeg48V
+        - DC480V
+        readOnly: true
+        type: string
+      MemberId:
+        description: This is the identifier for the member within the collection.
+        type: string
+      Model:
+        description: The model number for this Power Supply
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the Power Supply
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      PartNumber:
+        description: The part number for this Power Supply
+        readOnly: true
+        type: string
+      PowerCapacityWatts:
+        description: The maximum capacity of this Power Supply
+        minimum: 0
+        readOnly: true
+        type: number
+      PowerSupplyType:
+        description: The Power Supply type (AC or DC)
+        enum:
+        - Unknown
+        - AC
+        - DC
+        readOnly: true
+        type: string
+      Redundancy:
+        description: This structure is used to show redundancy for fans.  The Component
+          ids will reference the members of the redundancy groups.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Redundancy@odata.count:
+        readOnly: true
+        type: number
+      Redundancy@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      RelatedItem:
+        description: The ID(s) of the resources associated with this Power Limit
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        type: array
+      RelatedItem@odata.count:
+        readOnly: true
+        type: number
+      RelatedItem@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      SerialNumber:
+        description: The serial number for this Power Supply
+        readOnly: true
+        type: string
+      SparePartNumber:
+        description: The spare part number for this Power Supply
+        readOnly: true
+        type: string
+      Status:
+        $ref: '#/definitions/Resource_Status'
+    type: object
+  Power.1.0.0_Voltage:
+    description: This is the base type for addressable members of an array.
+    properties:
+      LowerThresholdCritical:
+        description: Below normal range but not yet fatal.
+        readOnly: true
+        type: number
+      LowerThresholdFatal:
+        description: Below normal range and is fatal
+        readOnly: true
+        type: number
+      LowerThresholdNonCritical:
+        description: Below normal range
+        readOnly: true
+        type: number
+      MaxReadingRange:
+        description: Maximum value for CurrentReading
+        readOnly: true
+        type: number
+      MemberId:
+        description: This is the identifier for the member within the collection.
+        type: string
+      MinReadingRange:
+        description: Minimum value for CurrentReading
+        readOnly: true
+        type: number
+      Name:
+        description: Voltage sensor name.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      PhysicalContext:
+        description: Describes the area or device to which this voltage measurement
+          applies.
+        enum:
+        - Room
+        - Intake
+        - Exhaust
+        - Front
+        - Back
+        - Upper
+        - Lower
+        - CPU
+        - GPU
+        - Backplane
+        - SystemBoard
+        - PowerSupply
+        - VoltageRegulator
+        - StorageDevice
+        - NetworkingDevice
+        - ComputeBay
+        - StorageBay
+        - NetworkBay
+        - ExpansionBay
+        - PowerSupplyBay
+        readOnly: true
+        type: string
+      ReadingVolts:
+        description: The current value of the voltage sensor.
+        readOnly: true
+        type: number
+      RelatedItem:
+        description: Describes the areas or devices to which this voltage measurement
+          applies.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      RelatedItem@odata.count:
+        readOnly: true
+        type: number
+      RelatedItem@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      SensorNumber:
+        description: A numerical identifier to represent the voltage sensor
+        readOnly: true
+        type: number
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      UpperThresholdCritical:
+        description: Above normal range but not yet fatal.
+        readOnly: true
+        type: number
+      UpperThresholdFatal:
+        description: Above normal range and is fatal
+        readOnly: true
+        type: number
+      UpperThresholdNonCritical:
+        description: Above normal range
+        readOnly: true
+        type: number
+    type: object
+  Processor.1.0.0_Processor:
+    description: This is the schema definition for the Processor resource.  It represents
+      the properties of a processor attached to a System.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      InstructionSet:
+        description: The instruction set of the processor
+        enum:
+        - x86
+        - x86-64
+        - IA-64
+        - ARM-A32
+        - ARM-A64
+        - MIPS32
+        - MIPS64
+        - OEM
+        readOnly: true
+        type: string
+      Manufacturer:
+        description: The processor manufacturer
+        readOnly: true
+        type: string
+      MaxSpeedMHz:
+        description: The maximum clock speed of the processor
+        readOnly: true
+        type: number
+      Model:
+        description: The product model number of this device
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      ProcessorArchitecture:
+        description: The architecture of the processor
+        enum:
+        - x86
+        - IA-64
+        - ARM
+        - MIPS
+        - OEM
+        readOnly: true
+        type: string
+      ProcessorId:
+        $ref: '#/definitions/Processor.1.0.0_ProcessorId'
+        description: Identification information for this processor.
+      ProcessorType:
+        description: The type of processor
+        enum:
+        - CPU
+        - GPU
+        - FPGA
+        - DSP
+        - Accelerator
+        - OEM
+        readOnly: true
+        type: string
+      Socket:
+        description: The socket or location of the processor
+        readOnly: true
+        type: string
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      TotalCores:
+        description: The total number of cores contained in this processor
+        readOnly: true
+        type: number
+      TotalThreads:
+        description: The total number of execution threads supported by this processor
+        readOnly: true
+        type: number
+    type: object
+  Processor.1.0.0_ProcessorId:
+    properties:
+      EffectiveFamily:
+        description: The effective Family for this processor
+        readOnly: true
+        type: string
+      EffectiveModel:
+        description: The effective Model for this processor
+        readOnly: true
+        type: string
+      IdentificationRegisters:
+        description: The contents of the Identification Registers (CPUID) for this
+          processor
+        readOnly: true
+        type: string
+      MicrocodeInfo:
+        description: The Microcode Information for this processor
+        readOnly: true
+        type: string
+      Step:
+        description: The Step value for this processor
+        readOnly: true
+        type: string
+      VendorId:
+        description: The Vendor Identification for this processor
+        readOnly: true
+        type: string
+    type: object
+  ProcessorCollection_ProcessorCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  RackHD.BootImage_BootImage:
+    description: This is the base type for the boot image installation action.
+    properties:
+      dnsServers:
+        items:
+          type: string
+        type: array
+      domain:
+        type: string
+      hostname:
+        type: string
+      installDisk:
+        type: string
+      networkDevices:
+        items:
+          $ref: '#/definitions/RackHD.BootImage_NetworkDevice'
+        type: array
+      osName:
+        enum:
+        - CentOS
+        - CentOS+KVM
+        - ESXi
+        - RHEL
+        - RHEL+KVM
+        type: string
+      repo:
+        type: string
+      rootPassword:
+        type: string
+      rootSshKey:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/RackHD.BootImage_Users'
+        type: array
+      version:
+        type: string
+    required:
+    - version
+    - repo
+    - osName
+    - rootPassword
+  RackHD.BootImage_BootImageList:
+    properties:
+      osName:
+        enum:
+        - CentOS
+        - CentOS+KVM
+        - ESXi
+        - RHEL
+        - RHEL+KVM
+        type: string
+  RackHD.BootImage_NetworkAddress:
+    properties:
+      gateway:
+        type: string
+      ipAddr:
+        type: string
+      netmask:
+        type: string
+      vlanIds:
+        type: array
+        items:
+          type: number
+    required:
+    - ipAddr
+    - netmask
+    - gateway
+  RackHD.BootImage_NetworkDevice:
+    properties:
+      device:
+        type: string
+      ipv4:
+        $ref: '#/definitions/RackHD.BootImage_NetworkAddress'
+      ipv6:
+        $ref: '#/definitions/RackHD.BootImage_NetworkAddress'
+    required:
+    - device
+  RackHD.BootImage_Users:
+    properties:
+      name:
+        type: string
+      password:
+        type: string
+      sshKey:
+        type: string
+      uid:
+        type: number
+    required:
+    - name
+    - password
+  RackHD.ResetAction_ResetAction:
+    description: This is the base type for the reset action.
+    properties:
+      reset_type:
+        enum:
+        - 'On'
+        - ForceOff
+        - GracefulShutdown
+        - GracefulRestart
+        - ForceRestart
+        - Nmi
+        - ForceOn
+        - PushPowerButton
+        type: string
+    required:
+    - reset_type
+  Resource_Oem:
+    description: Oem extension object.
+    properties: {}
+    type: object
+  Resource_Status:
+    properties:
+      Health:
+        description: This represents the health state of this resource in the absence
+          of its dependent resources.
+        enum:
+        - OK
+        - Warning
+        - Critical
+        readOnly: true
+        type: string
+      HealthRollup:
+        description: This represents the overall health state from the view of this
+          resource.
+        enum:
+        - OK
+        - Warning
+        - Critical
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+      State:
+        description: This indicates the known state of the resource, such as if it
+          is enabled.
+        enum:
+        - Enabled
+        - Disabled
+        - StandbyOffline
+        - StandbySpare
+        - InTest
+        - Starting
+        - Absent
+        readOnly: true
+        type: string
+    readOnly: true
+    type: object
+  Role.1.0.0_Role:
+    description: This schema defines a user role to be used in conjunction with a
+      manager account.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      AssignedPrivileges:
+        description: The redfish privileges that this role includes.
+        items:
+          enum:
+          - Login
+          - ConfigureManager
+          - ConfigureUsers
+          - ConfigureSelf
+          - ConfigureComponents
+          type: string
+        readOnly: false
+        type: array
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      IsPredefined:
+        description: This property is used to indicate if the Role is one of the Redfish
+          Predefined Roles vs a Custom role.
+        readOnly: true
+        type: boolean
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      OemPrivileges:
+        description: The OEM privileges that this role includes.
+        items:
+          type: string
+        readOnly: false
+        type: array
+    type: object
+  RoleCollection_RoleCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  SerialInterface.1.0.0_SerialInterface:
+    description: This schema defines an asynchronous serial interface resource.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      BitRate:
+        description: The receive and transmit rate of data flow, typically in bits-per-second
+          (bps), over the serial connection.
+        enum:
+        - '1200'
+        - '2400'
+        - '4800'
+        - '9600'
+        - '19200'
+        - '38400'
+        - '57600'
+        - '115200'
+        - '230400'
+        type: string
+      ConnectorType:
+        description: The type of connector used for this interface.
+        enum:
+        - RJ45
+        - RJ11
+        - DB9 Female
+        - DB9 Male
+        - DB25 Female
+        - DB25 Male
+        - USB
+        - mUSB
+        - uUSB
+        readOnly: true
+        type: string
+      DataBits:
+        description: The number of data bits that will follow the start bit over the
+          serial connection.
+        enum:
+        - '5'
+        - '6'
+        - '7'
+        - '8'
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      FlowControl:
+        description: The type of flow control, if any, that will be imposed on the
+          serial connection.
+        enum:
+        - None
+        - Software
+        - Hardware
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      InterfaceEnabled:
+        description: This indicates whether this interface is enabled.
+        type: boolean
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      Parity:
+        description: The type of parity used by the sender and receiver in order to
+          detect errors over the serial connection.
+        enum:
+        - None
+        - Even
+        - Odd
+        - Mark
+        - Space
+        type: string
+      PinOut:
+        description: The physical pin configuration needed for a serial connector.
+        enum:
+        - Cisco
+        - Cyclades
+        - Digi
+        readOnly: true
+        type: string
+      SignalType:
+        description: The type of signal used for the communication connection - RS232
+          or RS485.
+        enum:
+        - Rs232
+        - Rs485
+        readOnly: true
+        type: string
+      StopBits:
+        description: The period of time before the next start bit is transmitted.
+        enum:
+        - '1'
+        - '2'
+        type: string
+    type: object
+  SerialInterfaceCollection_SerialInterfaceCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  ServiceRoot.1.0.0_ServiceRoot:
+    description: This object represents the root Redfish service.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      AccountService:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+        description: This is a link to the Account Service.
+        readOnly: true
+      Chassis:
+        $ref: '#/definitions/ChassisCollection_ChassisCollection'
+        description: This is a link to a collection of Chassis.
+        readOnly: true
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      EventService:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+        description: This is a link to the EventService.
+        readOnly: true
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      JsonSchemas:
+        $ref: '#/definitions/JsonSchemaFileCollection_JsonSchemaFileCollection'
+        description: This is a link to a collection of Json-Schema files.
+        readOnly: true
+      Links:
+        description: The links object contains the links to other resources that are
+          related to this resource.
+        properties:
+          Oem:
+            $ref: '#/definitions/Resource_Oem'
+            description: Oem extension object.
+          Sessions:
+            $ref: '#/definitions/SessionCollection_SessionCollection'
+            description: Link to a collection of Sessions
+            readOnly: true
+        readOnly: true
+        type: object
+      Managers:
+        $ref: '#/definitions/ManagerCollection_ManagerCollection'
+        description: This is a link to a collection of Managers.
+        readOnly: true
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      RedfishVersion:
+        description: The version of the Redfish service
+        pattern: ^\d+\.\d+\.\d+$
+        readOnly: true
+        type: string
+      Registries:
+        $ref: '#/definitions/MessageRegistryFileCollection_MessageRegistryFileCollection'
+        description: This is a link to a collection of Registries.
+        readOnly: true
+      SessionService:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+        description: This is a link to the Sessions Service.
+        readOnly: true
+      Systems:
+        $ref: '#/definitions/ComputerSystemCollection_ComputerSystemCollection'
+        description: This is a link to a collection of Systems.
+        readOnly: true
+      Tasks:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+        description: This is a link to the Task Service.
+        readOnly: true
+      UUID:
+        description: 'Unique identifier for a service instance. When SSDP is used,
+          this value should be an exact match of the UUID value returned in a 200OK
+          from an SSDP M-SEARCH request during discovery. '
+        pattern: ([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})
+        readOnly: true
+        type: string
+    required:
+    - Links
+    type: object
+  Session.1.0.0_Session:
+    description: This is the base type for resources and referenceable members.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      Password:
+        description: This property is used in a POST to specify a password when creating
+          a new session.  This property is null on a GET.
+        type: string
+      UserName:
+        readOnly: true
+        type: string
+    type: object
+  SessionCollection_SessionCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  SessionService.1.0.0_SessionService:
+    description: This is the schema definition for the Session Service.  It represents
+      the properties for the service itself and has links to the actual list of sessions.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      ServiceEnabled:
+        description: This indicates whether this service is enabled.
+        type: boolean
+      SessionTimeout:
+        description: This is the number of seconds of inactivity that a session may
+          have before the session service closes the session due to inactivity.
+        maximum: 86400
+        minimum: 30
+        readOnly: false
+        type: number
+      Sessions:
+        $ref: '#/definitions/SessionCollection_SessionCollection'
+        description: Link to a collection of Sessions
+        readOnly: true
+      Status:
+        $ref: '#/definitions/Resource_Status'
+    type: object
+  SimpleStorage.1.0.0_Device:
+    properties:
+      Manufacturer:
+        description: The name of the manufacturer of this device
+        readOnly: true
+        type: string
+      Model:
+        description: The product model number of this device
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+      Status:
+        $ref: '#/definitions/Resource_Status'
+    required:
+    - Name
+    type: object
+  SimpleStorage.1.0.0_SimpleStorage:
+    description: This is the schema definition for the Simple Storage resource.  It
+      represents the properties of a storage controller and its directly-attached
+      devices.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Devices:
+        description: The storage devices associated with this resource
+        items:
+          $ref: '#/definitions/SimpleStorage.1.0.0_Device'
+        readOnly: true
+        type: array
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      UefiDevicePath:
+        description: The UEFI device path used to access this storage controller.
+        readOnly: true
+        type: string
+    type: object
+  SimpleStorageCollection_SimpleStorageCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  Task.1.0.0_Task:
+    description: This is the schema definition for a Task resource.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      EndTime:
+        description: The date-time stamp that the task was last completed.
+        format: date-time
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Messages:
+        description: This is an array of messages associated with the task.
+        items:
+          $ref: '#/definitions/Message.1.0.0_Message'
+        readOnly: true
+        type: array
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      StartTime:
+        description: The date-time stamp that the task was last started.
+        format: date-time
+        readOnly: true
+        type: string
+      TaskState:
+        description: The state of the task.
+        enum:
+        - New
+        - Starting
+        - Running
+        - Suspended
+        - Interrupted
+        - Pending
+        - Stopping
+        - Completed
+        - Killed
+        - Exception
+        - Service
+        readOnly: true
+        type: string
+      TaskStatus:
+        description: This is the completion status of the task.
+        enum:
+        - OK
+        - Warning
+        - Critical
+        readOnly: true
+        type: string
+    type: object
+  TaskCollection_TaskCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  TaskService.1.0.0_TaskService:
+    description: This is the schema definition for the Task Service.  It represents
+      the properties for the service itself and has links to the actual list of tasks.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      CompletedTaskOverWritePolicy:
+        description: Overwrite policy of completed tasks
+        enum:
+        - Manual
+        - Oldest
+        readOnly: true
+        type: string
+      DateTime:
+        description: The current DateTime (with offset) setting that the task service
+          is using.
+        format: date-time
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      LifeCycleEventOnTaskStateChange:
+        description: Send an Event upon Task State Change.
+        readOnly: true
+        type: boolean
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      ServiceEnabled:
+        description: This indicates whether this service is enabled.
+        type: boolean
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      Tasks:
+        $ref: '#/definitions/TaskCollection_TaskCollection'
+        description: References to the Tasks collection.
+        readOnly: true
+    type: object
+  Thermal.1.0.0_Fan:
+    description: This is the base type for addressable members of an array.
+    properties:
+      FanName:
+        description: Name of the fan
+        readOnly: true
+        type: string
+      LowerThresholdCritical:
+        description: Below normal range but not yet fatal
+        readOnly: true
+        type: number
+      LowerThresholdFatal:
+        description: Below normal range and is fatal
+        readOnly: true
+        type: number
+      LowerThresholdNonCritical:
+        description: Below normal range
+        readOnly: true
+        type: number
+      MaxReadingRange:
+        description: Maximum value for ReadingRPM
+        readOnly: true
+        type: number
+      MemberId:
+        description: This is the identifier for the member within the collection.
+        type: string
+      MinReadingRange:
+        description: Minimum value for ReadingRPM
+        readOnly: true
+        type: number
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      PhysicalContext:
+        description: Describes the area or device associated with this fan.
+        enum:
+        - Room
+        - Intake
+        - Exhaust
+        - Front
+        - Back
+        - Upper
+        - Lower
+        - CPU
+        - GPU
+        - Backplane
+        - SystemBoard
+        - PowerSupply
+        - VoltageRegulator
+        - StorageDevice
+        - NetworkingDevice
+        - ComputeBay
+        - StorageBay
+        - NetworkBay
+        - ExpansionBay
+        - PowerSupplyBay
+        readOnly: true
+        type: string
+      ReadingRPM:
+        description: Current fan speed in RPM
+        readOnly: true
+        type: number
+      Redundancy:
+        description: This structure is used to show redundancy for fans.  The Component
+          ids will reference the members of the redundancy groups.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Redundancy@odata.count:
+        readOnly: true
+        type: number
+      Redundancy@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      RelatedItem:
+        description: The ID(s) of the resources serviced with this fan
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        type: array
+      RelatedItem@odata.count:
+        readOnly: true
+        type: number
+      RelatedItem@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      UpperThresholdCritical:
+        description: Above normal range but not yet fatal
+        readOnly: true
+        type: number
+      UpperThresholdFatal:
+        description: Above normal range and is fatal
+        readOnly: true
+        type: number
+      UpperThresholdNonCritical:
+        description: Above normal range
+        readOnly: true
+        type: number
+    type: object
+  Thermal.1.0.0_Temperature:
+    description: This is the base type for addressable members of an array.
+    properties:
+      LowerThresholdCritical:
+        description: Below normal range but not yet fatal.
+        readOnly: true
+        type: number
+      LowerThresholdFatal:
+        description: Below normal range and is fatal
+        readOnly: true
+        type: number
+      LowerThresholdNonCritical:
+        description: Below normal range
+        readOnly: true
+        type: number
+      MaxReadingRangeTemp:
+        description: Maximum value for ReadingCelsius
+        readOnly: true
+        type: number
+      MemberId:
+        description: This is the identifier for the member within the collection.
+        type: string
+      MinReadingRangeTemp:
+        description: Minimum value for ReadingCelsius
+        readOnly: true
+        type: number
+      Name:
+        description: Temperature sensor name.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      PhysicalContext:
+        description: Describes the area or device to which this temperature measurement
+          applies.
+        enum:
+        - Room
+        - Intake
+        - Exhaust
+        - Front
+        - Back
+        - Upper
+        - Lower
+        - CPU
+        - GPU
+        - Backplane
+        - SystemBoard
+        - PowerSupply
+        - VoltageRegulator
+        - StorageDevice
+        - NetworkingDevice
+        - ComputeBay
+        - StorageBay
+        - NetworkBay
+        - ExpansionBay
+        - PowerSupplyBay
+        readOnly: true
+        type: string
+      ReadingCelsius:
+        description: Temperature
+        readOnly: true
+        type: number
+      RelatedItem:
+        description: Describes the areas or devices to which this temperature measurement
+          applies.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      RelatedItem@odata.count:
+        readOnly: true
+        type: number
+      RelatedItem@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      SensorNumber:
+        description: A numerical identifier to represent the temperature sensor
+        readOnly: true
+        type: number
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      UpperThresholdCritical:
+        description: Above normal range but not yet fatal.
+        readOnly: true
+        type: number
+      UpperThresholdFatal:
+        description: Above normal range and is fatal
+        readOnly: true
+        type: number
+      UpperThresholdNonCritical:
+        description: Above normal range
+        readOnly: true
+        type: number
+    type: object
+  Thermal.1.0.0_Thermal:
+    description: This is the schema definition for the Thermal properties.  It represents
+      the properties for Temperature and Cooling.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Fans:
+        description: This is the definition for fans.
+        items:
+          $ref: '#/definitions/Thermal.1.0.0_Fan'
+        readOnly: true
+        type: array
+      Fans@odata.count:
+        readOnly: true
+        type: number
+      Fans@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      Redundancy:
+        description: This structure is used to show redundancy for fans.  The Component
+          ids will reference the members of the redundancy groups.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Redundancy@odata.count:
+        readOnly: true
+        type: number
+      Redundancy@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Status:
+        $ref: '#/definitions/Resource_Status'
+      Temperatures:
+        description: This is the definition for temperature sensors.
+        items:
+          $ref: '#/definitions/Thermal.1.0.0_Temperature'
+        readOnly: true
+        type: array
+      Temperatures@odata.count:
+        readOnly: true
+        type: number
+      Temperatures@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+    type: object
+  VLanNetworkInterface.1.0.0_VLAN:
+    properties:
+      VLANEnable:
+        description: This indicates if this VLAN is enabled.
+        type: boolean
+      VLANId:
+        description: This indicates the VLAN identifier for this VLAN.
+        maximum: 4095
+        minimum: 0
+        type: number
+    type: object
+  VLanNetworkInterfaceCollection_VLanNetworkInterfaceCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  VirtualMedia.1.0.0_VirtualMedia:
+    description: This is the schema definition for the Virtual Media Service.
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      ConnectedVia:
+        description: Current virtual media connection methods
+        enum:
+        - NotConnected
+        - URI
+        - Applet
+        - Oem
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Id:
+        description: Uniquely identifies the resource within the collection of like
+          resources.
+        readOnly: true
+        type: string
+      Image:
+        description: A URI providing the location of the selected image
+        readOnly: true
+        type: string
+      ImageName:
+        description: The current image name
+        readOnly: true
+        type: string
+      Inserted:
+        description: Indicates if virtual media is inserted in the virtual device.
+        readOnly: true
+        type: boolean
+      MediaTypes:
+        description: This is the media types supported as virtual media.
+        items:
+          enum:
+          - CD
+          - Floppy
+          - USBStick
+          - DVD
+          type: string
+        readOnly: true
+        type: array
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+      WriteProtected:
+        description: Indicates the media is write protected.
+        readOnly: true
+        type: boolean
+    type: object
+  VirtualMediaCollection_VirtualMediaCollection:
+    properties:
+      '@odata.context':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+      '@odata.type':
+        readOnly: true
+        type: string
+      Description:
+        description: Provides a description of this resource and is used for commonality  in
+          the schema definitions.
+        readOnly: true
+        type: string
+      Members:
+        description: Contains the members of this collection.
+        items:
+          $ref: '#/definitions/odata.4.0.0_idRef'
+        readOnly: true
+        type: array
+      Members@odata.count:
+        readOnly: true
+        type: number
+      Members@odata.navigationLink:
+        $ref: '#/definitions/odata.4.0.0_idRef'
+      Name:
+        description: The name of the resource or array element.
+        readOnly: true
+        type: string
+      Oem:
+        $ref: '#/definitions/Resource_Oem'
+        description: This is the manufacturer/provider specific extension moniker
+          used to divide the Oem object into sections.
+    type: object
+  odata.4.0.0_idRef:
+    properties:
+      '@odata.id':
+        format: uri
+        readOnly: true
+        type: string
+    type: object
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  testEvent:
+    type: object

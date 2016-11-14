@@ -1,4 +1,4 @@
-package rhdman
+package manager
 
 import (
 	"encoding/json"
@@ -6,7 +6,6 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"sync"
 
 	"github.com/RackHD/neighborhood-manager/rackhd/manager/amqp"
 	"github.com/RackHD/neighborhood-manager/rackhd/models"
@@ -15,80 +14,51 @@ import (
 	"github.com/streadway/amqp"
 )
 
-// RackHDMan is a struct
-type RackHDMan struct {
+// Manager is a struct
+type Manager struct {
 	WatcherChan chan *watcher.Message
 	Federator   *federator.AmqpFed
-	RHDS        map[string]*RackHD
+	RHDS        map[string]*NodeTracker
 }
 
-var monLock *sync.Mutex
-
-// HTTPEndpoints is a struct to inject creds into the URI
-type HTTPEndpoints struct {
-	Address string
-	Port    int
-	HTTPS   bool
-	Proxies bool
-	Auth    bool
-	Routers string
-}
-
-// NewRackHDMan instantiates a new RackHDMan obj
-func NewRackHDMan(msgChan chan *watcher.Message) (RackHDMan, error) {
+// NewManager instantiates a new Manager obj
+func NewManager(msgChan chan *watcher.Message) (Manager, error) {
 	fed, err := federator.NewAmqpFed("amqp://guest:guest@localhost:5672", "8080", "nm")
 	if err != nil {
-		return RackHDMan{}, err
+		return Manager{}, err
 	}
-
-	rhd := make(map[string]*RackHD)
-	r := RackHDMan{
+	rhd := make(map[string]*NodeTracker)
+	m := Manager{
 		WatcherChan: msgChan,
 		Federator:   fed,
 		RHDS:        rhd,
 	}
-	return r, nil
+	return m, nil
 }
 
-// Start starts things
-func (r *RackHDMan) Start() {
-	go r.ProcessChan()
-}
-
-// ProcessChan is ...
-func (r *RackHDMan) ProcessChan() error {
-	for watcherMsg := range r.WatcherChan {
-		fmt.Printf("%+v", *watcherMsg)
+// RunManager handles incoming messages
+func (m *Manager) RunManager() {
+	for watcherMsg := range m.WatcherChan {
 		switch watcherMsg.Action {
 		case "create":
-			fmt.Println("HERE 1")
-			if err := r.CreateNewRackHD(watcherMsg); err != nil {
-				return err
-			}
+			go m.CreateNewRackHD(watcherMsg)
 		case "update":
-			fmt.Println("HERE 2")
-			if err := r.UpdateRackHD(watcherMsg); err != nil {
-				return err
-			}
+			go m.UpdateRackHD(watcherMsg)
 		case "delete":
-			fmt.Println("HERE 3")
-			if err := r.DeleteRackHD(watcherMsg); err != nil {
-				return err
-			}
+			go m.DeleteRackHD(watcherMsg)
+		default:
 		}
-		fmt.Println("HERE 4")
 	}
-	return nil
 }
 
 // DeleteRackHD is going to delete
-func (r *RackHDMan) DeleteRackHD(watcherMsg *watcher.Message) error {
+func (m *Manager) DeleteRackHD(watcherMsg *watcher.Message) error {
 	err := models.DeleteRhdByID(watcherMsg.Instance.UUID)
 	return err
 }
 
 // UpdateRackHD is going to update
-func (r *RackHDMan) UpdateRackHD(watcherMsg *watcher.Message) error {
+func (m *Manager) UpdateRackHD(watcherMsg *watcher.Message) error {
 	// conf, err := GetRackHDConfig(watcherMsg.Instance.Address)
 	// if err != nil {
 	// 	return err
@@ -108,22 +78,24 @@ func (r *RackHDMan) UpdateRackHD(watcherMsg *watcher.Message) error {
 }
 
 // CreateNewRackHD is going to create
-func (r *RackHDMan) CreateNewRackHD(watcherMsg *watcher.Message) error {
-	conf, err := GetRackHDConfig(watcherMsg.Instance.Address)
+func (m *Manager) CreateNewRackHD(watcherMsg *watcher.Message) error {
+	conf, err := getRackHDConfig(watcherMsg.Instance.Address)
 	if err != nil {
 		return err
 	}
-	uri, err := r.GetRackHDamqpURI(conf, watcherMsg.Instance.Address)
+	uri, err := getRackHDamqpURI(conf, watcherMsg.Instance.Address)
 	if err != nil {
 		return err
 	}
-	if err = r.Federator.AddRackHD(uri, watcherMsg.Instance.UUID); err != nil {
+	if err = m.Federator.AddRackHD(uri, watcherMsg.Instance.UUID); err != nil {
 		return err
 	}
-	trackingObj := NewRackHDTracker(watcherMsg.Instance.UUID, uri)
-	r.RHDS[watcherMsg.Instance.UUID] = trackingObj
-
-	rHD, err := models.NewRhd(watcherMsg.Instance.UUID, "http", uri.String())
+	nodeTracker := NewNodeTracker(watcherMsg.Instance.UUID, uri)
+	if err = nodeTracker.InitiateNodeCache(watcherMsg.Instance.Address); err != nil {
+		fmt.Println("Failed to init the node cache")
+	}
+	m.RHDS[watcherMsg.Instance.UUID] = nodeTracker
+	rHD, err := models.NewRhd(watcherMsg.Instance.UUID, watcherMsg.Instance.Address, uri.String())
 	if err != nil {
 		return err
 	}
@@ -131,15 +103,8 @@ func (r *RackHDMan) CreateNewRackHD(watcherMsg *watcher.Message) error {
 	return models.CreateRhd(rHD)
 }
 
-// InjectConfigParams is a stub to inject creds
-func (r *RackHDMan) InjectConfigParams(conf map[string]interface{}) error {
-	return nil
-}
-
 // GetRackHDConfig returns the RHD amqpURI
-func GetRackHDConfig(address string) (map[string]interface{}, error) {
-	monLock.Lock()
-	defer monLock.Unlock()
+func getRackHDConfig(address string) (map[string]interface{}, error) {
 	// Get RackHD instance details
 	client := cleanhttp.DefaultClient()
 	uri := &url.URL{
@@ -165,87 +130,22 @@ func GetRackHDConfig(address string) (map[string]interface{}, error) {
 }
 
 // GetRackHDamqpURI gets the amqp URI
-func (r *RackHDMan) GetRackHDamqpURI(conf map[string]interface{}, address string) (amqp.URI, error) {
-	rhdAmqpURI, ok := conf["amqp"]
+func getRackHDamqpURI(conf map[string]interface{}, address string) (amqp.URI, error) {
+	rhdAmqpURIinterface, ok := conf["amqp"]
 	if !ok {
 		return amqp.URI{}, fmt.Errorf("Unable to get RHD amqp interface")
 	}
-	amqpURI, err := amqp.ParseURI(rhdAmqpURI.(string))
+	rhdAmqpURI := rhdAmqpURIinterface.(string)
+	amqpURI, err := amqp.ParseURI(rhdAmqpURI)
 	if err != nil {
 		return amqp.URI{}, fmt.Errorf("Failed to parse AMQP URI")
 	}
-	if amqpURI.Host == "0.0.0.0" {
+	if amqpURI.Host == "0.0.0.0" || amqpURI.Host == "localhost" || amqpURI.Host == "127.0.0.1" {
 		host, _, err := net.SplitHostPort(address)
 		if err != nil {
 			return amqp.URI{}, err
 		}
 		amqpURI.Host = host
-	} else if amqpURI.Host == "127.0.0.1" {
-		// TODO: figure out if we are on the same host as RHD RabbitMQ instance
-		return amqp.URI{}, fmt.Errorf("AMQP not exposed externally")
 	}
 	return amqpURI, nil
-}
-
-// RackHD stores the state data of managed instances
-type RackHD struct {
-	stop chan struct{}
-	wg   sync.WaitGroup
-}
-
-// NewRackHDTracker creates go routines for days
-func NewRackHDTracker(uuid string, uri amqp.URI) *RackHD {
-
-	tObj := &RackHD{
-		stop: make(chan struct{}),
-		wg:   sync.WaitGroup{},
-	}
-	tObj.wg.Add(1)
-	go func(t *RackHD) {
-		defer t.wg.Done()
-		MQ := federator.AMQPClient{}
-		err := MQ.Initialize(uri.String())
-		if err != nil {
-			return
-		}
-		defer MQ.Close()
-		events, err := MQ.AmqpListen(
-			"on.events",
-			"topic",
-			uuid+"-events",
-			"event.node",
-			uuid+"-nm")
-		if err != nil {
-			return
-		}
-		for {
-			select {
-			case <-t.stop:
-				return
-			default:
-				for event := range events {
-					t.processEvents(&event)
-				}
-			}
-		}
-	}(tObj)
-
-	return tObj
-}
-
-func (rhd *RackHD) processEvents(m *amqp.Delivery) error {
-	switch m.Exchange {
-
-	case "on.events":
-		return rhd.processNodeEvent(m)
-
-	default:
-		return fmt.Errorf("Not my message, not my problem")
-	}
-}
-
-func (rhd *RackHD) processNodeEvent(m *amqp.Delivery) error {
-	fmt.Printf("%+v", m)
-	m.Ack(true)
-	return nil
 }

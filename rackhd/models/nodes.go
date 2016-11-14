@@ -41,6 +41,15 @@ func UpdateNode(node *RhdNode) error {
 	return db.Put(nodePath, b, nil)
 }
 
+// DeleteNode removes RhdNode on the backend
+func DeleteNode(node *RhdNode) error {
+	nodePath := rhdPrefix + node.RhdID + "/" + nodesPrefix + node.ID
+	if err := DeleteNodeCache(node.ID); err != nil {
+		return err
+	}
+	return db.DeleteTree(nodePath)
+}
+
 // GetAllNodes is currently stubbed out but unsupported
 func GetAllNodes() ([]*RhdNode, error) {
 	var nodes []*RhdNode

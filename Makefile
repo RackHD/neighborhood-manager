@@ -99,7 +99,7 @@ lint:
 	@${DOCKER_CMD} make lint-local
 
 lint-local:
-	@gometalinter --vendor --fast --disable=dupl --disable=gotype --skip=grpc ./...
+	@gometalinter --vendor --fast --disable=dupl --disable=gotype --skip=grpc --skip=swagger ./...
 
 test:
 	@make test-proxy
