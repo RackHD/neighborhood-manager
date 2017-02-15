@@ -48,10 +48,50 @@ type ClientTLSConfig struct {
 	CACertFile string
 }
 
+// AgentServiceRegistration is used to register a new service
+type AgentServiceRegistration struct {
+	ID                string
+	Name              string
+	Tags              []string
+	Port              int
+	Address           string
+	EnableTagOverride bool
+	Check             *AgentServiceCheck
+	Checks            AgentServiceChecks
+}
+
+// AgentServiceCheck is used to define a node or service level check
+type AgentServiceCheck struct {
+	Script            string
+	DockerContainerID string
+	Shell             string // Only supported for Docker.
+	Interval          string
+	Timeout           string
+	TTL               string
+	HTTP              string
+	TCP               string
+	Status            string
+	Notes             string
+	TLSSkipVerify     bool
+
+	// In Consul 0.7 and later, checks that are associated with a service
+	// may also contain this optional DeregisterCriticalServiceAfter field,
+	// which is a timeout in the same Go time format as Interval and TTL. If
+	// a check is in the critical state for more than this configured value,
+	// then its associated service (and all of its associated checks) will
+	// automatically be deregistered.
+	DeregisterCriticalServiceAfter string
+}
+
+// AgentServiceChecks is an array of AgentServiceCheck
+type AgentServiceChecks []*AgentServiceCheck
+
 // Registry represents the backend registry storage
 // Each registry should support every call listed
 // here or it cannot be utilized as a registry backend
 type Registry interface {
+	// Registers a new local service
+	ServiceRegister(serv *AgentServiceRegistration) error
 	// Register creates a new node, service or check
 	Register(reg *CatalogRegistration, options *WriteOptions) error
 

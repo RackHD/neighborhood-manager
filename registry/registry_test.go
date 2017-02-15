@@ -77,15 +77,21 @@ var _ = Describe("Registry", func() {
 			r               *registry.Registry
 			timeout         time.Duration
 			pollingInterval time.Duration
-			urn             string
-			ip              string
+			urnIS           string
+			urnRHD          string
+			ipRHD           string
+			ipIS            string
 			rGen            *rand.Rand
-			uuid            string
+			uuidRHD         string
+			uuidIS          string
 			err             error
 			ssdp            *gossdp.Ssdp
-			server          gossdp.AdvertisableServer
-			serviceName     string
-			serviceTag      string
+			serverIS        gossdp.AdvertisableServer
+			serviceNameIS   string
+			serviceTagIS    string
+			serverRHD       gossdp.AdvertisableServer
+			serviceNameRHD  string
+			serviceTagRHD   string
 		)
 
 		BeforeEach(func() {
@@ -97,11 +103,16 @@ var _ = Describe("Registry", func() {
 
 			mock.Register()
 			r, _ = registry.NewRegistry(libreg.MOCK, datacenter, backendAddr)
-			urn = "urn:schemas-upnp-org:service:agent:0.1"
+			urnIS = "urn:schemas-upnp-org:service:agent:0.1"
 
-			ip = "192.168.1.1:65535"
+			ipIS = "192.168.1.1:65535"
 			rGen = rand.New(rand.NewSource(time.Now().UnixNano()))
-			uuid = strconv.Itoa(rGen.Int())
+			uuidIS = strconv.Itoa(rGen.Int())
+
+			urnRHD = "urn:schemas-upnp-org:service:api:2.0"
+
+			ipRHD = "192.168.1.1:65535"
+			uuidRHD = strconv.Itoa(rGen.Int())
 
 			ssdp, err = gossdp.NewSsdp(nil)
 			if err != nil {
@@ -109,32 +120,65 @@ var _ = Describe("Registry", func() {
 			}
 			Expect(err).NotTo(HaveOccurred())
 
-			server = gossdp.AdvertisableServer{
-				ServiceType: urn,
-				DeviceUuid:  uuid,
-				Location:    fmt.Sprintf("%s%s%s", "http://", ip, "/fakepath"),
+			serverIS = gossdp.AdvertisableServer{
+				ServiceType: urnIS,
+				DeviceUuid:  uuidIS,
+				Location:    fmt.Sprintf("%s%s%s", "http://", ipIS, "/fakepath"),
 				MaxAge:      2,
 			}
-			serviceName = "Inservice-service:agent:0.1"
-			serviceTag = "Inservice"
+			serviceNameIS = "Inservice-service:agent:0.1"
+			serviceTagIS = "Inservice"
+
+			serverRHD = gossdp.AdvertisableServer{
+				ServiceType: urnRHD,
+				DeviceUuid:  uuidRHD,
+				Location:    fmt.Sprintf("%s%s%s", "http://", ipRHD, "/fakepath"),
+				MaxAge:      2,
+			}
+			serviceNameRHD = "RackHD-service:api:2.0"
+			serviceTagRHD = "RackHD"
 		})
 
-		It("should successfully register an Inservive-Agent service", func() {
-			ssdp.AdvertiseServer(server)
+		It("should successfully register an RackHD-on-http service", func() {
+			ssdp.AdvertiseServer(serverRHD)
 			go ssdp.Start()
 
 			// Start the test and wait for SSDP message to be seen
-			r.AddSearchTerm(urn, serviceTag)
+			r.AddSearchTerm(urnRHD, serviceTagRHD)
 			go r.Run()
 
 			Eventually(func() bool {
 				services, _ := r.Store.Services(nil)
-				return services[serviceName] != nil
+				return services[serviceNameRHD] != nil
 			}, timeout, pollingInterval).Should(BeTrue())
 
 			Consistently(func() bool {
-				service, _ := r.Store.Service(serviceName, "", nil)
-				return service[0].ServiceName == serviceName
+				service, _ := r.Store.Service(serviceNameRHD, "", nil)
+				return service[0].ServiceName == serviceNameRHD
+			}, timeout, pollingInterval).Should(BeTrue())
+
+			ssdp.Stop()
+			r.Stop()
+			log.Println("Finished test: Register RHD successfully")
+
+		})
+
+		It("should successfully register an Inservive-Agent service", func() {
+			ssdp.AdvertiseServer(serverIS)
+			go ssdp.Start()
+
+			// Start the test and wait for SSDP message to be seen
+			r.AddSearchTerm(urnIS, serviceTagIS)
+			go r.Run()
+
+			Eventually(func() bool {
+				services, _ := r.Store.Services(nil)
+				return services[serviceNameIS] != nil
+			}, timeout, pollingInterval).Should(BeTrue())
+
+			Consistently(func() bool {
+				service, _ := r.Store.Service(serviceNameIS, "", nil)
+				return service[0].ServiceName == serviceNameIS
 			}, timeout, pollingInterval).Should(BeTrue())
 
 			ssdp.Stop()
@@ -144,25 +188,25 @@ var _ = Describe("Registry", func() {
 		})
 
 		It("should handle badly formed URNs if they're whitelisted", func() {
-			serviceName = "Inservice-urn:MalformedData"
-			urn = "urn:MalformedData"
-			server.ServiceType = urn
+			serviceNameIS = "Inservice-urn:MalformedData"
+			urnIS = "urn:MalformedData"
+			serverIS.ServiceType = urnIS
 
-			ssdp.AdvertiseServer(server)
+			ssdp.AdvertiseServer(serverIS)
 			go ssdp.Start()
 
 			// Start the test and wait for SSDP message to be seen
-			r.AddSearchTerm(urn, serviceTag)
+			r.AddSearchTerm(urnIS, serviceTagIS)
 			go r.Run()
 
 			Eventually(func() bool {
 				services, _ := r.Store.Services(nil)
-				return services[serviceName] != nil
+				return services[serviceNameIS] != nil
 			}, timeout, pollingInterval).Should(BeTrue())
 
 			Consistently(func() bool {
-				service, _ := r.Store.Service(serviceName, "", nil)
-				return service[0].ServiceName == serviceName
+				service, _ := r.Store.Service(serviceNameIS, "", nil)
+				return service[0].ServiceName == serviceNameIS
 			}, timeout, pollingInterval).Should(BeTrue())
 
 			r.Stop()
@@ -173,17 +217,17 @@ var _ = Describe("Registry", func() {
 
 		It("should ignore SSDP messages with unknown URNs", func() {
 
-			ssdp.AdvertiseServer(server)
+			ssdp.AdvertiseServer(serverIS)
 			go ssdp.Start()
 
 			// Start the test and wait for SSDP message to be seen
-			urn = "urn:BAD:URN"
-			r.AddSearchTerm(urn, serviceTag)
+			urnIS = "urn:BAD:URN"
+			r.AddSearchTerm(urnIS, serviceTagIS)
 			go r.Run()
 
 			Consistently(func() bool {
 				services, _ := r.Store.Services(nil)
-				return services[serviceName] == nil
+				return services[serviceNameIS] == nil
 			}, timeout, pollingInterval).Should(BeTrue())
 
 			r.Stop()
@@ -197,22 +241,22 @@ var _ = Describe("Registry", func() {
 			badIP := "192.168.1165535"
 			badScheme := "://"
 
-			server.Location = fmt.Sprintf("%s%s%s", "http://", badIP, "/fakepath")
-			ssdp.AdvertiseServer(server)
+			serverIS.Location = fmt.Sprintf("%s%s%s", "http://", badIP, "/fakepath")
+			ssdp.AdvertiseServer(serverIS)
 
-			noSchemeServer := server
-			noSchemeServer.Location = fmt.Sprintf("%s%s%s", badScheme, ip, "/fakepath")
+			noSchemeServer := serverIS
+			noSchemeServer.Location = fmt.Sprintf("%s%s%s", badScheme, ipIS, "/fakepath")
 			ssdp.AdvertiseServer(noSchemeServer)
 			go ssdp.Start()
 
-			r.AddSearchTerm(urn, serviceTag)
+			r.AddSearchTerm(urnIS, serviceTagIS)
 
 			// Start the test and wait for SSDP message to be seen
 			go r.Run()
 
 			Consistently(func() bool {
 				services, _ := r.Store.Services(nil)
-				return services[serviceName] == nil
+				return services[serviceNameIS] == nil
 			}, timeout, pollingInterval).Should(BeTrue())
 
 			r.Stop()
@@ -223,18 +267,18 @@ var _ = Describe("Registry", func() {
 
 		It("should fail to parse SSDP messages with a bad port", func() {
 
-			ip := "192.168.1.1:INVALIDPORT"
-			server.Location = fmt.Sprintf("%s%s%s", "http://", ip, "/fakepath")
-			ssdp.AdvertiseServer(server)
+			ipIS := "192.168.1.1:INVALIDPORT"
+			serverIS.Location = fmt.Sprintf("%s%s%s", "http://", ipIS, "/fakepath")
+			ssdp.AdvertiseServer(serverIS)
 			go ssdp.Start()
 
 			// Start the test and wait for SSDP message to be seen
-			r.AddSearchTerm(urn, serviceTag)
+			r.AddSearchTerm(urnIS, serviceTagIS)
 			go r.Run()
 
 			Consistently(func() bool {
 				services, _ := r.Store.Services(nil)
-				return services[serviceName] == nil
+				return services[serviceNameIS] == nil
 			}, timeout, pollingInterval).Should(BeTrue())
 
 			r.Stop()
@@ -245,17 +289,17 @@ var _ = Describe("Registry", func() {
 
 		It("should fail to register SSDP messages with no Node UUID", func() {
 
-			server.DeviceUuid = ""
-			ssdp.AdvertiseServer(server)
+			serverIS.DeviceUuid = ""
+			ssdp.AdvertiseServer(serverIS)
 			go ssdp.Start()
 
 			// Start the test and wait for SSDP message to be seen
-			r.AddSearchTerm(urn, serviceTag)
+			r.AddSearchTerm(urnIS, serviceTagIS)
 			go r.Run()
 
 			Consistently(func() bool {
 				services, _ := r.Store.Services(nil)
-				return services[serviceName] == nil
+				return services[serviceNameIS] == nil
 			}, timeout, pollingInterval).Should(BeTrue())
 
 			r.Stop()

@@ -90,6 +90,27 @@ func (s *Consul) setTimeout(time time.Duration) {
 	s.config.WaitTime = time
 }
 
+// ServiceRegister add a local agent service and its check
+func (s *Consul) ServiceRegister(serv *registry.AgentServiceRegistration) error {
+
+	err := s.client.Agent().ServiceRegister(
+		&api.AgentServiceRegistration{
+			ID:                serv.ID,
+			Name:              serv.Name,
+			Tags:              serv.Tags,
+			Port:              serv.Port,
+			Address:           serv.Address,
+			EnableTagOverride: serv.EnableTagOverride,
+			Check: &api.AgentServiceCheck{
+				HTTP:                           serv.Check.HTTP,
+				Interval:                       serv.Check.Interval,
+				DeregisterCriticalServiceAfter: serv.Check.DeregisterCriticalServiceAfter,
+			},
+		},
+	)
+	return err
+}
+
 // Register adds an entry into the consul backend
 func (s *Consul) Register(reg *registry.CatalogRegistration, options *registry.WriteOptions) error {
 	catalog := s.client.Catalog()

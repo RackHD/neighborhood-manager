@@ -134,7 +134,31 @@ func (p *Registry) NotifyAlive(message gossdp.AliveMessage) {
 		return
 	}
 
+	if err = p.agentServiceRegister(serviceName, agentIP, "15s", agentPort); err != nil {
+		log.Printf("Error: Could not register agent service check %s: %s\n", serviceName, err)
+		return
+	}
+
 	log.Printf("New Service <%s> was registered for Node %s\n", serviceName, message.DeviceId)
+}
+
+// agentServiceRegister registers a local agent service and its checkc
+func (p *Registry) agentServiceRegister(pluginName, agentIP, interval string, pluginPort int) error {
+	err := p.Store.ServiceRegister(
+		&regStore.AgentServiceRegistration{
+			ID:                pluginName,
+			Name:              pluginName,
+			Port:              pluginPort,
+			Address:           agentIP,
+			EnableTagOverride: false,
+			Check: &regStore.AgentServiceCheck{
+				HTTP:                           agentIP + ":" + string(pluginPort) + "/api/2.0/nodes",
+				Interval:                       interval,
+				DeregisterCriticalServiceAfter: "5m",
+			},
+		},
+	)
+	return err
 }
 
 // register adds a service to the backend store

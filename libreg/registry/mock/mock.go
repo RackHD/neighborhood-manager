@@ -39,6 +39,27 @@ func (m *Mock) GetCatalog() map[registry.CatalogRegistration]bool {
 	return c
 }
 
+// ServiceRegister add a local agent service and its check
+func (m *Mock) ServiceRegister(serv *registry.AgentServiceRegistration) error {
+	//
+	// err := s.client.Agent().ServiceRegister(
+	// 	&api.AgentServiceRegistration{
+	// 		ID:                serv.ID,
+	// 		Name:              serv.Name,
+	// 		Tags:              serv.Tags,
+	// 		Port:              serv.Port,
+	// 		Address:           serv.Address,
+	// 		EnableTagOverride: serv.EnableTagOverride,
+	// 		Check: &api.AgentServiceCheck{
+	// 			HTTP:                           serv.Check.HTTP,
+	// 			Interval:                       serv.Check.Interval,
+	// 			DeregisterCriticalServiceAfter: serv.Check.DeregisterCriticalServiceAfter,
+	// 		},
+	// 	},
+	// )
+	return nil
+}
+
 // Register creates a new node, service or check
 func (m *Mock) Register(reg *registry.CatalogRegistration, options *registry.WriteOptions) error {
 	if reg.Address == "1.1.1.1" {
