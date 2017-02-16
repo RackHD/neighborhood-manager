@@ -15,6 +15,9 @@ import (
 
 func main() {
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatalf("%s\n", err)
+	}
 	viper.SetConfigName("ssdpSpoof")
 	viper.SetConfigType("json")
 	viper.AddConfigPath(dir)

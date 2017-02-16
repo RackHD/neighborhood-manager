@@ -94,12 +94,13 @@ build-reg:
 build-reg-local: lint-local
 	@go build -o ${REGISTRY}/bin/${REGISTRY} ${REGFLAGS} registry/cmd/registry/*.go
 	@go build -o registry/bin/ssdpspoofer registry/cmd/ssdpspoofer/*.go
+	@go build -o registry/bin/rackhdspoofer registry/cmd/rackHDSpoofer/*.go
 
 lint:
 	@${DOCKER_CMD} make lint-local
 
 lint-local:
-	@gometalinter --vendor --fast --disable=dupl --disable=gotype --skip=grpc ./...
+	@gometalinter --vendor --fast --disable=dupl --disable=gotype --skip=grpc --skip=rackhd ./...
 
 test:
 	@make test-proxy
@@ -124,6 +125,8 @@ release: deps build
 	@docker build -t rackhd/endpoint -f ${RACKHD}/Dockerfile-endpoint ${RACKHD}/
 	@docker build -t rackhd/${REGISTRY} -f ${REGISTRY}/Dockerfile-${REGISTRY} ${REGISTRY}/
 	@docker build -t rackhd/ssdpspoofer -f ${REGISTRY}/Dockerfile-ssdp ${REGISTRY}/
+	@docker build -t rackhd/rackhdspoofer -f ${REGISTRY}/Dockerfile-rackhd ${REGISTRY}/
+
 
 run-proxy: release
 	@docker-compose -f ${RACKHD}/docker-compose-${RACKHD}.yaml up --force-recreate

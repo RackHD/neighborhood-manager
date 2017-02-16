@@ -1,0 +1,5 @@
+FROM debian:wheezy
+
+ADD ./bin/rackhdspoofer /bin/rackhdspoofer
+
+ENTRYPOINT ["/bin/rackhdspoofer"]

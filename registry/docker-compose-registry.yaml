@@ -10,6 +10,7 @@ services:
     ports:
       - "8300:8300"
       - "8301:8301"
+      - "8080:8080"
       - "8301:8301/udp"
       - "8302:8302"
       - "8302:8302/udp"
@@ -29,6 +30,7 @@ services:
         - consulclient
     expose:
       - "1900"
+      - "8080"
       - "1900/udp"
       - "8300"
       - "8301"
@@ -55,12 +57,24 @@ services:
       - "1900/udp"
     depends_on:
         - consulserver
+  rackhdspoofer:
+    build:
+      context: .
+      dockerfile: Dockerfile-rackhd
+    image: "rackhd/rackhdspoofer:latest"
+    container_name: "rackhdspoofer"
+    hostname: "rackhdspoofer"
+    expose:
+      - "8080"
+    depends_on:
+        - consulserver
   consulclient:
     image: "rackhd/consul:client"
     container_name: "consulclient"
     hostname: "consulclient"
     expose:
       - "8300"
+      - "8080"
       - "8301"
       - "8301/udp"
       - "8302"

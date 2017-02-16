@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"net/url"
@@ -142,7 +143,7 @@ func (p *Registry) NotifyAlive(message gossdp.AliveMessage) {
 	log.Printf("New Service <%s> was registered for Node %s\n", serviceName, message.DeviceId)
 }
 
-// agentServiceRegister registers a local agent service and its checkc
+// agentServiceRegister registers a local agent service and its check
 func (p *Registry) agentServiceRegister(pluginName, agentIP, interval string, pluginPort int) error {
 	err := p.Store.ServiceRegister(
 		&regStore.AgentServiceRegistration{
@@ -152,7 +153,7 @@ func (p *Registry) agentServiceRegister(pluginName, agentIP, interval string, pl
 			Address:           agentIP,
 			EnableTagOverride: false,
 			Check: &regStore.AgentServiceCheck{
-				HTTP:                           agentIP + ":" + string(pluginPort) + "/api/2.0/nodes",
+				HTTP:                           "http://" + fmt.Sprintf("%s:%d/api/2.0/nodes", agentIP, pluginPort),
 				Interval:                       interval,
 				DeregisterCriticalServiceAfter: "5m",
 			},
