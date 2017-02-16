@@ -2,7 +2,7 @@
     "ssdp":{
         "Source1":{
             "broadcastIP":[
-                "0.0.0.0:8080"
+                "rackhdspoofer:8080"
             ],
             "urnList":[
                 "urn:schemas-upnp-org:service:agent:0.1",
