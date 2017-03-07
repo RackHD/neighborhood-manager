@@ -1,5 +1,5 @@
 hash: 7c32608f6d6cd807c9980e7a2d4a1a33b8228ef96330356cdb61e5e43238b693
-updated: 2017-02-15T22:17:50.926249281-05:00
+updated: 2017-03-07T09:58:36.817203487-05:00
 imports:
 - name: github.com/boltdb/bolt
   version: e9cf4fae01b5a8ff89d0ec6b32f0d9c9f79aefdd
@@ -10,7 +10,7 @@ imports:
   - store/boltdb
   - store/consul
 - name: github.com/fsnotify/fsnotify
-  version: a904159b9206978bb6d53fcc7a769e5cd726c737
+  version: f12c6236fe7b5cf6bcf30e5935d08cb079d78334
 - name: github.com/gin-gonic/gin
   version: e2212d40c62a98b388a5eb48ecbdcf88534688ba
   subpackages:
@@ -25,9 +25,9 @@ imports:
   subpackages:
   - api
 - name: github.com/hashicorp/go-cleanhttp
-  version: 3573b8b52aa7b37b9358d966a898feb387f62437
+  version: ad28ea4487f05916463e2423a55166280e8254b5
 - name: github.com/hashicorp/hcl
-  version: 372e8ddaa16fd67e371e9323807d056b799360af
+  version: 37ab263305aaeb501a60eb16863e808d426e37f2
   subpackages:
   - hcl/ast
   - hcl/parser
@@ -43,46 +43,56 @@ imports:
   - coordinate
 - name: github.com/king-jam/gossdp
   version: 83dbf4057d732d2a11fc27754f969eea50f7b132
+- name: github.com/kr/fs
+  version: 2788f0dbd16903de03cb8186e5c7d97b69ad387b
 - name: github.com/magiconair/properties
-  version: b3b15ef068fd0b17ddf408a23669f20811d194d2
+  version: 61b492c03cf472e0c6419be5899b8e0dc28b1b88
 - name: github.com/manucorporat/sse
   version: ee05b128a739a0fb76c7ebd3ae4810c1de808d6d
 - name: github.com/mattn/go-isatty
-  version: 281032e84ae07510239465db46bf442aa44b953a
+  version: dda3de49cbfcec471bd7a70e6cc01fcc3ff90109
 - name: github.com/mitchellh/mapstructure
-  version: db1efb556f84b25a0a13a04aad883943538ad2e0
+  version: bfdb1a85537d60bc7e954e600c250219ea497417
 - name: github.com/pelletier/go-buffruneio
   version: df1e16fde7fc330a0ca68167c23bf7ed6ac31d6d
 - name: github.com/pelletier/go-toml
-  version: c9506ee96398e7571356462217b9e24d6a628d71
+  version: 0049ab3dc4c4c70a9eee23087437b69c0dde2130
+- name: github.com/pkg/errors
+  version: 17b591df37844cde689f4d5813e5cea0927d8dd2
+- name: github.com/pkg/sftp
+  version: a71e8f580e3b622ebff585309160b1cc549ef4d2
 - name: github.com/spf13/afero
-  version: 72b31426848c6ef12a7a8e216708cb0d1530f074
+  version: 20500e2abd0d1f4564a499e83d11d6c73cd58c27
   subpackages:
   - mem
+  - sftp
 - name: github.com/spf13/cast
-  version: d1139bab1c07d5ad390a65e7305876b3c1a8370b
+  version: e31f36ffc91a2ba9ddb72a4b6a607ff9b3d3cb63
 - name: github.com/spf13/jwalterweatherman
-  version: fa7ca7e836cf3a8bb4ebf799f472c12d7e903d66
+  version: 33c24e77fb80341fe7130ee7c594256ff08ccc46
 - name: github.com/spf13/pflag
-  version: 9ff6c6923cfffbcd502984b8e0c80539a94968b7
+  version: 5ccb023bc27df288a957c5e994cd44fd19619465
 - name: github.com/spf13/viper
-  version: 5ed0fc31f7f453625df314d8e66b9791e8d13003
+  version: 7fb2782df3d83e0036cc89f461ed0422628776f4
 - name: github.com/streadway/amqp
   version: d75c3a341ff43309ad0cb69ac8bdbd1d8772775f
-- name: golang.org/x/net
-  version: 61557ac0112b576429a0df080e1c2cef5dfbb642
+- name: golang.org/x/crypto
+  version: 1f22c0103821b9390939b6776727195525381532
   subpackages:
-  - bpf
+  - curve25519
+  - ssh
+- name: golang.org/x/net
+  version: f315505cf3349909cdf013ea56690da34e96a451
+  subpackages:
   - context
   - internal/iana
-  - internal/netreflect
   - ipv4
 - name: golang.org/x/sys
-  version: e24f485414aeafb646f6fca458b0bf869c0880a1
+  version: 478fcf54317e52ab69f40bb4c7a1520288d7f7ea
   subpackages:
   - unix
 - name: golang.org/x/text
-  version: 85c29909967d7f171f821e7a42e7b7af76fb9598
+  version: d69c40b4be55797923cec7457fac7a244d91a9b6
   subpackages:
   - transform
   - unicode/norm
@@ -91,7 +101,7 @@ imports:
 - name: gopkg.in/go-playground/validator.v8
   version: c193cecd124b5cc722d7ee5538e945bdb3348435
 - name: gopkg.in/yaml.v2
-  version: a3f3340b5840cee44f372bddb5880fcbc419b46a
+  version: a5b47d31c556af34a302ce5d659e6fea44d90de0
 testImports:
 - name: github.com/onsi/ginkgo
   version: 462326b1628e124b23f42e87a8f2750e3c4e2d24
