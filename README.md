@@ -39,7 +39,7 @@ Code and bug submissions are handled on GitHub using the Issues tab for this rep
 Community
 ---------
 
-We also have a #InfraEnablers Slack channel: You can request an invite at http://community.emccode.com.
+We also have a #RackHD Slack channel: You can request an invite at http://community.emccode.com.
 
 
 Licensing
